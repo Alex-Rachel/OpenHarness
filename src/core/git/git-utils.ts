@@ -812,7 +812,7 @@ export function getRepoDeliveryStatus(
   repoPath: string,
   options?: {
     baseBranch?: string | null;
-    sourceType?: "local" | "github";
+    sourceType?: "local" | "github" | "svn" | "none";
     sourceUrl?: string | null;
   },
 ): RepoDeliveryStatus {
@@ -1132,6 +1132,8 @@ export interface ValidationResult {
   warning?: string;
   isGitHub?: boolean;
   parsed?: ParsedGitHubUrl;
+  /** Detected VCS type for local paths ("git" | "svn" | "none") */
+  vcsType?: "git" | "svn" | "none";
 }
 
 /**
@@ -1195,14 +1197,16 @@ export function validateRepoInput(input: string): ValidationResult {
   const normalizedPath = normalizeLocalRepoPath(trimmed);
   const bridge = getServerBridge();
   if (bridge.fs.existsSync(normalizedPath)) {
-    if (isGitRepository(normalizedPath)) {
-      return { valid: true };
+    // Auto-detect VCS type from directory contents
+    const vcsPath = path.join(normalizedPath, ".git");
+    const svnPath = path.join(normalizedPath, ".svn");
+    let vcsType: "git" | "svn" | "none" = "none";
+    if (bridge.fs.existsSync(vcsPath)) {
+      vcsType = "git";
+    } else if (bridge.fs.existsSync(svnPath)) {
+      vcsType = "svn";
     }
-    return {
-      valid: false,
-      error: "Directory exists but is not a git repository",
-      suggestion: "Initialize a git repository first or choose a different directory",
-    };
+    return { valid: true, vcsType };
   }
 
   return {

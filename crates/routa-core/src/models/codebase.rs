@@ -2,11 +2,15 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
+use crate::vcs::VcsType;
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum CodebaseSourceType {
     Local,
     Github,
+    Svn,
+    None,
 }
 
 impl CodebaseSourceType {
@@ -14,6 +18,8 @@ impl CodebaseSourceType {
         match self {
             Self::Local => "local",
             Self::Github => "github",
+            Self::Svn => "svn",
+            Self::None => "none",
         }
     }
 }
@@ -25,6 +31,8 @@ impl FromStr for CodebaseSourceType {
         match value {
             "local" => Ok(Self::Local),
             "github" => Ok(Self::Github),
+            "svn" => Ok(Self::Svn),
+            "none" => Ok(Self::None),
             _ => Err(()),
         }
     }
@@ -45,6 +53,9 @@ pub struct Codebase {
     pub source_type: Option<CodebaseSourceType>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source_url: Option<String>,
+    /// Auto-detected VCS type. Defaults to "git" for backward compat.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub vcs_type: Option<VcsType>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -71,6 +82,35 @@ impl Codebase {
             is_default,
             source_type,
             source_url,
+            vcs_type: None,
+            created_at: now,
+            updated_at: now,
+        }
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_with_vcs_type(
+        id: String,
+        workspace_id: String,
+        repo_path: String,
+        branch: Option<String>,
+        label: Option<String>,
+        is_default: bool,
+        source_type: Option<CodebaseSourceType>,
+        source_url: Option<String>,
+        vcs_type: Option<VcsType>,
+    ) -> Self {
+        let now = Utc::now();
+        Self {
+            id,
+            workspace_id,
+            repo_path,
+            branch,
+            label,
+            is_default,
+            source_type,
+            source_url,
+            vcs_type,
             created_at: now,
             updated_at: now,
         }

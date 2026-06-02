@@ -667,7 +667,7 @@ const en: TranslationDictionary = {
     localPathPlaceholder: "/Users/you/project or ~/project",
     loadingProject: "Loading Project...",
     useLocalProject: "Use Local Project",
-    localProjectHint: "The path must exist locally and already be a git repository.",
+    localProjectHint: "Enter the path to a local directory. Git and SVN working copies, or any plain folder, are supported.",
     loadingRepositories: "Loading repositories...",
     modified: "modified",
     behind: "behind",

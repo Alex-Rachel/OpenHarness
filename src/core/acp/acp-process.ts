@@ -80,6 +80,10 @@ export class AcpProcess {
     private _sessionContext: AcpSessionContext | null = null;
     private lastSyntheticTurnStopReason: string | null = null;
     private lastStderrErrorMessage: string | null = null;
+    /** stderr output captured during startup for error diagnostics */
+    private startupStderr = "";
+    /** Exit info captured during startup for error diagnostics */
+    private startupExitInfo: { code: number | null; signal: string | null } | null = null;
 
     constructor(config: AcpProcessConfig, onNotification: NotificationHandler) {
         this._config = config;
@@ -171,6 +175,10 @@ export class AcpProcess {
             if (text) {
                 this.rememberStderrError(text);
                 console.error(`[AcpProcess:${displayName} stderr] ${text}`);
+                // Capture stderr during startup for error diagnostics
+                if (!this._alive) {
+                    this.startupStderr += text + "\n";
+                }
                 // Forward stderr to frontend as process_output notification
                 // This allows xterm.js to display agent process output
                 this.onNotification({
@@ -193,6 +201,10 @@ export class AcpProcess {
             console.log(
                 `[AcpProcess:${displayName}] Process exited: code=${code}, signal=${signal}`
             );
+            // Capture exit info during startup for error diagnostics
+            if (!this._alive) {
+                this.startupExitInfo = { code, signal };
+            }
             this._alive = false;
             // Reject all pending requests
             for (const [id, pending] of this.pendingRequests) {
@@ -224,11 +236,25 @@ export class AcpProcess {
         this._alive = true;
 
 
-        // Wait for process to stabilize
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // Wait for process to stabilize with diagnostic-rich error on failure.
+        // On Windows and slower machines, the agent may need more than 500ms
+        // to initialize (especially on first run with package download).
+        const STARTUP_TIMEOUT_MS = 3_000;
+        await new Promise((resolve) => setTimeout(resolve, STARTUP_TIMEOUT_MS));
 
         if (!this.alive) {
-            throw new Error(`${displayName} process died during startup`);
+            const exitCode = this.startupExitInfo?.code;
+            const exitSignal = this.startupExitInfo?.signal;
+            const stderrHint = this.startupStderr.trim()
+                ? `\n  stderr: ${this.startupStderr.trim().slice(-500)}`
+                : "";
+            const exitHint = exitCode != null ? ` (exit code=${exitCode})` : "";
+            const signalHint = exitSignal ? ` (signal=${exitSignal})` : "";
+            throw new Error(
+                `${displayName} process died during startup${exitHint}${signalHint}.${stderrHint}\n` +
+                `  command: ${command} ${finalArgs.join(" ")}\n` +
+                `  cwd: ${cwd}`
+            );
         }
 
         console.log(

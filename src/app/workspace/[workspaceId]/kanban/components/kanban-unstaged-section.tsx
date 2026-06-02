@@ -4,6 +4,8 @@ import React from "react";
 import { GitCommitHorizontal, Trash2 } from "lucide-react";
 import { KanbanFileChangesSection } from "./kanban-file-changes-section";
 import type { KanbanFileChangeItem } from "../kanban-file-changes-types";
+import type { CodebaseData } from "@/client/hooks/use-workspaces";
+import { useHasVcsCapability } from "@/client/hooks/use-vcs-capabilities";
 
 interface KanbanUnstagedSectionProps {
   files: KanbanFileChangeItem[];
@@ -16,6 +18,8 @@ interface KanbanUnstagedSectionProps {
   onStageSelected: () => void;
   onDiscardSelected: () => void;
   loading?: boolean;
+  /** Codebase data for VCS capability gating */
+  codebase?: CodebaseData;
 }
 
 export function KanbanUnstagedSection({
@@ -29,7 +33,10 @@ export function KanbanUnstagedSection({
   onStageSelected,
   onDiscardSelected,
   loading = false,
+  codebase,
 }: KanbanUnstagedSectionProps) {
+  const canStageUnstage = useHasVcsCapability(codebase, "stageUnstage");
+  if (!canStageUnstage) return null;
   const selectedCount = files.filter(f => f.selected).length;
   const hasSelection = selectedCount > 0;
 

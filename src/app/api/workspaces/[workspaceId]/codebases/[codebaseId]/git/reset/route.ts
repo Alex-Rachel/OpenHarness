@@ -7,6 +7,7 @@ import {
   hasLocalBranch,
   resetBranch,
 } from "@/core/git/git-operations";
+import { requireVcsCapability } from "@/core/vcs";
 
 export const dynamic = "force-dynamic";
 
@@ -44,18 +45,19 @@ export async function POST(
   }
 
   const system = getRoutaSystem();
-  const workspace = await system.workspaceStore.get(workspaceId);
-  
-  if (!workspace) {
+
+  // VCS capability guard — reject if the codebase is not a Git repository
+  const guard = await requireVcsCapability(codebaseId, "reset", system.codebaseStore);
+  if (!guard.allowed) {
     return NextResponse.json(
-      { success: false, error: "Workspace not found" },
-      { status: 404 },
+      { success: false, error: guard.errorMessage },
+      { status: 400 },
     );
   }
 
-  const codebase = await system.codebaseStore.get(codebaseId);
-  
-  if (!codebase || codebase.workspaceId !== workspaceId) {
+  const codebase = guard.codebase!;
+
+  if (codebase.workspaceId !== workspaceId) {
     return NextResponse.json(
       { success: false, error: "Codebase not found" },
       { status: 404 },
@@ -80,7 +82,7 @@ export async function POST(
       }
       await system.codebaseStore.update(codebaseId, { branch: to });
     }
-    
+
     return NextResponse.json({
       success: true,
       ...(isTargetLocalBranch ? { branch: to } : {}),

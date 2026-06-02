@@ -40,6 +40,8 @@ export interface RepoSelection {
   name: string;
   path: string;
   branch: string;
+  /** VCS type detected for this directory (git, svn, or none) */
+  vcsType?: "git" | "svn" | "none";
 }
 
 interface RepoPickerProps {
@@ -365,7 +367,7 @@ export function RepoPicker({
 
         if (!res.ok) {
           throw new Error(
-            typeof data?.error === "string" ? data.error : "Failed to load local repository"
+            typeof data?.error === "string" ? data.error : "Failed to load local directory"
           );
         }
 
@@ -378,6 +380,9 @@ export function RepoPicker({
               : repoPath.trim().split("/").pop() || repoPath.trim(),
           path: typeof data?.path === "string" ? data.path : repoPath.trim(),
           branch: typeof data?.branch === "string" ? data.branch : "",
+          vcsType: (data?.vcsType === "git" || data?.vcsType === "svn" || data?.vcsType === "none")
+            ? data.vcsType
+            : undefined,
         });
         setLocalPath("");
         setSearchQuery("");
@@ -385,7 +390,7 @@ export function RepoPicker({
       } catch (err) {
         if (!isMountedRef.current) return;
         setLocalRepoError(
-          err instanceof Error ? err.message : "Failed to load local repository"
+          err instanceof Error ? err.message : "Failed to load local directory"
         );
       } finally {
         if (isMountedRef.current) {
@@ -875,6 +880,9 @@ function SelectedRepoPill({
           />
         </div>
 
+        {/* VCS type badge */}
+        {value.vcsType && <VcsTypeBadge vcsType={value.vcsType} />}
+
         {showInlinePath && (
           <span
             className="max-w-[200px] truncate text-[10px] font-mono text-slate-500 dark:text-slate-400"
@@ -925,6 +933,26 @@ function SelectedRepoPill({
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * VCS type badge - displays the detected version control system type.
+ * Shows "Git", "SVN", or "Local Folder" with appropriate styling.
+ */
+function VcsTypeBadge({ vcsType }: { vcsType: "git" | "svn" | "none" }) {
+  const label = vcsType === "git" ? "Git" : vcsType === "svn" ? "SVN" : "Local";
+  const colorClasses =
+    vcsType === "git"
+      ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+      : vcsType === "svn"
+        ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400"
+        : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400";
+
+  return (
+    <span className={`shrink-0 text-[9px] px-1.5 py-0.5 rounded font-medium ${colorClasses}`}>
+      {label}
+    </span>
   );
 }
 

@@ -686,6 +686,8 @@ export interface ExtendedTranslationDictionarySections extends TailTranslationDi
     down: string;
     exportSuccess: string;
     fileChanges: string;
+    svnChanges: string;
+    nonVcsFiles: string;
     fromPath: string;
     githubAccessBoard: string;
     githubAccessEnv: string;
@@ -958,6 +960,8 @@ export interface ExtendedTranslationDictionarySections extends TailTranslationDi
     addFallbackAgent: string;
     enableAutomaticFallback: string;
     fallbackProviderDefault: string;
+    nonVcsProject: string;
+    nonVcsProjectHint: string;
   };
 
   // Kanban modal dialogs

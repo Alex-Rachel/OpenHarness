@@ -4,6 +4,7 @@ use rusqlite::OptionalExtension;
 use crate::db::Database;
 use crate::error::ServerError;
 use crate::models::codebase::{Codebase, CodebaseSourceType};
+use crate::vcs::VcsType;
 
 pub struct CodebaseStore {
     db: Database,
@@ -19,8 +20,8 @@ impl CodebaseStore {
         self.db
             .with_conn_async(move |conn| {
                 conn.execute(
-                    "INSERT INTO codebases (id, workspace_id, repo_path, branch, label, is_default, source_type, source_url, created_at, updated_at)
-                     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
+                    "INSERT INTO codebases (id, workspace_id, repo_path, branch, label, is_default, source_type, source_url, vcs_type, created_at, updated_at)
+                     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)",
                     rusqlite::params![
                         cb.id,
                         cb.workspace_id,
@@ -30,6 +31,7 @@ impl CodebaseStore {
                         cb.is_default as i32,
                         cb.source_type.as_ref().map(CodebaseSourceType::as_str),
                         cb.source_url,
+                        cb.vcs_type.as_ref().map(|v| v.to_string()),
                         cb.created_at.timestamp_millis(),
                         cb.updated_at.timestamp_millis(),
                     ],
@@ -44,7 +46,7 @@ impl CodebaseStore {
         self.db
             .with_conn_async(move |conn| {
                 let mut stmt = conn.prepare(
-                    "SELECT id, workspace_id, repo_path, branch, label, is_default, source_type, source_url, created_at, updated_at
+                    "SELECT id, workspace_id, repo_path, branch, label, is_default, source_type, source_url, vcs_type, created_at, updated_at
                      FROM codebases WHERE id = ?1",
                 )?;
                 stmt.query_row(rusqlite::params![id], |row| Ok(row_to_codebase(row)))
@@ -61,7 +63,7 @@ impl CodebaseStore {
         self.db
             .with_conn_async(move |conn| {
                 let mut stmt = conn.prepare(
-                    "SELECT id, workspace_id, repo_path, branch, label, is_default, source_type, source_url, created_at, updated_at
+                    "SELECT id, workspace_id, repo_path, branch, label, is_default, source_type, source_url, vcs_type, created_at, updated_at
                      FROM codebases WHERE workspace_id = ?1 ORDER BY created_at DESC",
                 )?;
                 let rows = stmt
@@ -148,7 +150,7 @@ impl CodebaseStore {
         self.db
             .with_conn_async(move |conn| {
                 let mut stmt = conn.prepare(
-                    "SELECT id, workspace_id, repo_path, branch, label, is_default, source_type, source_url, created_at, updated_at
+                    "SELECT id, workspace_id, repo_path, branch, label, is_default, source_type, source_url, vcs_type, created_at, updated_at
                      FROM codebases WHERE workspace_id = ?1 AND is_default = 1",
                 )?;
                 stmt.query_row(rusqlite::params![workspace_id], |row| Ok(row_to_codebase(row)))
@@ -192,7 +194,7 @@ impl CodebaseStore {
         self.db
             .with_conn_async(move |conn| {
                 let mut stmt = conn.prepare(
-                    "SELECT id, workspace_id, repo_path, branch, label, is_default, source_type, source_url, created_at, updated_at
+                    "SELECT id, workspace_id, repo_path, branch, label, is_default, source_type, source_url, vcs_type, created_at, updated_at
                      FROM codebases WHERE workspace_id = ?1 AND repo_path = ?2",
                 )?;
                 stmt.query_row(rusqlite::params![workspace_id, repo_path], |row| Ok(row_to_codebase(row)))
@@ -211,8 +213,17 @@ fn row_to_codebase(row: &Row<'_>) -> Codebase {
         .unwrap_or(None)
         .and_then(|value| value.parse::<CodebaseSourceType>().ok());
     let source_url = row.get(7).unwrap_or(None);
-    let created_ms: i64 = row.get(8).unwrap_or(0);
-    let updated_ms: i64 = row.get(9).unwrap_or(0);
+    let vcs_type = row
+        .get::<_, Option<String>>(8)
+        .unwrap_or(None)
+        .and_then(|value| match value.as_str() {
+            "git" => Some(VcsType::Git),
+            "svn" => Some(VcsType::Svn),
+            "none" => Some(VcsType::None),
+            _ => None,
+        });
+    let created_ms: i64 = row.get(9).unwrap_or(0);
+    let updated_ms: i64 = row.get(10).unwrap_or(0);
 
     Codebase {
         id: row.get(0).unwrap_or_default(),
@@ -223,6 +234,7 @@ fn row_to_codebase(row: &Row<'_>) -> Codebase {
         is_default: is_default_int != 0,
         source_type,
         source_url,
+        vcs_type,
         created_at: chrono::DateTime::from_timestamp_millis(created_ms).unwrap_or_else(Utc::now),
         updated_at: chrono::DateTime::from_timestamp_millis(updated_ms).unwrap_or_else(Utc::now),
     }

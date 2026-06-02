@@ -6,6 +6,7 @@ use serde::Deserialize;
 use crate::error::ServerError;
 use crate::git;
 use crate::state::AppState;
+use routa_core::vcs::{self, VcsType};
 
 #[derive(Debug, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -103,6 +104,30 @@ pub fn validate_local_git_repo_path(candidate: &Path) -> Result<(), ServerError>
     }
 
     Ok(())
+}
+
+/// Validate a local directory and return its detected VCS type.
+/// Accepts any valid directory (Git, SVN, or non-VCS).
+/// Returns an error if the path doesn't exist or isn't a directory.
+/// Rejects bare Git repositories.
+pub fn validate_local_repo_path(candidate: &Path) -> Result<VcsType, ServerError> {
+    validate_repo_path(candidate, "Path ")?;
+
+    let vcs_type = vcs::detect_vcs_type(candidate).ok_or_else(|| {
+        ServerError::BadRequest(format!(
+            "Directory exists but VCS type could not be determined: {}",
+            candidate.display()
+        ))
+    })?;
+
+    // Reject bare Git repositories
+    if vcs_type == VcsType::Git && git::is_bare_git_repository(&candidate.to_string_lossy()) {
+        return Err(ServerError::BadRequest(
+            "Cannot add a bare git repository as a codebase".to_string(),
+        ));
+    }
+
+    Ok(vcs_type)
 }
 
 #[derive(Debug, Default, Clone, Copy)]

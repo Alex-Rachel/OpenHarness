@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRoutaSystem } from "@/core/routa-system";
 import { GitWorktreeService } from "@/core/git/git-worktree-service";
+import { requireVcsCapability } from "@/core/vcs";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +19,14 @@ export async function GET(
   const { workspaceId, codebaseId } = await params;
   const system = getRoutaSystem();
 
-  // Validate codebase belongs to the workspace
-  const codebase = await system.codebaseStore.get(codebaseId);
-  if (!codebase || codebase.workspaceId !== workspaceId) {
+  // VCS capability guard — worktree management requires Git
+  const guard = await requireVcsCapability(codebaseId, "worktree", system.codebaseStore);
+  if (!guard.allowed) {
+    return NextResponse.json({ error: guard.errorMessage }, { status: 400 });
+  }
+
+  const codebase = guard.codebase!;
+  if (codebase.workspaceId !== workspaceId) {
     return NextResponse.json({ error: "Codebase not found" }, { status: 404 });
   }
 
@@ -59,9 +65,14 @@ export async function POST(
 
   const system = getRoutaSystem();
 
-  // Validate codebase belongs to the workspace
-  const codebase = await system.codebaseStore.get(codebaseId);
-  if (!codebase || codebase.workspaceId !== workspaceId) {
+  // VCS capability guard — worktree management requires Git
+  const guard = await requireVcsCapability(codebaseId, "worktree", system.codebaseStore);
+  if (!guard.allowed) {
+    return NextResponse.json({ error: guard.errorMessage }, { status: 400 });
+  }
+
+  const codebase = guard.codebase!;
+  if (codebase.workspaceId !== workspaceId) {
     return NextResponse.json({ error: "Codebase not found" }, { status: 404 });
   }
 

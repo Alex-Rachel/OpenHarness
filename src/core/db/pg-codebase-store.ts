@@ -87,6 +87,7 @@ export class PgCodebaseStore implements CodebaseStore {
       isDefault: codebase.isDefault,
       sourceType: codebase.sourceType ?? null,
       sourceUrl: codebase.sourceUrl ?? null,
+      vcsType: codebase.vcsType ?? null,
       createdAt: codebase.createdAt,
       updatedAt: codebase.updatedAt,
     });
@@ -167,6 +168,7 @@ export class PgCodebaseStore implements CodebaseStore {
       isDefault: row.isDefault,
       sourceType: (row.sourceType as Codebase["sourceType"]) ?? undefined,
       sourceUrl: row.sourceUrl ?? undefined,
+      vcsType: (row.vcsType as Codebase["vcsType"]) ?? undefined,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     };

@@ -2,6 +2,8 @@
 
 import React from "react";
 import { ArrowDown, RotateCcw } from "lucide-react";
+import type { CodebaseData } from "@/client/hooks/use-workspaces";
+import { useVcsCapabilities } from "@/client/hooks/use-vcs-capabilities";
 
 interface KanbanGitOperationButtonsProps {
   targetBranch?: string;
@@ -10,6 +12,8 @@ interface KanbanGitOperationButtonsProps {
   onPull: () => void;
   onRebase: () => void;
   loading?: boolean;
+  /** Codebase data for VCS capability gating */
+  codebase?: CodebaseData;
 }
 
 export function KanbanGitOperationButtons({
@@ -18,11 +22,19 @@ export function KanbanGitOperationButtons({
   onPull,
   onRebase,
   loading = false,
+  codebase,
 }: KanbanGitOperationButtonsProps) {
+  const capabilities = useVcsCapabilities(codebase);
+  const canPullUpdate = capabilities.has("pullUpdate");
+  const canRebase = capabilities.has("rebase");
+
+  // Hide entire component if neither operation is available
+  if (!canPullUpdate && !canRebase) return null;
+
   return (
     <div className="flex items-center gap-2 border-t border-slate-200/70 px-3 py-2 dark:border-[#202433]">
       {/* Pull Button */}
-      {behind > 0 && (
+      {canPullUpdate && behind > 0 && (
         <button
           type="button"
           onClick={onPull}
@@ -35,15 +47,17 @@ export function KanbanGitOperationButtons({
       )}
 
       {/* Rebase Button */}
-      <button
-        type="button"
-        onClick={onRebase}
-        disabled={loading}
-        className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-purple-200 bg-purple-50 px-3 py-1.5 text-xs font-medium text-purple-700 transition hover:bg-purple-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-purple-900/40 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
-      >
-        <RotateCcw className="h-3.5 w-3.5" />
-        Rebase onto {targetBranch} ↻
-      </button>
+      {canRebase && (
+        <button
+          type="button"
+          onClick={onRebase}
+          disabled={loading}
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-purple-200 bg-purple-50 px-3 py-1.5 text-xs font-medium text-purple-700 transition hover:bg-purple-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-purple-900/40 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
+        >
+          <RotateCcw className="h-3.5 w-3.5" />
+          Rebase onto {targetBranch} ↻
+        </button>
+      )}
     </div>
   );
 }

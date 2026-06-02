@@ -7,8 +7,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getRoutaSystem } from "@/core/routa-system";
-import { createCodebase } from "@/core/models/codebase";
+import { createCodebase, type VcsType, type CodebaseSourceType } from "@/core/models/codebase";
 import { normalizeLocalRepoPath, validateRepoInput, isBareGitRepository } from "@/core/git";
+import { resolveVcsType } from "@/core/vcs/vcs-detect";
+import { getVcsCapabilities } from "@/core/vcs/vcs-capabilities";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +23,13 @@ export async function GET(
 
   const codebases = await system.codebaseStore.listByWorkspace(workspaceId);
 
-  return NextResponse.json({ codebases });
+  // Attach capabilities to each codebase for client-side feature gating
+  const enriched = codebases.map((cb) => ({
+    ...cb,
+    capabilities: Array.from(getVcsCapabilities(cb.vcsType)),
+  }));
+
+  return NextResponse.json({ codebases: enriched });
 }
 
 export async function POST(
@@ -41,14 +49,15 @@ export async function POST(
   const validation = validateRepoInput(repoPath);
   if (!validation.valid || validation.isGitHub) {
     return NextResponse.json(
-      { error: validation.error ?? "repoPath must point to a local git repository" },
+      { error: validation.error ?? "repoPath must point to a local directory" },
       { status: 400 },
     );
   }
 
-  // Check if this is a bare repository
-  // Bare repos don't have a working directory and can't be used as normal codebases
-  if (isBareGitRepository(repoPath)) {
+  const vcsType: VcsType = resolveVcsType(validation.vcsType);
+
+  // Check if this is a bare repository (Git-only check)
+  if (vcsType === "git" && isBareGitRepository(repoPath)) {
     return NextResponse.json(
       {
         error: "Cannot add a bare git repository as a codebase",
@@ -73,6 +82,11 @@ export async function POST(
   const count = await system.codebaseStore.countByWorkspace(workspaceId);
   const isDefault = count === 0;
 
+  // Derive sourceType from vcsType for non-GitHub sources
+  const sourceType: CodebaseSourceType = vcsType === "svn" ? "svn"
+    : vcsType === "none" ? "none"
+    : "local";
+
   const codebase = createCodebase({
     id: crypto.randomUUID(),
     workspaceId,
@@ -80,6 +94,8 @@ export async function POST(
     branch,
     label,
     isDefault,
+    sourceType,
+    vcsType,
   });
 
   await system.codebaseStore.add(codebase);

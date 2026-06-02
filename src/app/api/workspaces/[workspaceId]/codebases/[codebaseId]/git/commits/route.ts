@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { getRoutaSystem } from "@/core/routa-system";
 import { isGitRepository } from "@/core/git";
 import { getCommitList } from "@/core/git/git-operations";
+import { getSvnLog } from "@/core/vcs/svn-utils";
 
 export const dynamic = "force-dynamic";
 
 /**
  * GET /api/workspaces/:workspaceId/codebases/:codebaseId/git/commits
- * Get commit history from current branch
+ * Get commit history from current branch (Git) or revision log (SVN).
+ * Supports both Git and SVN codebases via VCS type dispatch.
  */
 export async function GET(
   request: Request,
@@ -20,7 +22,7 @@ export async function GET(
 
   const system = getRoutaSystem();
   const workspace = await system.workspaceStore.get(workspaceId);
-  
+
   if (!workspace) {
     return NextResponse.json(
       { error: "Workspace not found" },
@@ -29,7 +31,7 @@ export async function GET(
   }
 
   const codebase = await system.codebaseStore.get(codebaseId);
-  
+
   if (!codebase) {
     return NextResponse.json(
       { error: "Codebase not found" },
@@ -37,7 +39,9 @@ export async function GET(
     );
   }
 
-  if (!isGitRepository(codebase.repoPath)) {
+  const isSvn = codebase.vcsType === "svn";
+
+  if (!isSvn && !isGitRepository(codebase.repoPath)) {
     return NextResponse.json(
       { error: "Not a valid git repository" },
       { status: 400 },
@@ -45,8 +49,23 @@ export async function GET(
   }
 
   try {
+    // VCS dispatch: SVN log ignores `since` parameter
+    if (isSvn) {
+      const entries = getSvnLog(codebase.repoPath, limit);
+      const commits = entries.map((entry) => ({
+        sha: `r${entry.revision}`,
+        message: entry.message,
+        author: entry.author,
+        date: entry.date,
+      }));
+      return NextResponse.json({
+        commits,
+        count: commits.length,
+      });
+    }
+
     const commits = await getCommitList(codebase.repoPath, { limit, since });
-    
+
     return NextResponse.json({
       commits,
       count: commits.length,

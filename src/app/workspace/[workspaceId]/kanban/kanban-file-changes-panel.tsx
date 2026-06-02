@@ -3,12 +3,15 @@
 import React from "react";
 import { useTranslation } from "@/i18n";
 import type { KanbanRepoChanges, KanbanFileChangeItem, KanbanFileChangeStatus } from "./kanban-file-changes-types";
+import type { CodebaseData } from "@/client/hooks/use-workspaces";
 import {
   AlertTriangle,
   ArrowRightLeft,
   ChevronRight,
   Copy,
   FilePlus2,
+  FolderOpen,
+  GitBranch,
   Pencil,
   Plus,
   Trash2,
@@ -22,6 +25,8 @@ interface KanbanFileChangesPanelProps {
   loading?: boolean;
   open: boolean;
   onClose: () => void;
+  /** Codebase data for VCS-type-appropriate header display */
+  codebases?: CodebaseData[];
 }
 
 const PREVIEW_FILE_LIMIT = 4;
@@ -210,11 +215,21 @@ export function KanbanFileChangesPanel({
   loading = false,
   open,
   onClose,
+  codebases = [],
 }: KanbanFileChangesPanelProps) {
   const { t } = useTranslation();
   const [expandedRepos, setExpandedRepos] = React.useState<Record<string, boolean>>({});
   const [showAllRepos, setShowAllRepos] = React.useState<Record<string, boolean>>({});
   const summary = getKanbanFileChangesSummary(repos);
+
+  // Determine VCS-type-appropriate header from the first codebase's vcsType
+  const primaryVcsType = codebases.length > 0 ? codebases[0].vcsType : undefined;
+  const panelTitle =
+    primaryVcsType === "none"
+      ? t.kanban.nonVcsFiles
+      : primaryVcsType === "svn"
+        ? t.kanban.svnChanges
+        : t.kanban.fileChanges;
 
   return (
     <>
@@ -231,7 +246,7 @@ export function KanbanFileChangesPanel({
           >
             <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 dark:border-[#191c28]">
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t.kanban.fileChanges}</div>
+                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{panelTitle}</div>
                 <div className="text-[11px] text-slate-400 dark:text-slate-500">
                   {t.kanban.reposChangedFiles.replace("{repos}", String(repos.length)).replace("{files}", String(summary.changedFiles))}
                 </div>

@@ -156,6 +156,8 @@ pub struct ClaudeCodeProcess {
     state: Arc<Mutex<ProcessState>>,
     stdin_tx: Arc<Mutex<Option<tokio::process::ChildStdin>>>,
     prompt_complete_tx: Arc<Mutex<Option<oneshot::Sender<String>>>>,
+    /// stderr output captured during startup for error diagnostics
+    startup_stderr: Arc<Mutex<String>>,
 }
 
 impl ClaudeCodeProcess {
@@ -172,6 +174,7 @@ impl ClaudeCodeProcess {
             state: Arc::new(Mutex::new(ProcessState::default())),
             stdin_tx: Arc::new(Mutex::new(None)),
             prompt_complete_tx: Arc::new(Mutex::new(None)),
+            startup_stderr: Arc::new(Mutex::new(String::new())),
         }
     }
 
@@ -396,23 +399,47 @@ impl ClaudeCodeProcess {
             tracing::info!("[ClaudeCode:{}] stdout reader exited", display_name);
         });
 
-        // Spawn stderr reader
+        // Spawn stderr reader — capture output during startup for diagnostics
         let display_name2 = self.config.display_name.clone();
+        let startup_stderr = self.startup_stderr.clone();
+        let alive_clone = self.alive.clone();
         tokio::spawn(async move {
             let reader = BufReader::new(stderr);
             let mut lines = reader.lines();
             while let Ok(Some(line)) = lines.next_line().await {
                 if !line.trim().is_empty() {
                     tracing::warn!("[ClaudeCode:{} stderr] {}", display_name2, line);
+                    // Capture stderr during startup for error diagnostics
+                    if alive_clone.load(Ordering::SeqCst) {
+                        let mut buf = startup_stderr.lock().await;
+                        if buf.len() < 2000 {
+                            buf.push_str(&line);
+                            buf.push('\n');
+                        }
+                    }
                 }
             }
         });
 
-        // Wait for process to stabilize
-        tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+        // Wait for process to stabilize with diagnostic-rich error on failure.
+        // On Windows and slower machines, Claude Code may need more than 500ms
+        // to initialize (especially on first run with package download).
+        tokio::time::sleep(tokio::time::Duration::from_millis(3_000)).await;
 
         if !self.is_alive() {
-            return Err("Claude Code process died during startup".to_string());
+            let stderr_hint = {
+                let buf = self.startup_stderr.lock().await;
+                let trimmed = buf.trim();
+                if trimmed.is_empty() {
+                    String::new()
+                } else {
+                    format!("\n  stderr: {}", &trimmed[trimmed.len().saturating_sub(500)..])
+                }
+            };
+            return Err(format!(
+                "Claude Code process died during startup.{}",
+                stderr_hint
+            ));
         }
 
         tracing::info!("[ClaudeCode:{}] Process started", self.config.display_name);

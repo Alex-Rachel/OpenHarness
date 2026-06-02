@@ -77,10 +77,8 @@ async function ensureCodebase(
   folderPath: string,
   output: vscode.OutputChannel,
 ): Promise<boolean> {
-  if (!isGitRepository(folderPath)) {
-    output.appendLine(`[routa] Skipping codebase registration; not a git repository: ${folderPath}`);
-    return false;
-  }
+  const vcsType = detectVcsType(folderPath);
+  output.appendLine(`[routa] Detected VCS type '${vcsType}' for: ${folderPath}`);
 
   const codebases = await client.listCodebases(workspaceId);
   if (codebases.some((codebase) => samePath(codebase.repoPath, folderPath))) {
@@ -91,6 +89,7 @@ async function ensureCodebase(
     repoPath: folderPath,
     label,
     isDefault: true,
+    vcsType,
   });
   return !!created || await hasRegisteredCodebase(client, workspaceId, folderPath);
 }
@@ -104,8 +103,21 @@ async function hasRegisteredCodebase(
   return codebases.some((codebase: RoutaCodebase) => samePath(codebase.repoPath, folderPath));
 }
 
-function isGitRepository(folderPath: string): boolean {
-  return existsSync(path.join(folderPath, ".git"));
+/** Supported version control system types. */
+export type VcsType = "git" | "svn" | "none";
+
+/**
+ * Detect the version control system used by the given folder.
+ * Checks for `.git/` first, then `.svn/`, and falls back to `"none"`.
+ */
+function detectVcsType(folderPath: string): VcsType {
+  if (existsSync(path.join(folderPath, ".git"))) {
+    return "git";
+  }
+  if (existsSync(path.join(folderPath, ".svn"))) {
+    return "svn";
+  }
+  return "none";
 }
 
 function samePath(left: string, right: string): boolean {

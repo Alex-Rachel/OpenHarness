@@ -50,8 +50,9 @@ export const codebases = sqliteTable("codebases", {
   branch: text("branch"),
   label: text("label"),
   isDefault: integer("is_default", { mode: "boolean" }).notNull().default(false),
-  sourceType: text("source_type"),   // "local" | "github" — null treated as "local"
+  sourceType: text("source_type"),   // "local" | "github" | "svn" | "none" — null treated as "local"
   sourceUrl: text("source_url"),     // e.g. "https://github.com/owner/repo"
+  vcsType: text("vcs_type").default("git"), // "git" | "svn" | "none" — auto-detected VCS type
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
 });

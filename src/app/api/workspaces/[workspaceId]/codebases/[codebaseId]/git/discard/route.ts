@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { getRoutaSystem } from "@/core/routa-system";
 import { isGitRepository } from "@/core/git";
 import { discardChanges } from "@/core/git/git-operations";
+import { svnRevert } from "@/core/vcs/svn-utils";
 
 export const dynamic = "force-dynamic";
 
 /**
  * POST /api/workspaces/:workspaceId/codebases/:codebaseId/git/discard
- * Discard changes to files in working directory (destructive)
+ * Discard changes to files in working directory (destructive).
+ * Uses git checkout for Git, svn revert for SVN.
  */
 export async function POST(
   request: Request,
@@ -33,7 +35,7 @@ export async function POST(
 
   const system = getRoutaSystem();
   const workspace = await system.workspaceStore.get(workspaceId);
-  
+
   if (!workspace) {
     return NextResponse.json(
       { success: false, error: "Workspace not found" },
@@ -42,7 +44,7 @@ export async function POST(
   }
 
   const codebase = await system.codebaseStore.get(codebaseId);
-  
+
   if (!codebase) {
     return NextResponse.json(
       { success: false, error: "Codebase not found" },
@@ -50,7 +52,9 @@ export async function POST(
     );
   }
 
-  if (!isGitRepository(codebase.repoPath)) {
+  const isSvn = codebase.vcsType === "svn";
+
+  if (!isSvn && !isGitRepository(codebase.repoPath)) {
     return NextResponse.json(
       { success: false, error: "Not a valid git repository" },
       { status: 400 },
@@ -58,8 +62,13 @@ export async function POST(
   }
 
   try {
-    await discardChanges(codebase.repoPath, files);
-    
+    // VCS dispatch: SVN revert vs Git discard
+    if (isSvn) {
+      svnRevert(codebase.repoPath, files);
+    } else {
+      await discardChanges(codebase.repoPath, files);
+    }
+
     return NextResponse.json({
       success: true,
       discarded: files,

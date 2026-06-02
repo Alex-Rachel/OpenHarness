@@ -663,7 +663,7 @@ const zh: TranslationDictionary = {
     localPathPlaceholder: "/Users/you/project 或 ~/project",
     loadingProject: "加载项目中...",
     useLocalProject: "使用本地项目",
-    localProjectHint: "路径必须存在于本地并且已经是一个 git 仓库。",
+    localProjectHint: "输入本地目录路径。支持 Git 仓库、SVN 工作副本或普通文件夹。",
     loadingRepositories: "加载仓库中...",
     modified: "已修改",
     behind: "落后",

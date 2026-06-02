@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getRoutaSystem } from "@/core/routa-system";
 import { isGitRepository } from "@/core/git";
 import { rebaseBranch } from "@/core/git/git-operations";
+import { requireVcsCapability } from "@/core/vcs";
 
 export const dynamic = "force-dynamic";
 
@@ -25,23 +26,17 @@ export async function POST(
   }
 
   const system = getRoutaSystem();
-  const workspace = await system.workspaceStore.get(workspaceId);
-  
-  if (!workspace) {
+
+  // VCS capability guard — reject if the codebase is not a Git repository
+  const guard = await requireVcsCapability(codebaseId, "rebase", system.codebaseStore);
+  if (!guard.allowed) {
     return NextResponse.json(
-      { success: false, error: "Workspace not found" },
-      { status: 404 },
+      { success: false, error: guard.errorMessage },
+      { status: 400 },
     );
   }
 
-  const codebase = await system.codebaseStore.get(codebaseId);
-  
-  if (!codebase) {
-    return NextResponse.json(
-      { success: false, error: "Codebase not found" },
-      { status: 404 },
-    );
-  }
+  const codebase = guard.codebase!;
 
   if (!isGitRepository(codebase.repoPath)) {
     return NextResponse.json(
@@ -52,7 +47,7 @@ export async function POST(
 
   try {
     await rebaseBranch(codebase.repoPath, onto);
-    
+
     return NextResponse.json({
       success: true,
     });

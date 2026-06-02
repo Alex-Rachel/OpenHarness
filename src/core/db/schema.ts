@@ -48,8 +48,9 @@ export const codebases = pgTable("codebases", {
   branch: text("branch"),
   label: text("label"),
   isDefault: boolean("is_default").notNull().default(false),
-  sourceType: text("source_type"),   // "local" | "github" — null treated as "local"
+  sourceType: text("source_type"),   // "local" | "github" | "svn" | "none" — null treated as "local"
   sourceUrl: text("source_url"),     // e.g. "https://github.com/owner/repo"
+  vcsType: text("vcs_type").default("git"), // "git" | "svn" | "none" — auto-detected VCS type
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

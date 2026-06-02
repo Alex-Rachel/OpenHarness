@@ -14,6 +14,7 @@ export interface RoutaCodebase {
   label?: string;
   branch?: string;
   isDefault?: boolean;
+  vcsType?: string;
 }
 
 interface RequestOptions {
@@ -79,6 +80,7 @@ export class RoutaClient {
       label?: string;
       branch?: string;
       isDefault?: boolean;
+      vcsType?: string;
     },
   ): Promise<RoutaCodebase | null> {
     try {
@@ -92,6 +94,7 @@ export class RoutaClient {
             branch: input.branch,
             isDefault: input.isDefault ?? true,
             sourceType: "local",
+            vcsType: input.vcsType ?? "none",
           },
         },
       );

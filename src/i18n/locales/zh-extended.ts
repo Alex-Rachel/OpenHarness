@@ -734,6 +734,8 @@ export const zhExtended: ExtendedTranslationDictionarySections = {
     yesLabel: "是",
     // File changes panel
     fileChanges: "文件变更",
+    svnChanges: "SVN 变更",
+    nonVcsFiles: "文件",
     reposChangedFiles: "{repos} 个仓库 · {files} 个文件已变更",
     dirty: "有修改",
     hide: "隐藏",
@@ -953,6 +955,8 @@ export const zhExtended: ExtendedTranslationDictionarySections = {
     addFallbackAgent: "添加备选 Agent",
     enableAutomaticFallback: "失败时自动尝试下一个备选 Agent",
     fallbackProviderDefault: "默认提供商",
+    nonVcsProject: "此项目未纳入版本控制。文件变更追踪不可用。",
+    nonVcsProjectHint: "非 VCS 项目不支持文件变更追踪和 Git 操作。",
   },
 
   kanbanModals: {

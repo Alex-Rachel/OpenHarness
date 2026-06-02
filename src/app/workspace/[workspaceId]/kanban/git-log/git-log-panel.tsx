@@ -5,6 +5,7 @@ import { GitBranch, PanelLeftClose, PanelLeft } from "lucide-react";
 import { CodebasePicker } from "@/client/components/codebase-picker";
 import type { CodebaseData } from "@/client/hooks/use-workspaces";
 import { useTranslation } from "@/i18n";
+import { useHasVcsCapability } from "@/client/hooks/use-vcs-capabilities";
 import type { GitLogAdapter } from "./types";
 import { useGitLog } from "./use-git-log";
 import { RefsTree } from "./refs-tree";
@@ -31,6 +32,10 @@ export function GitLogPanel({
   className = "",
 }: GitLogPanelProps) {
   const { t } = useTranslation();
+  // Find the active codebase for the current repoPath to check capabilities
+  const activeCodebase = codebases.find((c) => c.repoPath === repoPath);
+  const canShowLogGraph = useHasVcsCapability(activeCodebase, "logGraph");
+  if (!canShowLogGraph) return null;
   const git = useGitLog(adapter, repoPath);
   const [refsOpen, setRefsOpen] = useState(true);
   const [detailOpen, setDetailOpen] = useState(true);

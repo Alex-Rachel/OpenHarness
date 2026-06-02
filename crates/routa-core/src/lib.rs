@@ -33,9 +33,11 @@ pub mod skills;
 pub mod spec_detector;
 pub mod state;
 pub mod storage;
+pub mod svn;
 pub mod store;
 pub mod tools;
 pub mod trace;
+pub mod vcs;
 pub mod workflow;
 
 // Convenience re-exports

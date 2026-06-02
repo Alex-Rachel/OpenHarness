@@ -19,8 +19,10 @@ export interface CodebaseData {
   branch?: string;
   label?: string;
   isDefault: boolean;
-  sourceType?: "local" | "github";
+  sourceType?: "local" | "github" | "svn" | "none";
   sourceUrl?: string;
+  vcsType?: "git" | "svn" | "none";
+  capabilities?: string[];
   createdAt: string;
   updatedAt: string;
 }

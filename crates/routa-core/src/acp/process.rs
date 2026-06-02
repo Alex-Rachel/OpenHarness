@@ -148,11 +148,15 @@ impl AcpProcess {
         let name = display_name.to_string();
 
         // Log stderr in background and forward to frontend as process_output
+        // Also capture stderr during startup for error diagnostics
+        let startup_stderr: Arc<Mutex<String>> = Arc::new(Mutex::new(String::new()));
         if let Some(stderr) = stderr {
             let name_clone = name.clone();
             let ntx_stderr = notification_tx.clone();
             let our_sid_stderr = our_session_id.to_string();
             let resolved_command_stderr = resolved_command.clone();
+            let alive_for_stderr = alive.clone();
+            let startup_stderr_clone = startup_stderr.clone();
             tokio::spawn(async move {
                 let reader = BufReader::new(stderr);
                 let mut lines = reader.lines();
@@ -166,6 +170,14 @@ impl AcpProcess {
                             continue;
                         }
                         tracing::debug!("[AcpProcess:{} stderr] {}", name_clone, line);
+                        // Capture stderr during startup for error diagnostics
+                        if alive_for_stderr.load(Ordering::SeqCst) {
+                            let mut buf = startup_stderr_clone.lock().await;
+                            if buf.len() < 2000 {
+                                buf.push_str(&line);
+                                buf.push('\n');
+                            }
+                        }
                         // Forward stderr to frontend as process_output notification
                         let notification = serde_json::json!({
                             "jsonrpc": "2.0",
@@ -544,11 +556,22 @@ impl AcpProcess {
             tracing::info!("[AcpProcess:{}] stdout reader finished", name_clone);
         });
 
-        // Wait briefly for process to stabilize
-        tokio::time::sleep(Duration::from_millis(300)).await;
+        // Wait for process to stabilize with diagnostic-rich error on failure.
+        // On Windows and slower machines, the agent may need more than 300ms
+        // to initialize (especially on first run with package download).
+        tokio::time::sleep(Duration::from_millis(3_000)).await;
 
         if !alive.load(Ordering::SeqCst) {
-            return Err(format!("{display_name} process died during startup"));
+            let stderr_hint = {
+                let buf = startup_stderr.lock().await;
+                let trimmed = buf.trim();
+                if trimmed.is_empty() {
+                    String::new()
+                } else {
+                    format!("\n  stderr: {}", &trimmed[trimmed.len().saturating_sub(500)..])
+                }
+            };
+            return Err(format!("{display_name} process died during startup.{}", stderr_hint));
         }
 
         tracing::info!("[AcpProcess:{}] Process started", display_name);

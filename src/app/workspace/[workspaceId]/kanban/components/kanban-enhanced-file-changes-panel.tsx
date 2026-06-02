@@ -2,7 +2,10 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useTranslation } from "@/i18n";
+import { FolderOpen } from "lucide-react";
 import type { KanbanRepoChanges, KanbanFileChangeItem, KanbanTaskChanges, KanbanCommitInfo } from "../kanban-file-changes-types";
+import type { CodebaseData } from "@/client/hooks/use-workspaces";
+import { useVcsCapabilities } from "@/client/hooks/use-vcs-capabilities";
 import { KanbanUnstagedSection } from "./kanban-unstaged-section";
 import { KanbanStagedSection } from "./kanban-staged-section";
 import { KanbanCommitsSection } from "./kanban-commits-section";
@@ -24,6 +27,8 @@ interface KanbanEnhancedFileChangesPanelProps {
   onClose?: () => void;
   onRefresh?: () => void;
   embedded?: boolean; // true when used in card detail, false when used as sidebar
+  /** Codebase data for VCS capability gating */
+  codebase?: CodebaseData;
 }
 
 export function KanbanEnhancedFileChangesPanel({
@@ -36,6 +41,7 @@ export function KanbanEnhancedFileChangesPanel({
   onClose,
   onRefresh,
   embedded = false,
+  codebase,
 }: KanbanEnhancedFileChangesPanelProps) {
   const { t } = useTranslation();
   const [autoCommit, setAutoCommit] = useState(false);
@@ -50,6 +56,10 @@ export function KanbanEnhancedFileChangesPanel({
   const [commitsOpen, setCommitsOpen] = useState(false);
   const [commitsLoaded, setCommitsLoaded] = useState(false);
   const [lastLoadedCommitsRefreshToken, setLastLoadedCommitsRefreshToken] = useState(0);
+
+  // VCS capability gating
+  const capabilities = useVcsCapabilities(codebase);
+  const isVcsProject = codebase?.vcsType !== "none" && codebase?.vcsType !== undefined;
 
   // Support both sidebar mode (repos) and embedded mode (changes)
   const activeRepo = repos && repos.length > 0 ? repos[0] : null;
@@ -387,6 +397,13 @@ export function KanbanEnhancedFileChangesPanel({
             <div className="border-b border-slate-200/70 px-1 pb-2 text-sm text-slate-500 dark:border-slate-700/70 dark:text-slate-400">
               {t.kanbanDetail.noRepoChanges}
             </div>
+          ) : !isVcsProject ? (
+            <div className="flex flex-col items-center justify-center gap-2 px-4 py-6 text-center">
+              <FolderOpen className="h-6 w-6 text-slate-300 dark:text-slate-600" />
+              <div className="text-xs text-slate-400 dark:text-slate-500">
+                {t.kanbanDetail.nonVcsProject || "This project is not under version control. File change tracking is not available."}
+              </div>
+            </div>
           ) : (
             <>
               {/* Unstaged Section */}
@@ -401,6 +418,7 @@ export function KanbanEnhancedFileChangesPanel({
                 onStageSelected={handleStageSelected}
                 onDiscardSelected={handleDiscardSelected}
                 loading={gitLoading}
+                codebase={codebase}
               />
 
               {/* Inline Diff Viewer */}
@@ -425,6 +443,7 @@ export function KanbanEnhancedFileChangesPanel({
                 onCommit={() => setCommitModalOpen(true)}
                 onExport={handleExport}
                 loading={gitLoading}
+                codebase={codebase}
               />
             </>
           )}
@@ -492,6 +511,16 @@ export function KanbanEnhancedFileChangesPanel({
             <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-400 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-500">
               No repositories linked to this workspace
             </div>
+          ) : !isVcsProject ? (
+            <div className="flex flex-col items-center justify-center gap-3 px-4 py-10 text-center">
+              <FolderOpen className="h-8 w-8 text-slate-300 dark:text-slate-600" />
+              <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                {t.kanbanDetail.nonVcsProject || "This project is not under version control."}
+              </div>
+              <div className="text-xs text-slate-400 dark:text-slate-500">
+                {t.kanbanDetail.nonVcsProjectHint || "File change tracking and Git operations are not available for non-VCS projects."}
+              </div>
+            </div>
           ) : (
             <div className="space-y-3">
               {/* Unstaged Section */}
@@ -505,6 +534,7 @@ export function KanbanEnhancedFileChangesPanel({
                 onStageSelected={handleStageSelected}
                 onDiscardSelected={handleDiscardSelected}
                 loading={gitLoading}
+                codebase={codebase}
               />
 
               {/* Inline Diff Viewer */}
@@ -528,6 +558,7 @@ export function KanbanEnhancedFileChangesPanel({
                 onCommit={() => setCommitModalOpen(true)}
                 onExport={handleExport}
                 loading={gitLoading}
+                codebase={codebase}
               />
 
               {/* Commits Section */}
@@ -539,6 +570,7 @@ export function KanbanEnhancedFileChangesPanel({
                 expanded={commitsOpen}
                 onToggle={() => setCommitsOpen((open) => !open)}
                 loading={commitsLoading}
+                codebase={codebase}
               />
 
               {/* Git Operation Buttons */}
@@ -550,6 +582,7 @@ export function KanbanEnhancedFileChangesPanel({
                   onPull={handlePull}
                   onRebase={handleRebase}
                   loading={gitLoading}
+                  codebase={codebase}
                 />
               )}
 

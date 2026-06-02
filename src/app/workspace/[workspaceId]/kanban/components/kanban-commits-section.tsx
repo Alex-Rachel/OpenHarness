@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { GitCommit, ChevronDown, ChevronRight, ExternalLink, RotateCcw } from "lucide-react";
 import { FileRow } from "../kanban-file-changes-panel";
 import type { KanbanCommitInfo, KanbanFileChangeItem } from "../kanban-file-changes-types";
+import type { CodebaseData } from "@/client/hooks/use-workspaces";
+import { useHasVcsCapability } from "@/client/hooks/use-vcs-capabilities";
 
 interface KanbanCommitsSectionProps {
   commits: KanbanCommitInfo[];
@@ -13,6 +15,8 @@ interface KanbanCommitsSectionProps {
   expanded?: boolean;
   onToggle?: () => void;
   loading?: boolean;
+  /** Codebase data for VCS capability gating */
+  codebase?: CodebaseData;
 }
 
 export function KanbanCommitsSection({
@@ -23,7 +27,10 @@ export function KanbanCommitsSection({
   expanded = false,
   onToggle,
   loading = false,
+  codebase,
 }: KanbanCommitsSectionProps) {
+  const canViewCommitHistory = useHasVcsCapability(codebase, "commitHistory");
+  if (!canViewCommitHistory) return null;
   const [expandedCommits, setExpandedCommits] = useState<Set<string>>(new Set());
 
   const toggleCommit = (sha: string) => {

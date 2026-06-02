@@ -8,11 +8,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::api::repo_context::{
     canonical_repo_path_for_response, normalize_local_repo_path, validate_local_git_repo_path,
-    validate_repo_path,
+    validate_local_repo_path, validate_repo_path,
 };
 use crate::error::ServerError;
 use crate::models::codebase::{Codebase, CodebaseSourceType};
 use crate::state::AppState;
+use routa_core::vcs::VcsType;
 
 fn repo_label_from_path(repo_path: &str) -> String {
     std::path::Path::new(repo_path)
@@ -155,12 +156,31 @@ async fn add_codebase(
     axum::extract::Path(workspace_id): axum::extract::Path<String>,
     Json(body): Json<AddCodebaseRequest>,
 ) -> Result<(StatusCode, Json<serde_json::Value>), ServerError> {
-    let source_type = body.source_type.unwrap_or(CodebaseSourceType::Local);
     let repo_path = normalize_local_repo_path(&body.repo_path);
-    match source_type {
-        CodebaseSourceType::Local => validate_local_git_repo_path(&repo_path)?,
-        CodebaseSourceType::Github => validate_repo_path(&repo_path, "Path ")?,
-    }
+
+    // Validate directory and detect VCS type
+    let vcs_type = match body.source_type.as_ref() {
+        Some(CodebaseSourceType::Github) => {
+            validate_repo_path(&repo_path, "Path ")?;
+            // GitHub-cloned repos are always Git
+            Some(VcsType::Git)
+        }
+        _ => {
+            // Local/SVN/None — auto-detect VCS type from directory
+            Some(validate_local_repo_path(&repo_path)?)
+        }
+    };
+
+    // Derive source type from VCS type when not explicitly set
+    let source_type = match body.source_type {
+        Some(st) => st,
+        None => match vcs_type {
+            Some(VcsType::Svn) => CodebaseSourceType::Svn,
+            Some(VcsType::None) => CodebaseSourceType::None,
+            _ => CodebaseSourceType::Local,
+        },
+    };
+
     let repo_path = repo_path.to_string_lossy().to_string();
 
     // Check for duplicate repo_path within the workspace
@@ -182,7 +202,7 @@ async fn add_codebase(
     let should_set_default =
         should_set_new_codebase_as_default(has_existing_default, body.is_default);
 
-    let codebase = Codebase::new(
+    let codebase = Codebase::new_with_vcs_type(
         uuid::Uuid::new_v4().to_string(),
         workspace_id,
         repo_path,
@@ -191,6 +211,7 @@ async fn add_codebase(
         false,
         Some(source_type),
         body.source_url,
+        vcs_type,
     );
 
     state.codebase_store.save(&codebase).await?;
@@ -243,7 +264,9 @@ async fn update_codebase(
     let repo_path = if let Some(repo_path) = body.repo_path.as_deref() {
         let normalized = normalize_local_repo_path(repo_path);
         match requested_source_type {
-            CodebaseSourceType::Local => validate_local_git_repo_path(&normalized)?,
+            CodebaseSourceType::Local | CodebaseSourceType::Svn | CodebaseSourceType::None => {
+                validate_local_git_repo_path(&normalized)?
+            }
             CodebaseSourceType::Github => validate_repo_path(&normalized, "Path ")?,
         }
         let normalized = normalized.to_string_lossy().to_string();

@@ -141,6 +141,10 @@ export class ClaudeCodeProcess {
     private _alive = false;
     private _config: ClaudeCodeProcessConfig;
     private onNotification: NotificationHandler;
+    /** stderr output captured during startup for error diagnostics */
+    private startupStderr = "";
+    /** Exit info captured during startup for error diagnostics */
+    private startupExitInfo: { code: number | null; signal: string | null } | null = null;
 
     // Track tool names for mapping tool_use → tool_result
     private toolUseNames = new Map<string, string>();
@@ -275,11 +279,19 @@ export class ClaudeCodeProcess {
             const text = chunk.toString("utf-8").trim();
             if (text) {
                 console.error(`[ClaudeCode:${displayName} stderr] ${text}`);
+                // Capture stderr during startup for error diagnostics
+                if (!this._alive) {
+                    this.startupStderr += text + "\n";
+                }
             }
         });
 
         this.process.on("exit", (code, signal) => {
             console.log(`[ClaudeCode:${displayName}] Process exited: code=${code}, signal=${signal}`);
+            // Capture exit info during startup for error diagnostics
+            if (!this._alive) {
+                this.startupExitInfo = { code, signal };
+            }
             this._alive = false;
             if (this.promptTimeout) { clearTimeout(this.promptTimeout); this.promptTimeout = null; }
             if (this.promptReject) {
@@ -311,11 +323,29 @@ export class ClaudeCodeProcess {
 
         this._alive = true;
 
-        // Wait for process to stabilize
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // Wait for process to stabilize with diagnostic-rich error on failure.
+        // On Windows and slower machines, Claude Code may need more than 500ms
+        // to initialize (especially on first run with package download).
+        const STARTUP_TIMEOUT_MS = 3_000;
+        await new Promise((resolve) => setTimeout(resolve, STARTUP_TIMEOUT_MS));
 
         if (!this.alive) {
-            throw new Error(`Claude Code process died during startup`);
+            const exitCode = this.startupExitInfo?.code;
+            const exitSignal = this.startupExitInfo?.signal;
+            const stderrHint = this.startupStderr.trim()
+                ? `\n  stderr: ${this.startupStderr.trim().slice(-500)}`
+                : "";
+            const exitHint = exitCode != null ? ` (exit code=${exitCode})` : "";
+            const signalHint = exitSignal ? ` (signal=${exitSignal})` : "";
+
+            // Detect known crash patterns and provide actionable hints
+            const crashHint = ClaudeCodeProcess.detectCrashHint(this.startupStderr);
+
+            throw new Error(
+                `Claude Code process died during startup${exitHint}${signalHint}.${crashHint}${stderrHint}\n` +
+                `  command: ${cmd.join(" ")}\n` +
+                `  cwd: ${cwd}`
+            );
         }
 
         console.log(`[ClaudeCode:${displayName}] Process started, pid=${this.process.pid}`);
@@ -764,6 +794,30 @@ export class ClaudeCodeProcess {
                 break;
             }
         }
+    }
+
+    /**
+     * Detect known crash patterns from stderr and return actionable hints.
+     */
+    private static detectCrashHint(stderr: string): string {
+        const lower = stderr.toLowerCase();
+
+        // Bun runtime segfault — Claude Code runs on Bun
+        if (lower.includes("bun has crashed") || lower.includes("segmentation fault")) {
+            return "\n  hint: Bun runtime crashed (known issue). Try updating Bun: `bun upgrade`, or switch to Node.js.";
+        }
+
+        // Node.js out-of-memory
+        if (lower.includes("fatal error") && lower.includes("callandretry") && lower.includes("out of memory")) {
+            return "\n  hint: Node.js ran out of memory. Try increasing with NODE_OPTIONS=--max-old-space-size=4096.";
+        }
+
+        // Authentication / API key issues
+        if (lower.includes("anthropic_auth_token") || lower.includes("api key") || lower.includes("unauthorized")) {
+            return "\n  hint: Authentication failed. Ensure ANTHROPIC_AUTH_TOKEN or ANTHROPIC_API_KEY is set.";
+        }
+
+        return "";
     }
 
     /**

@@ -17,6 +17,8 @@ import { desktopAwareFetch } from "../utils/diagnostics";
 import { Button } from "./button";
 import { Check, ChevronDown, Download, RefreshCw, Search, GitBranch, Globe } from "lucide-react";
 import { useTranslation } from "@/i18n";
+import type { CodebaseData } from "@/client/hooks/use-workspaces";
+import { useHasVcsCapability } from "@/client/hooks/use-vcs-capabilities";
 
 
 // ─── Types ──────────────────────────────────────────────────────────────
@@ -39,6 +41,8 @@ interface BranchSelectorProps {
   currentBranch: string;
   onBranchChange: (branch: string) => void;
   disabled?: boolean;
+  /** Codebase data for VCS capability gating */
+  codebase?: CodebaseData;
 }
 
 function interpolateBranchSelectorLabel(
@@ -57,8 +61,11 @@ export function BranchSelector({
   currentBranch,
   onBranchChange,
   disabled = false,
+  codebase,
 }: BranchSelectorProps) {
   const { t } = useTranslation();
+  const canManageBranches = useHasVcsCapability(codebase, "branchManagement");
+  if (!canManageBranches) return null;
   const [showDropdown, setShowDropdown] = useState(false);
   const [branchData, setBranchData] = useState<BranchData | null>(null);
   const [loading, setLoading] = useState(false);

@@ -734,6 +734,8 @@ export const enExtended: ExtendedTranslationDictionarySections = {
     yesLabel: "Yes",
     // File changes panel
     fileChanges: "File Changes",
+    svnChanges: "SVN Changes",
+    nonVcsFiles: "Files",
     reposChangedFiles: "{repos} repos · {files} changed files",
     dirty: "dirty",
     hide: "Hide",
@@ -953,6 +955,8 @@ export const enExtended: ExtendedTranslationDictionarySections = {
     addFallbackAgent: "Add fallback agent",
     enableAutomaticFallback: "Automatically try next fallback agent on failure",
     fallbackProviderDefault: "Default provider",
+    nonVcsProject: "This project is not under version control. File change tracking is not available.",
+    nonVcsProjectHint: "File change tracking and Git operations are not available for non-VCS projects.",
   },
 
   kanbanModals: {

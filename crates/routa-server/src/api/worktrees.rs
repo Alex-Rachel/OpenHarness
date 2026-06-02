@@ -12,6 +12,7 @@ use crate::error::ServerError;
 use crate::git;
 use crate::models::worktree::Worktree;
 use crate::state::AppState;
+use routa_core::vcs::{has_vcs_capability, VcsCapability, VcsType};
 
 /// Per-repository mutex for serializing git worktree operations.
 type RepoLocks = Arc<Mutex<HashMap<String, Arc<Mutex<()>>>>>;
@@ -61,6 +62,15 @@ async fn list_worktrees(
         )));
     }
 
+    // Capability guard — worktree management requires Git
+    let vcs_type = codebase.vcs_type.unwrap_or(VcsType::Git);
+    if !has_vcs_capability(Some(vcs_type), VcsCapability::Worktree) {
+        return Err(ServerError::BadRequest(format!(
+            "Worktree management requires a Git repository, but this codebase uses \"{}\"",
+            vcs_type
+        )));
+    }
+
     let worktrees = state.worktree_store.list_by_codebase(&codebase_id).await?;
     Ok(Json(serde_json::json!({ "worktrees": worktrees })))
 }
@@ -90,6 +100,15 @@ async fn create_worktree(
     if codebase.workspace_id != workspace_id {
         return Err(ServerError::NotFound(format!(
             "Codebase {codebase_id} not found"
+        )));
+    }
+
+    // Capability guard — worktree management requires Git
+    let vcs_type = codebase.vcs_type.unwrap_or(VcsType::Git);
+    if !has_vcs_capability(Some(vcs_type), VcsCapability::Worktree) {
+        return Err(ServerError::BadRequest(format!(
+            "Worktree management requires a Git repository, but this codebase uses \"{}\"",
+            vcs_type
         )));
     }
 

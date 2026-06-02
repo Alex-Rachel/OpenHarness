@@ -13,6 +13,7 @@ use crate::api::repo_context::{
 };
 use crate::error::ServerError;
 use crate::state::AppState;
+use routa_core::vcs::{VcsType, VcsCapability};
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -61,10 +62,15 @@ fn resolve_commit_sha(sha: Option<&str>) -> Result<String, ServerError> {
     Ok(sha.to_string())
 }
 
-async fn resolve_codebase_repo_path(
+/// Resolve repo path with VCS capability enforcement.
+/// Loads the codebase, validates workspace membership, checks that the
+/// detected VCS type supports the required capability, and verifies the
+/// repository path exists and is a valid Git repository.
+async fn resolve_codebase_repo_path_with_capability(
     state: &AppState,
     workspace_id: &str,
     codebase_id: &str,
+    capability: VcsCapability,
 ) -> Result<String, ServerError> {
     let _workspace = state
         .workspace_store
@@ -84,6 +90,15 @@ async fn resolve_codebase_repo_path(
         return Err(ServerError::NotFound("Codebase not found".to_string()));
     }
 
+    // Use the capability system to gate VCS-specific operations
+    let vcs_type = codebase.vcs_type.unwrap_or(routa_core::vcs::VcsType::Git);
+    if !routa_core::vcs::has_vcs_capability(Some(vcs_type), capability) {
+        return Err(ServerError::BadRequest(format!(
+            "This operation requires a Git repository, but this codebase uses \"{}\"",
+            vcs_type
+        )));
+    }
+
     let repo_path = canonical_repo_path_for_response(&codebase.repo_path);
 
     if !routa_core::git::is_git_repository(&repo_path) {
@@ -93,6 +108,63 @@ async fn resolve_codebase_repo_path(
     }
 
     Ok(repo_path)
+}
+
+/// Resolve repo path and VCS type for a codebase.
+/// Unlike `resolve_codebase_repo_path_with_capability`, this accepts both Git and SVN repositories.
+/// Returns the canonical repo path and the resolved VCS type (defaults to Git for backward compat).
+async fn resolve_codebase_repo_path_with_vcs(
+    state: &AppState,
+    workspace_id: &str,
+    codebase_id: &str,
+) -> Result<(String, VcsType), ServerError> {
+    let _workspace = state
+        .workspace_store
+        .get(workspace_id)
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?
+        .ok_or_else(|| ServerError::NotFound("Workspace not found".to_string()))?;
+
+    let codebase = state
+        .codebase_store
+        .get(codebase_id)
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?
+        .ok_or_else(|| ServerError::NotFound("Codebase not found".to_string()))?;
+
+    if codebase.workspace_id != workspace_id {
+        return Err(ServerError::NotFound("Codebase not found".to_string()));
+    }
+
+    let repo_path = canonical_repo_path_for_response(&codebase.repo_path);
+    let vcs_type = codebase
+        .vcs_type
+        .unwrap_or(VcsType::Git);
+
+    match vcs_type {
+        VcsType::Git => {
+            if !routa_core::git::is_git_repository(&repo_path) {
+                return Err(ServerError::BadRequest(
+                    "Not a valid git repository".to_string(),
+                ));
+            }
+        }
+        VcsType::Svn => {
+            // SVN working copy validation: directory must exist
+            if !std::path::Path::new(&repo_path).is_dir() {
+                return Err(ServerError::BadRequest(
+                    "SVN working copy path does not exist or is not a directory".to_string(),
+                ));
+            }
+        }
+        VcsType::None => {
+            return Err(ServerError::BadRequest(
+                "This operation is not supported for non-VCS codebases".to_string(),
+            ));
+        }
+    }
+
+    Ok((repo_path, vcs_type))
 }
 
 fn validate_git_file_path(path: &str) -> Result<(), String> {
@@ -349,7 +421,11 @@ async fn stage_files(
     Path((workspace_id, codebase_id)): Path<(String, String)>,
     Json(req): Json<StageFilesRequest>,
 ) -> Result<Json<StageFilesResponse>, ServerError> {
-    let repo_path = match resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await {
+    let repo_path = match resolve_codebase_repo_path_with_capability(
+        &state, &workspace_id, &codebase_id, VcsCapability::StageUnstage,
+    )
+    .await
+    {
         Ok(repo_path) => repo_path,
         Err(error) => {
             return Ok(Json(StageFilesResponse {
@@ -384,7 +460,11 @@ async fn unstage_files(
     Path((workspace_id, codebase_id)): Path<(String, String)>,
     Json(req): Json<StageFilesRequest>,
 ) -> Result<Json<StageFilesResponse>, ServerError> {
-    let repo_path = match resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await {
+    let repo_path = match resolve_codebase_repo_path_with_capability(
+        &state, &workspace_id, &codebase_id, VcsCapability::StageUnstage,
+    )
+    .await
+    {
         Ok(repo_path) => repo_path,
         Err(error) => {
             return Ok(Json(StageFilesResponse {
@@ -433,8 +513,8 @@ async fn create_commit(
     Path((workspace_id, codebase_id)): Path<(String, String)>,
     Json(req): Json<CreateCommitRequest>,
 ) -> Result<Json<CreateCommitResponse>, ServerError> {
-    let repo_path = match resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await {
-        Ok(repo_path) => repo_path,
+    let (repo_path, vcs_type) = match resolve_codebase_repo_path_with_vcs(&state, &workspace_id, &codebase_id).await {
+        Ok(result) => result,
         Err(error) => {
             return Ok(Json(CreateCommitResponse {
                 success: false,
@@ -448,24 +528,57 @@ async fn create_commit(
     let files = req.files;
     let response_message = message.clone();
 
-    match tokio::task::spawn_blocking(move || {
-        routa_core::git::create_commit(&repo_path, &message, files.as_deref())
-    })
-    .await
-    .map_err(|error| ServerError::Internal(error.to_string()))?
-    {
-        Ok(sha) => Ok(Json(CreateCommitResponse {
-            success: true,
-            sha: Some(sha),
-            message: Some(response_message),
-            error: None,
-        })),
-        Err(e) => Ok(Json(CreateCommitResponse {
-            success: false,
-            sha: None,
-            message: None,
-            error: Some(e),
-        })),
+    // VCS dispatch: SVN vs Git commit
+    if vcs_type == VcsType::Svn {
+        let svn_files = files.unwrap_or_default();
+        if svn_files.is_empty() {
+            return Ok(Json(CreateCommitResponse {
+                success: false,
+                sha: None,
+                message: None,
+                error: Some("SVN commit requires at least one file path".to_string()),
+            }));
+        }
+        let result = tokio::task::spawn_blocking(move || {
+            routa_core::svn::svn_commit(&repo_path, &svn_files, &message)
+        })
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?;
+
+        match result {
+            Ok(revision) => Ok(Json(CreateCommitResponse {
+                success: true,
+                sha: Some(format!("r{revision}")),
+                message: Some(response_message),
+                error: None,
+            })),
+            Err(e) => Ok(Json(CreateCommitResponse {
+                success: false,
+                sha: None,
+                message: None,
+                error: Some(e),
+            })),
+        }
+    } else {
+        match tokio::task::spawn_blocking(move || {
+            routa_core::git::create_commit(&repo_path, &message, files.as_deref())
+        })
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?
+        {
+            Ok(sha) => Ok(Json(CreateCommitResponse {
+                success: true,
+                sha: Some(sha),
+                message: Some(response_message),
+                error: None,
+            })),
+            Err(e) => Ok(Json(CreateCommitResponse {
+                success: false,
+                sha: None,
+                message: None,
+                error: Some(e),
+            })),
+        }
     }
 }
 
@@ -508,8 +621,8 @@ async fn discard_changes(
         ));
     }
 
-    let repo_path = match resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await {
-        Ok(repo_path) => repo_path,
+    let (repo_path, vcs_type) = match resolve_codebase_repo_path_with_vcs(&state, &workspace_id, &codebase_id).await {
+        Ok(result) => result,
         Err(error) => {
             let status = match error {
                 ServerError::NotFound(_) => StatusCode::NOT_FOUND,
@@ -529,10 +642,16 @@ async fn discard_changes(
     let files = req.files;
     let discarded_files = files.clone();
 
-    let result =
+    // VCS dispatch: SVN revert vs Git discard
+    let result = if vcs_type == VcsType::Svn {
+        tokio::task::spawn_blocking(move || routa_core::svn::svn_revert(&repo_path, &files))
+            .await
+            .map_err(|error| ServerError::Internal(error.to_string()))?
+    } else {
         tokio::task::spawn_blocking(move || routa_core::git::discard_changes(&repo_path, &files))
             .await
-            .map_err(|error| ServerError::Internal(error.to_string()))?;
+            .map_err(|error| ServerError::Internal(error.to_string()))?
+    };
 
     match result {
         Ok(()) => Ok((
@@ -568,19 +687,28 @@ async fn get_file_diff(
         .to_string();
     validate_git_file_path(&path).map_err(ServerError::BadRequest)?;
     let staged = query.staged.unwrap_or(false);
-    let repo_path = resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await?;
+    let (repo_path, vcs_type) = resolve_codebase_repo_path_with_vcs(&state, &workspace_id, &codebase_id).await?;
     let response_path = path.clone();
 
-    let diff = tokio::task::spawn_blocking(move || {
-        if staged {
-            git_command_output(&repo_path, &["diff", "--cached", "--", path.as_str()])
-        } else {
-            git_command_output(&repo_path, &["diff", "--", path.as_str()])
-        }
-    })
-    .await
-    .map_err(|error| ServerError::Internal(error.to_string()))?
-    .map_err(ServerError::Internal)?;
+    // VCS dispatch: SVN does not have a staging concept
+    let diff = if vcs_type == VcsType::Svn {
+        tokio::task::spawn_blocking(move || {
+            routa_core::svn::get_svn_file_diff(&repo_path, &path)
+        })
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?
+    } else {
+        tokio::task::spawn_blocking(move || {
+            if staged {
+                git_command_output(&repo_path, &["diff", "--cached", "--", path.as_str()])
+            } else {
+                git_command_output(&repo_path, &["diff", "--", path.as_str()])
+            }
+        })
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?
+        .map_err(ServerError::Internal)?
+    };
 
     Ok(Json(GetFileDiffResponse {
         diff,
@@ -602,7 +730,10 @@ async fn get_commit_diff(
     if let Some(path_value) = path.as_deref() {
         validate_git_file_path(path_value).map_err(ServerError::BadRequest)?;
     }
-    let repo_path = resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await?;
+    let repo_path = resolve_codebase_repo_path_with_capability(
+        &state, &workspace_id, &codebase_id, VcsCapability::CommitHistory,
+    )
+    .await?;
     let response_sha = sha.clone();
     let response_path = path.clone();
 
@@ -629,8 +760,8 @@ async fn pull_commits_handler(
     Path((workspace_id, codebase_id)): Path<(String, String)>,
     Json(req): Json<PullCommitsRequest>,
 ) -> Result<(StatusCode, Json<GitOperationResponse>), ServerError> {
-    let repo_path = match resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await {
-        Ok(repo_path) => repo_path,
+    let (repo_path, vcs_type) = match resolve_codebase_repo_path_with_vcs(&state, &workspace_id, &codebase_id).await {
+        Ok(result) => result,
         Err(error) => {
             let status = match error {
                 ServerError::NotFound(_) => StatusCode::NOT_FOUND,
@@ -647,32 +778,51 @@ async fn pull_commits_handler(
             ));
         }
     };
-    let remote = req.remote;
-    let branch = req.branch;
 
-    let result = tokio::task::spawn_blocking(move || {
-        routa_core::git::pull_commits(&repo_path, remote.as_deref(), branch.as_deref())
-    })
-    .await
-    .map_err(|error| ServerError::Internal(error.to_string()))?;
+    // VCS dispatch: SVN update ignores remote/branch
+    if vcs_type == VcsType::Svn {
+        tokio::task::spawn_blocking(move || {
+            routa_core::svn::svn_update(&repo_path)
+        })
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?;
 
-    match result {
-        Ok(()) => Ok((
+        Ok((
             StatusCode::OK,
             Json(GitOperationResponse {
                 success: true,
                 error: None,
                 branch: None,
             }),
-        )),
-        Err(error) => Ok((
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(GitOperationResponse {
-                success: false,
-                error: Some(error),
-                branch: None,
-            }),
-        )),
+        ))
+    } else {
+        let remote = req.remote;
+        let branch = req.branch;
+
+        let result = tokio::task::spawn_blocking(move || {
+            routa_core::git::pull_commits(&repo_path, remote.as_deref(), branch.as_deref())
+        })
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?;
+
+        match result {
+            Ok(()) => Ok((
+                StatusCode::OK,
+                Json(GitOperationResponse {
+                    success: true,
+                    error: None,
+                    branch: None,
+                }),
+            )),
+            Err(error) => Ok((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(GitOperationResponse {
+                    success: false,
+                    error: Some(error),
+                    branch: None,
+                }),
+            )),
+        }
     }
 }
 
@@ -688,7 +838,10 @@ async fn rebase_branch_handler(
         .filter(|value| !value.is_empty())
         .ok_or_else(|| ServerError::BadRequest("Target branch 'onto' is required".to_string()))?
         .to_string();
-    let repo_path = resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await?;
+    let repo_path = resolve_codebase_repo_path_with_capability(
+        &state, &workspace_id, &codebase_id, VcsCapability::Rebase,
+    )
+    .await?;
 
     let result =
         tokio::task::spawn_blocking(move || routa_core::git::rebase_branch(&repo_path, &onto))
@@ -756,7 +909,10 @@ async fn reset_branch_handler(
             }),
         ));
     }
-    let repo_path = resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await?;
+    let repo_path = resolve_codebase_repo_path_with_capability(
+        &state, &workspace_id, &codebase_id, VcsCapability::Reset,
+    )
+    .await?;
     let confirm = req.confirm.unwrap_or(false);
     let repo_path_for_git = repo_path.clone();
     let to_for_git = to.clone();
@@ -818,7 +974,11 @@ async fn export_changes_handler(
     Path((workspace_id, codebase_id)): Path<(String, String)>,
     Json(req): Json<ExportChangesRequest>,
 ) -> Result<(StatusCode, Json<ExportChangesResponse>), ServerError> {
-    let repo_path = match resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await {
+    let repo_path = match resolve_codebase_repo_path_with_capability(
+        &state, &workspace_id, &codebase_id, VcsCapability::Diff,
+    )
+    .await
+    {
         Ok(repo_path) => repo_path,
         Err(error) => {
             let status = match error {
@@ -910,16 +1070,41 @@ async fn get_commits(
     Path((workspace_id, codebase_id)): Path<(String, String)>,
     Query(query): Query<GetCommitsQuery>,
 ) -> Result<Json<GetCommitsResponse>, ServerError> {
-    let repo_path = resolve_codebase_repo_path(&state, &workspace_id, &codebase_id).await?;
+    let (repo_path, vcs_type) = resolve_codebase_repo_path_with_vcs(&state, &workspace_id, &codebase_id).await?;
     let limit = query.limit;
     let since = query.since;
 
-    let commits = tokio::task::spawn_blocking(move || {
-        routa_core::git::get_commit_list(&repo_path, limit, since.as_deref())
-    })
-    .await
-    .map_err(|error| ServerError::Internal(error.to_string()))?
-    .map_err(ServerError::Internal)?;
+    // VCS dispatch: SVN log mapped to CommitInfo shape
+    let commits = if vcs_type == VcsType::Svn {
+        tokio::task::spawn_blocking(move || {
+            let limit_val = limit.unwrap_or(20);
+            let entries = routa_core::svn::get_svn_log(&repo_path, limit_val);
+            entries
+                .into_iter()
+                .map(|entry| routa_core::git::CommitInfo {
+                    sha: format!("r{}", entry.revision),
+                    short_sha: format!("r{}", entry.revision),
+                    message: entry.message.clone(),
+                    summary: entry.message.lines().next().unwrap_or("").to_string(),
+                    author_name: entry.author.clone(),
+                    author_email: String::new(),
+                    authored_at: entry.date.clone(),
+                    additions: 0,
+                    deletions: 0,
+                    parents: Vec::new(),
+                })
+                .collect::<Vec<_>>()
+        })
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?
+    } else {
+        tokio::task::spawn_blocking(move || {
+            routa_core::git::get_commit_list(&repo_path, limit, since.as_deref())
+        })
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?
+        .map_err(ServerError::Internal)?
+    };
 
     let count = commits.len();
 

@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { getRoutaSystem } from "@/core/routa-system";
 import { isGitRepository } from "@/core/git";
 import { pullCommits } from "@/core/git/git-operations";
+import { svnUpdate } from "@/core/vcs/svn-utils";
 
 export const dynamic = "force-dynamic";
 
 /**
  * POST /api/workspaces/:workspaceId/codebases/:codebaseId/git/pull
- * Pull commits from remote
+ * Pull commits from remote (Git) or update working copy (SVN).
+ * Supports both Git and SVN codebases via VCS type dispatch.
  */
 export async function POST(
   request: Request,
@@ -19,7 +21,7 @@ export async function POST(
 
   const system = getRoutaSystem();
   const workspace = await system.workspaceStore.get(workspaceId);
-  
+
   if (!workspace) {
     return NextResponse.json(
       { success: false, error: "Workspace not found" },
@@ -28,7 +30,7 @@ export async function POST(
   }
 
   const codebase = await system.codebaseStore.get(codebaseId);
-  
+
   if (!codebase) {
     return NextResponse.json(
       { success: false, error: "Codebase not found" },
@@ -36,7 +38,9 @@ export async function POST(
     );
   }
 
-  if (!isGitRepository(codebase.repoPath)) {
+  const isSvn = codebase.vcsType === "svn";
+
+  if (!isSvn && !isGitRepository(codebase.repoPath)) {
     return NextResponse.json(
       { success: false, error: "Not a valid git repository" },
       { status: 400 },
@@ -44,8 +48,17 @@ export async function POST(
   }
 
   try {
+    // VCS dispatch: SVN update ignores remote/branch parameters
+    if (isSvn) {
+      const result = svnUpdate(codebase.repoPath);
+      return NextResponse.json({
+        success: true,
+        revision: result.revision,
+      });
+    }
+
     await pullCommits(codebase.repoPath, remote, branch);
-    
+
     return NextResponse.json({
       success: true,
     });
