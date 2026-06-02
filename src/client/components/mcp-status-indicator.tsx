@@ -108,20 +108,20 @@ export function McpStatusIndicator({ compact = false, className = "" }: McpStatu
   const isChecking = loading && !status;
   const available = !!status?.available;
   const toneClass = isChecking
-    ? "border-gray-200 text-gray-500 bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800/30"
+    ? "border-desktop-border text-desktop-text-tertiary bg-desktop-surface-muted"
     : available
-      ? "border-sky-200 text-sky-700 bg-sky-50 hover:bg-sky-100 dark:border-sky-800/60 dark:text-sky-300 dark:bg-sky-900/20 dark:hover:bg-sky-900/30"
-      : "border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100 dark:border-amber-800/60 dark:text-amber-300 dark:bg-amber-900/20 dark:hover:bg-amber-900/30";
+      ? "border-[var(--dt-status-success)]/25 text-[var(--dt-status-success)] bg-[var(--dt-status-success-subtle)] hover:bg-[var(--dt-status-success-subtle)]"
+      : "border-[var(--dt-status-warning)]/25 text-[var(--dt-status-warning)] bg-[var(--dt-status-warning-subtle)] hover:bg-[var(--dt-status-warning-subtle)]";
   const compactToneClass = isChecking
     ? "text-desktop-text-tertiary"
     : available
-      ? "text-sky-500"
-      : "text-amber-500";
+      ? "text-[var(--dt-status-success)]"
+      : "text-[var(--dt-status-warning)]";
   const dotClass = isChecking
-    ? "bg-gray-400 animate-pulse"
+    ? "bg-desktop-text-tertiary animate-pulse"
     : available
-      ? "bg-sky-500"
-      : "bg-amber-500";
+      ? "bg-[var(--dt-status-success)]"
+      : "bg-[var(--dt-status-warning)]";
   const label = isChecking
     ? "Checking MCP..."
     : available

@@ -21,6 +21,9 @@ import type { KanbanCodebaseModalProps } from "./kanban-tab-modals";
 import type { AcpProviderInfo } from "@/client/acp-client";
 import type { KanbanTaskAgentCopy } from "./i18n/kanban-task-agent";
 
+const compactToolbarButtonClass =
+  "inline-flex h-6 shrink-0 items-center rounded-md border border-desktop-border bg-desktop-surface px-2 text-[11px] font-semibold text-desktop-text-secondary transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--dt-focus-ring)]/45";
+
 type KanbanTabHeaderProps = Omit<ComponentProps<typeof KanbanTabHeader>, "actionSlot">;
 type BoardSurfaceProps = ComponentProps<typeof KanbanBoardSurface>;
 type CreateTaskModalProps = ComponentProps<typeof KanbanCreateTaskModal>;
@@ -90,10 +93,10 @@ function KanbanTabHeaderActionSlot({
   }
 
   return (
-    <div className="flex min-w-[560px] flex-1 items-center border border-slate-200 bg-white transition-colors focus-within:border-amber-400/80 focus-within:ring-2 focus-within:ring-amber-400/15 dark:border-slate-700 dark:bg-[#12141c]">
+    <div className="flex min-w-[560px] flex-1 items-center rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface shadow-[var(--dt-shadow-sm)] transition-colors focus-within:border-desktop-accent focus-within:ring-2 focus-within:ring-[var(--dt-focus-ring)]/25">
       {onAgentPrompt && (
         <>
-          <div className="ml-1 shrink-0 border-l border-r border-slate-200 dark:border-slate-700">
+          <div className="ml-1 shrink-0 border-l border-r border-desktop-border">
             <AcpProviderDropdown
               providers={availableProviders}
               selectedProvider={selectedProviderId}
@@ -101,7 +104,7 @@ function KanbanTabHeaderActionSlot({
               disabled={disableBoardProvider}
               ariaLabel={kanbanTaskAgentCopy.providerAriaLabel}
               dataTestId="kanban-agent-provider"
-              buttonClassName="flex h-7 items-center gap-1.5 bg-transparent px-2 text-[12px] font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:text-slate-200 dark:hover:bg-slate-800/40"
+              buttonClassName="flex h-7 items-center gap-1.5 bg-transparent px-2 text-[12px] font-medium text-desktop-text-primary transition-colors hover:bg-desktop-surface-muted disabled:opacity-50"
               labelClassName="max-w-[110px] truncate"
             />
           </div>
@@ -117,12 +120,12 @@ function KanbanTabHeaderActionSlot({
             }}
             placeholder={disableBoardProvider ? kanbanTaskAgentCopy.connectingPlaceholder : kanbanTaskAgentCopy.placeholder}
             disabled={agentLoading || disableBoardProvider}
-            className="h-7 min-w-64 flex-1 bg-transparent px-2 text-[12px] text-slate-800 placeholder-slate-400 outline-none disabled:opacity-50 dark:text-slate-200 dark:placeholder-slate-500"
+            className="h-7 min-w-64 flex-1 bg-transparent px-2 text-[12px] text-desktop-text-primary placeholder:text-desktop-text-tertiary outline-none disabled:opacity-50"
           />
           <button
             onClick={onAgentSubmit}
             disabled={!agentInput.trim() || agentLoading || disableBoardProvider}
-            className="mr-1 inline-flex h-6 shrink-0 items-center gap-1 rounded-md bg-slate-900 px-2 text-[11px] font-semibold text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 dark:bg-amber-500 dark:hover:bg-amber-400 dark:disabled:bg-[#1a1d29] dark:disabled:text-slate-500"
+            className="mr-1 inline-flex h-6 shrink-0 items-center gap-1 rounded-md border border-transparent bg-desktop-accent px-2 text-[11px] font-semibold text-desktop-accent-text transition-colors hover:bg-desktop-accent-strong disabled:cursor-not-allowed disabled:border-desktop-border disabled:bg-desktop-surface-muted disabled:text-desktop-text-tertiary"
           >
             {agentLoading ? "..." : (
               <>
@@ -135,14 +138,14 @@ function KanbanTabHeaderActionSlot({
       )}
       <button
         onClick={showCreateTaskModal}
-        className="mr-1 inline-flex h-6 shrink-0 items-center rounded-md border border-amber-200 bg-amber-50 px-2 text-[11px] font-semibold text-amber-700 transition-colors hover:bg-amber-100 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-300 dark:hover:bg-amber-900/30"
+        className={`mr-1 ${compactToolbarButtonClass}`}
       >
         {kanbanTaskAgentCopy.manual}
       </button>
       {agentSessionId && (
         <button
           onClick={() => openAgentPanel(agentSessionId)}
-          className="mr-2 shrink-0 text-[11px] text-amber-600 hover:underline dark:text-amber-400"
+          className="mr-2 shrink-0 text-[11px] font-medium text-desktop-accent hover:underline"
           title={kanbanTaskAgentCopy.openPanelTitle}
         >
           {kanbanTaskAgentCopy.view}
@@ -196,7 +199,7 @@ export function KanbanTabContent({
     return (
       <div className="flex h-full flex-col space-y-2">
         <KanbanTabHeader {...headerProps} actionSlot={headerActionSlot}/>
-        <div className="rounded-2xl border border-gray-200/60 bg-white p-6 text-sm text-gray-500 dark:border-[#1c1f2e] dark:bg-[#12141c] dark:text-gray-400">
+        <div className="rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-surface p-6 text-sm text-desktop-text-secondary shadow-[var(--dt-shadow-sm)]">
           No board available yet.
         </div>
       </div>

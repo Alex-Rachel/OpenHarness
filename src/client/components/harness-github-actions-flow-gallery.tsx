@@ -49,9 +49,9 @@ const CATEGORY_DEFINITIONS: WorkflowCategoryDefinition[] = [
 ];
 
 const JOB_KIND_STYLES: Record<WorkflowJobKind, string> = {
-  job: "border-slate-200 bg-white/90 text-slate-600",
-  approval: "border-amber-200 bg-amber-50 text-amber-700",
-  release: "border-violet-200 bg-violet-50 text-violet-700",
+  job: "border-desktop-border bg-desktop-surface text-desktop-text-secondary",
+  approval: "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
+  release: "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]",
 };
 
 function cx(...values: Array<string | false | null | undefined>) {
@@ -175,9 +175,9 @@ function CategoryIcon({ category }: { category: WorkflowCategoryKey }) {
 
 function MetricCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="inline-flex items-center gap-1.5 rounded-sm border border-slate-200 bg-white/90 px-2.5 py-1 text-[10px]">
-      <span className="font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</span>
-      <span className="text-[12px] font-semibold text-slate-900">{value}</span>
+    <div className="inline-flex items-center gap-1.5 rounded-sm border border-desktop-border bg-desktop-surface px-2.5 py-1 text-[10px]">
+      <span className="font-semibold uppercase tracking-[0.16em] text-desktop-text-secondary">{label}</span>
+      <span className="text-[12px] font-semibold text-desktop-text-primary">{value}</span>
     </div>
   );
 }
@@ -190,30 +190,30 @@ function MiniDagPreview({ flow }: { flow: GitHubActionsFlow }) {
   return (
     <div className="overflow-x-auto">
       <div className="flex min-w-max items-start gap-2">
-        <div className="w-[4.5rem] shrink-0 rounded-sm border border-sky-200/80 bg-sky-50/80 px-2 py-1.5">
-          <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-sky-700">Trigger</div>
-          <div className="mt-0.5 text-[10px] font-semibold leading-4 text-slate-900">
+        <div className="w-[4.5rem] shrink-0 rounded-sm border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-2 py-1.5">
+          <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[var(--dt-status-info)]">Trigger</div>
+          <div className="mt-0.5 text-[10px] font-semibold leading-4 text-desktop-text-primary">
             {humanizeToken(normalizeGitHubWorkflowEventTokens(flow.event)[0] ?? flow.event)}
           </div>
         </div>
 
         {visibleLanes.map((laneJobs, laneIndex) => (
           <div key={`${flow.id}:lane:${laneIndex}`} className="flex items-start gap-1.5">
-            <div className="flex h-7 items-center text-slate-300">
+            <div className="flex h-7 items-center text-desktop-text-tertiary">
               <ArrowRight className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}/>
             </div>
             <div className="w-24 shrink-0 space-y-0.5">
               {laneJobs.slice(0, 1).map((job) => (
-                <div key={job.id} className="rounded-sm border border-slate-200/80 bg-slate-50/75 px-2 py-1">
-                  <div className="truncate text-[10px] font-semibold text-slate-900">{job.name}</div>
+                <div key={job.id} className="rounded-sm border border-desktop-border bg-desktop-surface-muted px-2 py-1">
+                  <div className="truncate text-[10px] font-semibold text-desktop-text-primary">{job.name}</div>
                   <div className="mt-0.5 flex items-center justify-between gap-2">
-                    <span className="truncate text-[9px] text-slate-500">{job.runner}</span>
+                    <span className="truncate text-[9px] text-desktop-text-secondary">{job.runner}</span>
                     <span className={cx("rounded-full border px-1.5 py-0.5 text-[8px]", JOB_KIND_STYLES[job.kind])}>{job.kind}</span>
                   </div>
                 </div>
               ))}
               {laneJobs.length > 1 ? (
-                <div className="rounded-sm border border-dashed border-slate-200/80 bg-white/70 px-2 py-1 text-[9px] text-slate-500">
+                <div className="rounded-sm border border-dashed border-desktop-border bg-desktop-surface px-2 py-1 text-[9px] text-desktop-text-secondary">
                   +{laneJobs.length - 1} more jobs
                 </div>
               ) : null}
@@ -223,10 +223,10 @@ function MiniDagPreview({ flow }: { flow: GitHubActionsFlow }) {
 
         {hiddenLaneCount > 0 ? (
           <div className="flex items-start gap-1.5">
-            <div className="flex h-7 items-center text-slate-300">
+            <div className="flex h-7 items-center text-desktop-text-tertiary">
               <ArrowRight className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}/>
             </div>
-            <div className="w-[4.5rem] shrink-0 rounded-sm border border-dashed border-slate-200/80 bg-white/70 px-2 py-1.5 text-[9px] text-slate-500">
+            <div className="w-[4.5rem] shrink-0 rounded-sm border border-dashed border-desktop-border bg-desktop-surface px-2 py-1.5 text-[9px] text-desktop-text-secondary">
               +{hiddenLaneCount} more stages
             </div>
           </div>
@@ -250,9 +250,9 @@ function WorkflowCard({
   const hiddenTokenCount = Math.max(eventTokens.length - visibleTokens.length, 0);
   const stageCount = summarizeStageCount(flow);
   const metaPills = [
-    { label: `${flow.jobs.length} jobs`, className: "border-slate-200 bg-slate-50/90 text-slate-600" },
-    { label: `${stageCount} stages`, className: "border-sky-200 bg-sky-50 text-sky-700" },
-    { label: `${countDependencies(flow)} dependencies`, className: "border-emerald-200 bg-emerald-50 text-emerald-700" },
+    { label: `${flow.jobs.length} jobs`, className: "border-desktop-border bg-desktop-surface-muted text-desktop-text-secondary" },
+    { label: `${stageCount} stages`, className: "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]" },
+    { label: `${countDependencies(flow)} dependencies`, className: "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]" },
   ];
 
   return (
@@ -262,14 +262,14 @@ function WorkflowCard({
       className={cx(
         "w-full rounded-sm border px-3 py-2.5 text-left transition-all",
         selected
-          ? "border-sky-300 bg-sky-50/70"
-          : "border-slate-200/80 bg-white/95 hover:border-slate-300 hover:bg-slate-50/80",
+          ? "border-desktop-accent bg-desktop-surface-muted"
+          : "border-desktop-border bg-desktop-surface hover:border-desktop-border-light hover:bg-desktop-surface-muted",
       )}
     >
       <div className="flex items-start justify-between gap-3">
-        <h4 className="min-w-0 truncate pr-2 text-[15px] font-semibold tracking-[-0.02em] text-slate-900">{flow.name}</h4>
+        <h4 className="min-w-0 truncate pr-2 text-[15px] font-semibold tracking-[-0.02em] text-desktop-text-primary">{flow.name}</h4>
         {flow.relativePath ? (
-          <div className="shrink-0 truncate rounded-full border border-slate-200 bg-white/90 px-2 py-0.5 font-mono text-[9px] text-slate-500">
+          <div className="shrink-0 truncate rounded-full border border-desktop-border bg-desktop-surface px-2 py-0.5 font-mono text-[9px] text-desktop-text-secondary">
             {flow.relativePath.split("/").pop()}
           </div>
         ) : null}
@@ -278,12 +278,12 @@ function WorkflowCard({
       <div className="mt-1.5 overflow-x-auto">
         <div className="flex min-w-max items-center gap-1.5 whitespace-nowrap pr-1">
           {visibleTokens.map((token) => (
-            <span key={`${flow.id}:${token}`} className="rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-[10px] font-medium text-violet-700">
+            <span key={`${flow.id}:${token}`} className="rounded-full border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-2.5 py-1 text-[10px] font-medium text-[var(--dt-status-info)]">
               {token}
             </span>
           ))}
           {hiddenTokenCount > 0 ? (
-            <span className="rounded-full border border-slate-200 bg-white/90 px-2 py-1 text-[10px] text-slate-500">
+            <span className="rounded-full border border-desktop-border bg-desktop-surface px-2 py-1 text-[10px] text-desktop-text-secondary">
               +{hiddenTokenCount}
             </span>
           ) : null}
@@ -295,7 +295,7 @@ function WorkflowCard({
         </div>
       </div>
 
-      <div className="mt-2 rounded-sm border border-slate-200/80 bg-white/70 px-2 py-1.5">
+      <div className="mt-2 rounded-sm border border-desktop-border bg-desktop-surface px-2 py-1.5">
         <MiniDagPreview flow={flow} />
       </div>
     </button>
@@ -317,27 +317,27 @@ function FlowCanvas({
   const eventTokens = normalizeGitHubWorkflowEventTokens(flow.event);
 
   return (
-    <section className="rounded-sm border border-slate-200/80 bg-white/95 p-3.5">
+    <section className="rounded-sm border border-desktop-border bg-desktop-surface p-3.5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">Pipeline</div>
-          <h3 className="mt-1 text-[17px] font-semibold tracking-[-0.02em] text-slate-900">{flow.name}</h3>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-desktop-text-secondary">Pipeline</div>
+          <h3 className="mt-1 text-[17px] font-semibold tracking-[-0.02em] text-desktop-text-primary">{flow.name}</h3>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {eventTokens.map((token) => (
-              <span key={`${flow.id}:detail:${token}`} className="rounded-full border border-slate-200 bg-white/85 px-2.5 py-1 text-[10px] text-slate-600">
+              <span key={`${flow.id}:detail:${token}`} className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-[10px] text-desktop-text-secondary">
                 {token}
               </span>
             ))}
           </div>
         </div>
         <div className="flex flex-wrap gap-2 text-[10px]">
-          <span className="rounded-full border border-slate-200 bg-white/85 px-2.5 py-1 text-slate-600">
+          <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-desktop-text-secondary">
             {flow.jobs.length} jobs
           </span>
-          <span className="rounded-full border border-slate-200 bg-white/85 px-2.5 py-1 text-slate-600">
+          <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-desktop-text-secondary">
             {lanes.length} stages
           </span>
-          <span className="rounded-full border border-slate-200 bg-white/85 px-2.5 py-1 text-slate-600">
+          <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-desktop-text-secondary">
             {countDependencies(flow)} edges
           </span>
         </div>
@@ -346,13 +346,13 @@ function FlowCanvas({
       <div className="mt-3 overflow-x-auto pb-1">
         <div className="flex min-w-max items-start gap-3">
           <div className={cx(
-            "shrink-0 rounded-sm border border-sky-200/80 bg-sky-50/60 p-3.5",
+            "shrink-0 rounded-sm border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] p-3.5",
             compactMode ? "w-44" : "w-52",
           )}>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-sky-700">Trigger source</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--dt-status-info)]">Trigger source</div>
             <div className="mt-2.5 space-y-1.5">
               {eventTokens.map((token) => (
-                <div key={`${flow.id}:trigger:${token}`} className="rounded-sm border border-white/70 bg-white/90 px-2.5 py-1.5 text-[10px] font-medium text-slate-700">
+                <div key={`${flow.id}:trigger:${token}`} className="rounded-sm border border-desktop-border bg-desktop-surface px-2.5 py-1.5 text-[10px] font-medium text-desktop-text-primary">
                   {humanizeToken(token)}
                 </div>
               ))}
@@ -361,11 +361,11 @@ function FlowCanvas({
 
           {lanes.map((laneJobs, laneIndex) => (
             <div key={`${flow.id}:canvas-lane:${laneIndex}`} className="flex items-start gap-3">
-              <div className="flex h-10 items-center text-slate-300">
+              <div className="flex h-10 items-center text-desktop-text-tertiary">
                 <ArrowRight className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}/>
               </div>
               <div className={cx("shrink-0 space-y-2.5", compactMode ? "w-60" : "w-64")}>
-                <div className="pl-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">{formatStageLabel(laneIndex)}</div>
+                <div className="pl-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-desktop-text-secondary">{formatStageLabel(laneIndex)}</div>
                 {laneJobs.map((job) => {
                   const selected = activeJobId === job.id;
                   return (
@@ -376,14 +376,14 @@ function FlowCanvas({
                       className={cx(
                         "w-full rounded-sm border px-3 py-2.5 text-left transition-all",
                         selected
-                          ? "border-sky-300 bg-sky-50/80"
-                          : "border-slate-200 bg-white/92 hover:border-slate-300",
+                          ? "border-desktop-accent bg-desktop-surface-muted"
+                          : "border-desktop-border bg-desktop-surface hover:border-desktop-border-light",
                       )}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <div className="text-[12px] font-semibold text-slate-900">{job.name}</div>
-                          <div className="mt-0.5 text-[10px] font-mono text-slate-500">{job.runner}</div>
+                          <div className="text-[12px] font-semibold text-desktop-text-primary">{job.name}</div>
+                          <div className="mt-0.5 text-[10px] font-mono text-desktop-text-secondary">{job.runner}</div>
                         </div>
                         <span className={cx("rounded-full border px-2 py-0.5 text-[10px]", JOB_KIND_STYLES[job.kind])}>
                           {job.kind}
@@ -391,16 +391,16 @@ function FlowCanvas({
                       </div>
                       <div className="mt-2.5 flex flex-wrap gap-1.5">
                         {job.stepCount !== null ? (
-                          <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] text-slate-500">
+                          <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5 text-[10px] text-desktop-text-secondary">
                             {job.stepCount} steps
                           </span>
                         ) : null}
                         {job.needs.length > 0 ? job.needs.map((need) => (
-                          <span key={`${job.id}:${need}`} className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] text-slate-500">
+                          <span key={`${job.id}:${need}`} className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5 text-[10px] text-desktop-text-secondary">
                             {need}
                           </span>
                         )) : (
-                          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] text-emerald-700">
+                          <span className="rounded-full border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] px-2 py-0.5 text-[10px] text-[var(--dt-status-success)]">
                             root
                           </span>
                         )}
@@ -427,60 +427,60 @@ function JobInspector({
   compactMode: boolean;
 }) {
   return (
-    <aside className="rounded-sm border border-slate-200/80 bg-white/95 p-3.5">
+    <aside className="rounded-sm border border-desktop-border bg-desktop-surface p-3.5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">Inspector</div>
-          <h3 className="mt-1 text-[17px] font-semibold tracking-[-0.02em] text-slate-900">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-desktop-text-secondary">Inspector</div>
+          <h3 className="mt-1 text-[17px] font-semibold tracking-[-0.02em] text-desktop-text-primary">
             {activeJob?.name ?? flow.name}
           </h3>
-          <div className="mt-1 text-[11px] leading-5 text-slate-500">
+          <div className="mt-1 text-[11px] leading-5 text-desktop-text-secondary">
             {activeJob
               ? "Selected job metadata, upstream dependencies, and execution context."
               : "Workflow-level metadata and source definition."}
           </div>
         </div>
-        <span className="rounded-full border border-slate-200 bg-white/85 px-2.5 py-1 text-[10px] text-slate-500">
+        <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-[10px] text-desktop-text-secondary">
           {activeJob ? "Job detail" : "Workflow detail"}
         </span>
       </div>
 
       <div className="mt-3 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
-        <div className="rounded-sm border border-slate-200 bg-white/90 px-3 py-2.5">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Runner</div>
-          <div className="mt-2 break-all font-mono text-[11px] text-slate-700">{activeJob?.runner ?? "n/a"}</div>
+        <div className="rounded-sm border border-desktop-border bg-desktop-surface px-3 py-2.5">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-desktop-text-secondary">Runner</div>
+          <div className="mt-2 break-all font-mono text-[11px] text-desktop-text-primary">{activeJob?.runner ?? "n/a"}</div>
         </div>
-        <div className="rounded-sm border border-slate-200 bg-white/90 px-3 py-2.5">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Step count</div>
-          <div className="mt-2 text-[14px] font-semibold text-slate-900">
+        <div className="rounded-sm border border-desktop-border bg-desktop-surface px-3 py-2.5">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-desktop-text-secondary">Step count</div>
+          <div className="mt-2 text-[14px] font-semibold text-desktop-text-primary">
             {activeJob?.stepCount ?? "Unknown"}
           </div>
         </div>
-        <div className="rounded-sm border border-slate-200 bg-white/90 px-3 py-2.5">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Dependencies</div>
+        <div className="rounded-sm border border-desktop-border bg-desktop-surface px-3 py-2.5">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-desktop-text-secondary">Dependencies</div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {activeJob?.needs.length ? activeJob.needs.map((need) => (
-              <span key={`${activeJob.id}:${need}`} className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] text-slate-600">
+              <span key={`${activeJob.id}:${need}`} className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5 text-[10px] text-desktop-text-secondary">
                 {need}
               </span>
             )) : (
-              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] text-emerald-700">
+              <span className="rounded-full border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] px-2 py-0.5 text-[10px] text-[var(--dt-status-success)]">
                 root
               </span>
             )}
           </div>
         </div>
-        <div className="rounded-sm border border-slate-200 bg-white/90 px-3 py-2.5">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Source path</div>
-          <div className="mt-2 break-all font-mono text-[11px] text-slate-700">{flow.relativePath ?? "n/a"}</div>
+        <div className="rounded-sm border border-desktop-border bg-desktop-surface px-3 py-2.5">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-desktop-text-secondary">Source path</div>
+          <div className="mt-2 break-all font-mono text-[11px] text-desktop-text-primary">{flow.relativePath ?? "n/a"}</div>
         </div>
       </div>
 
-      <div className="mt-3 rounded-sm border border-slate-200 bg-white/90 px-3 py-2.5">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Trigger set</div>
+      <div className="mt-3 rounded-sm border border-desktop-border bg-desktop-surface px-3 py-2.5">
+        <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-desktop-text-secondary">Trigger set</div>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {normalizeGitHubWorkflowEventTokens(flow.event).map((token) => (
-            <span key={`${flow.id}:inspector:${token}`} className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] text-slate-600">
+            <span key={`${flow.id}:inspector:${token}`} className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-[10px] text-desktop-text-secondary">
               {token}
             </span>
           ))}
@@ -488,8 +488,8 @@ function JobInspector({
       </div>
 
       {!compactMode ? (
-        <details className="mt-3 rounded-sm border border-slate-200 bg-white/90 p-3">
-          <summary className="cursor-pointer list-none text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+        <details className="mt-3 rounded-sm border border-desktop-border bg-desktop-surface p-3">
+          <summary className="cursor-pointer list-none text-[10px] font-semibold uppercase tracking-[0.16em] text-desktop-text-secondary">
             Workflow YAML
           </summary>
           <div className="mt-3">
@@ -553,43 +553,43 @@ function WorkflowDetailDialog({
       <button
         type="button"
         aria-label="Close workflow detail"
-        className="absolute inset-0 bg-slate-950/28 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-desktop-bg-primary/70 backdrop-blur-[2px]"
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-label={`${flow.name} pipeline detail`}
-        className="relative z-10 flex max-h-[88vh] w-full max-w-[1360px] flex-col overflow-hidden rounded-sm border border-slate-200/80 bg-white/98 shadow-[0_16px_48px_rgba(15,23,42,0.18)]"
+        className="relative z-10 flex max-h-[88vh] w-full max-w-[1360px] flex-col overflow-hidden rounded-sm border border-desktop-border bg-desktop-surface shadow-[var(--dt-shadow-md)]"
       >
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200/80 px-4 py-3.5">
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-desktop-border px-4 py-3.5">
           <div className="min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">Pipeline detail</div>
-            <h3 className="mt-1 truncate text-[20px] font-semibold tracking-[-0.03em] text-slate-950">{flow.name}</h3>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-desktop-text-secondary">Pipeline detail</div>
+            <h3 className="mt-1 truncate text-[20px] font-semibold tracking-[-0.03em] text-desktop-text-primary">{flow.name}</h3>
             <div className="mt-1 flex flex-wrap gap-1.5">
               {normalizeGitHubWorkflowEventTokens(flow.event).map((token) => (
-                <span key={`${flow.id}:dialog:${token}`} className="rounded-full border border-slate-200 bg-white/90 px-2.5 py-1 text-[10px] text-slate-600">
+                <span key={`${flow.id}:dialog:${token}`} className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-[10px] text-desktop-text-secondary">
                   {token}
                 </span>
               ))}
               {flow.relativePath ? (
-                <span className="rounded-full border border-slate-200 bg-white/90 px-2.5 py-1 font-mono text-[10px] text-slate-500">
+                <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 font-mono text-[10px] text-desktop-text-secondary">
                   {flow.relativePath}
                 </span>
               ) : null}
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-slate-200 bg-white/90 px-2.5 py-1 text-[10px] text-slate-600">
+            <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-[10px] text-desktop-text-secondary">
               {flow.jobs.length} jobs
             </span>
-            <span className="rounded-full border border-slate-200 bg-white/90 px-2.5 py-1 text-[10px] text-slate-600">
+            <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-[10px] text-desktop-text-secondary">
               {summarizeStageCount(flow)} stages
             </span>
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-700"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-desktop-border bg-desktop-surface text-desktop-text-secondary transition-colors hover:border-desktop-border-light hover:text-desktop-text-primary"
             >
               <X className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}/>
             </button>
@@ -674,7 +674,7 @@ export function HarnessGitHubActionsFlowGallery({
         {categories.map((category) => {
           const expanded = activeExpandedCategories.has(category.key);
           return (
-            <section key={category.key} className="overflow-hidden rounded-sm border border-slate-200/80 bg-white/95">
+            <section key={category.key} className="overflow-hidden rounded-sm border border-desktop-border bg-desktop-surface">
               <button
                 type="button"
                 aria-label={`${category.key} category`}
@@ -700,15 +700,15 @@ export function HarnessGitHubActionsFlowGallery({
                     return next;
                   });
                 }}
-                className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors hover:bg-slate-50/80"
+                className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors hover:bg-desktop-surface-muted"
               >
                 <span className="flex min-w-0 items-center gap-2">
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-sm border border-slate-200 bg-white/90 text-slate-600">
+                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-sm border border-desktop-border bg-desktop-surface-muted text-desktop-text-secondary">
                     <CategoryIcon category={category.key} />
                   </span>
                   <span className="min-w-0">
-                    <span className="block truncate text-[12px] font-semibold text-slate-900">{category.key}</span>
-                    <span className="block truncate text-[10px] text-slate-500">
+                    <span className="block truncate text-[12px] font-semibold text-desktop-text-primary">{category.key}</span>
+                    <span className="block truncate text-[10px] text-desktop-text-secondary">
                       {category.flows.length > 0
                         ? `${category.flows.length} workflow${category.flows.length === 1 ? "" : "s"}`
                         : category.emptyHint}
@@ -716,11 +716,11 @@ export function HarnessGitHubActionsFlowGallery({
                   </span>
                 </span>
                 <span className="flex shrink-0 items-center gap-2">
-                  <span className="rounded-full border border-slate-200 bg-white/90 px-2 py-0.5 text-[10px] text-slate-600">
+                  <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5 text-[10px] text-desktop-text-secondary">
                     {category.flows.length}
                   </span>
                   <ArrowRight
-                    className={cx("h-4 w-4 text-slate-400 transition-transform", expanded && "rotate-90")}
+                    className={cx("h-4 w-4 text-desktop-text-tertiary transition-transform", expanded && "rotate-90")}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -730,7 +730,7 @@ export function HarnessGitHubActionsFlowGallery({
               </button>
 
               {expanded ? (
-                <div className="border-t border-slate-200/80 px-3 py-3">
+                <div className="border-t border-desktop-border px-3 py-3">
                   {category.flows.length > 0 ? (
                     <div className={cx("grid gap-2", compactMode ? "grid-cols-1" : "xl:grid-cols-2")}>
                       {category.flows.map((flow) => (
@@ -747,7 +747,7 @@ export function HarnessGitHubActionsFlowGallery({
                       ))}
                     </div>
                   ) : (
-                    <div className="rounded-sm border border-dashed border-slate-200 bg-white/70 px-4 py-8 text-center text-[12px] text-slate-500">
+                    <div className="rounded-sm border border-dashed border-desktop-border bg-desktop-surface-muted px-4 py-8 text-center text-[12px] text-desktop-text-secondary">
                       {category.emptyHint}
                     </div>
                   )}

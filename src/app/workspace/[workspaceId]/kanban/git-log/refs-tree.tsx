@@ -37,7 +37,7 @@ function TreeNode({ label, icon, children, defaultOpen = true, count }: TreeNode
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center gap-1 px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-[#1a1d29]"
+        className="flex w-full items-center gap-1 px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-desktop-text-secondary hover:bg-desktop-bg-active"
       >
         {open ? (
           <ChevronDown className="h-3 w-3 shrink-0" />
@@ -47,7 +47,7 @@ function TreeNode({ label, icon, children, defaultOpen = true, count }: TreeNode
         {icon}
         <span className="flex-1 text-left">{label}</span>
         {count != null && (
-          <span className="text-[10px] font-normal tabular-nums text-slate-400 dark:text-slate-500">
+          <span className="text-[10px] font-normal tabular-nums text-desktop-text-tertiary">
             {count}
           </span>
         )}
@@ -72,13 +72,13 @@ function RefItem({
       onClick={onClick}
       className={`flex w-full items-center gap-1.5 rounded px-2 py-0.75 text-left text-[11px] transition-colors ${
         active
-          ? "bg-amber-100 font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
-          : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-[#1a1d29]"
+          ? "bg-desktop-bg-active font-medium text-desktop-text-primary"
+          : "text-desktop-text-secondary hover:bg-desktop-bg-active"
       }`}
       title={gitRef.remote ? `${gitRef.remote}/${gitRef.name}` : gitRef.name}
     >
       {gitRef.isCurrent && (
-        <MapPin className="h-2.5 w-2.5 shrink-0 text-emerald-500" />
+        <MapPin className="h-2.5 w-2.5 shrink-0 text-[var(--dt-status-success)]" />
       )}
       <span className="truncate">
         {gitRefKey(gitRef)}
@@ -90,7 +90,7 @@ function RefItem({
 export function RefsTree({ refs, activeBranches, onToggleBranch }: RefsTreeProps) {
   if (!refs) {
     return (
-      <div className="px-2 py-4 text-center text-[11px] text-slate-400 dark:text-slate-500">
+      <div className="px-2 py-4 text-center text-[11px] text-desktop-text-tertiary">
         Loading…
       </div>
     );
@@ -112,7 +112,7 @@ export function RefsTree({ refs, activeBranches, onToggleBranch }: RefsTreeProps
       {headRef && (
         <TreeNode
           label="HEAD"
-          icon={<MapPin className="h-3 w-3 shrink-0 text-emerald-500" />}
+          icon={<MapPin className="h-3 w-3 shrink-0 text-[var(--dt-status-success)]" />}
           defaultOpen
         >
           <RefItem
@@ -126,7 +126,7 @@ export function RefsTree({ refs, activeBranches, onToggleBranch }: RefsTreeProps
       {/* Local branches */}
       <TreeNode
         label="Local"
-        icon={<GitBranch className="h-3 w-3 shrink-0 text-blue-500" />}
+        icon={<GitBranch className="h-3 w-3 shrink-0 text-[var(--dt-status-info)]" />}
         count={refs.local.length}
         defaultOpen
       >
@@ -143,7 +143,7 @@ export function RefsTree({ refs, activeBranches, onToggleBranch }: RefsTreeProps
       {/* Remote branches grouped by remote */}
       <TreeNode
         label="Remote"
-        icon={<Globe className="h-3 w-3 shrink-0 text-violet-500" />}
+        icon={<Globe className="h-3 w-3 shrink-0 text-[var(--dt-status-info)]" />}
         count={refs.remote.length}
         defaultOpen={false}
       >
@@ -151,7 +151,7 @@ export function RefsTree({ refs, activeBranches, onToggleBranch }: RefsTreeProps
           <TreeNode
             key={remote}
             label={remote}
-            icon={<Globe className="h-2.5 w-2.5 shrink-0 text-violet-400" />}
+            icon={<Globe className="h-2.5 w-2.5 shrink-0 text-[var(--dt-status-info)]" />}
             count={branches.length}
           >
             {branches.map((r) => (
@@ -170,7 +170,7 @@ export function RefsTree({ refs, activeBranches, onToggleBranch }: RefsTreeProps
       {refs.tags.length > 0 && (
         <TreeNode
           label="Tags"
-          icon={<Tag className="h-3 w-3 shrink-0 text-amber-500" />}
+          icon={<Tag className="h-3 w-3 shrink-0 text-[var(--dt-status-warning)]" />}
           count={refs.tags.length}
           defaultOpen={false}
         >

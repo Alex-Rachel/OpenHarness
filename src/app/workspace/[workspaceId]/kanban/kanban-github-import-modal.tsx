@@ -207,24 +207,24 @@ export function KanbanGitHubImportModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="flex max-h-[88vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-[#1c1f2e] dark:bg-[#12141c]">
+      <div className="flex max-h-[88vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-desktop-border bg-desktop-surface-elevated p-5 shadow-[var(--dt-shadow-lg)]">
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t.kanbanImport.title}</h3>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t.kanbanImport.description}</p>
+            <h3 className="text-lg font-semibold text-desktop-text-primary">{t.kanbanImport.title}</h3>
+            <p className="mt-1 text-sm text-desktop-text-secondary">{t.kanbanImport.description}</p>
           </div>
-          <button onClick={onClose} className="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+          <button onClick={onClose} className="text-sm text-desktop-text-tertiary hover:text-desktop-text-primary">
             {t.common.close}
           </button>
         </div>
 
-        <div className="mb-4 flex gap-1 border-b border-slate-200 dark:border-slate-700">
+        <div className="mb-4 flex gap-1 border-b border-desktop-border">
           <button
             type="button"
             onClick={() => setActiveTab("issues")}
             className={`px-4 py-2 text-sm font-medium transition-colors ${activeTab === "issues"
-              ? "border-b-2 border-amber-500 text-amber-600 dark:text-amber-400"
-              : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              ? "border-b-2 border-desktop-accent text-desktop-accent"
+              : "text-desktop-text-secondary hover:text-desktop-text-primary"
             }`}
           >
             {t.kanbanImport.tabIssues}
@@ -233,8 +233,8 @@ export function KanbanGitHubImportModal({
             type="button"
             onClick={() => setActiveTab("pulls")}
             className={`px-4 py-2 text-sm font-medium transition-colors ${activeTab === "pulls"
-              ? "border-b-2 border-purple-500 text-purple-600 dark:text-purple-400"
-              : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              ? "border-b-2 border-desktop-accent text-desktop-accent"
+              : "text-desktop-text-secondary hover:text-desktop-text-primary"
             }`}
           >
             {t.kanbanImport.tabPulls}
@@ -242,13 +242,13 @@ export function KanbanGitHubImportModal({
         </div>
 
         <div className="mb-4 flex flex-wrap items-center gap-3">
-          <label className="text-xs font-medium text-slate-500 dark:text-slate-400">
+          <label className="text-xs font-medium text-desktop-text-secondary">
             {t.kanbanImport.repository}
           </label>
           <select
             value={selectedCodebaseId}
             onChange={(event) => setSelectedCodebaseId(event.target.value)}
-            className="min-w-[220px] rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-200"
+            className="min-w-[220px] rounded-lg border border-desktop-border bg-desktop-surface px-3 py-2 text-sm text-desktop-text-primary focus:border-desktop-accent focus:outline-none focus:ring-2 focus:ring-[var(--dt-focus-ring)]/25"
           >
             {codebases.map((codebase) => (
               <option key={codebase.id} value={codebase.id}>
@@ -257,20 +257,20 @@ export function KanbanGitHubImportModal({
             ))}
           </select>
           {currentRepo && (
-            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600 dark:bg-[#191c28] dark:text-slate-300">
+            <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-xs text-desktop-text-secondary">
               {currentRepo}
             </span>
           )}
           <button
             type="button"
             onClick={() => setReloadNonce((current) => current + 1)}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-[#191c28]"
+            className="rounded-lg border border-desktop-border px-3 py-2 text-xs text-desktop-text-secondary hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
           >
             {t.common.refresh}
           </button>
         </div>
 
-        <div className="mb-3 flex items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+        <div className="mb-3 flex items-center justify-between gap-3 text-xs text-desktop-text-secondary">
           <div>
             {currentCount > 0 ? `${currentCount} ${currentItemsLoadedText}` : currentNoItemsText}
           </div>
@@ -279,14 +279,14 @@ export function KanbanGitHubImportModal({
               <button
                 type="button"
                 onClick={() => setSelectedItemIds(currentSelectableIds)}
-                className="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300"
+                className="text-desktop-accent hover:text-desktop-accent-strong"
               >
                 {t.kanbanImport.selectAll}
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedItemIds([])}
-                className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                className="text-desktop-text-secondary hover:text-desktop-text-primary"
               >
                 {t.kanbanImport.clearSelection}
               </button>
@@ -294,34 +294,34 @@ export function KanbanGitHubImportModal({
           )}
         </div>
 
-        <label className="mb-3 flex items-start gap-3 rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 dark:border-slate-700 dark:text-slate-200">
+        <label className="mb-3 flex items-start gap-3 rounded-xl border border-desktop-border bg-desktop-surface-muted px-4 py-3 text-sm text-desktop-text-primary">
           <input
             type="checkbox"
             checked={mergeAsSingleCard}
             disabled={submitting}
             onChange={(event) => setMergeAsSingleCard(event.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded border-slate-300"
+            className="mt-0.5 h-4 w-4 rounded border-desktop-border text-desktop-accent focus:ring-[var(--dt-focus-ring)]"
           />
           <span className="min-w-0">
             <span className="block font-medium">{t.kanbanImport.mergeAsSingleCard}</span>
-            <span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">
+            <span className="mt-1 block text-xs text-desktop-text-secondary">
               {t.kanbanImport.mergeAsSingleCardHint}
             </span>
           </span>
         </label>
 
-        <div className="min-h-0 flex-1 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700">
+        <div className="min-h-0 flex-1 overflow-y-auto rounded-xl border border-desktop-border">
           {loading ? (
-            <div className="flex h-40 items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+            <div className="flex h-40 items-center justify-center text-sm text-desktop-text-secondary">
               {currentLoadingText}
             </div>
           ) : error ? (
-            <div className="flex h-40 items-center justify-center px-6 text-center text-sm text-rose-600 dark:text-rose-400">
+            <div className="flex h-40 items-center justify-center px-6 text-center text-sm text-desktop-danger-text">
               {error}
             </div>
           ) : activeTab === "issues" ? (
             selectableIssues.length === 0 ? (
-              <div className="flex h-40 items-center justify-center px-6 text-center text-sm text-slate-500 dark:text-slate-400">
+              <div className="flex h-40 items-center justify-center px-6 text-center text-sm text-desktop-text-secondary">
                 {t.kanbanImport.noIssues}
               </div>
             ) : (
@@ -333,8 +333,8 @@ export function KanbanGitHubImportModal({
                     <label
                       key={issue.id}
                       className={`flex gap-3 px-4 py-3 transition-colors ${imported
-                        ? "bg-slate-50/70 dark:bg-[#161925]"
-                        : "hover:bg-slate-50 dark:hover:bg-[#161925]"
+                        ? "bg-desktop-surface-muted"
+                        : "hover:bg-desktop-surface-muted"
                       }`}
                     >
                       <input
@@ -349,7 +349,7 @@ export function KanbanGitHubImportModal({
                             return current.filter((id) => id !== issue.id);
                           });
                         }}
-                        className="mt-1 h-4 w-4 rounded border-slate-300"
+                        className="mt-1 h-4 w-4 rounded border-desktop-border text-desktop-accent focus:ring-[var(--dt-focus-ring)]"
                       />
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
@@ -357,30 +357,30 @@ export function KanbanGitHubImportModal({
                             href={issue.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-sm font-medium text-slate-900 hover:text-amber-600 dark:text-slate-100 dark:hover:text-amber-300"
+                            className="text-sm font-medium text-desktop-text-primary hover:text-desktop-accent"
                           >
                             #{issue.number} {issue.title}
                           </a>
                           <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${issue.state === "open"
-                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300"
-                            : "bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                            ? "border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
+                            : "border border-desktop-border bg-desktop-surface-muted text-desktop-text-secondary"
                           }`}>
                             {issue.state === "open" ? t.kanbanImport.stateOpen : t.kanbanImport.stateClosed}
                           </span>
                           {imported && (
-                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+                            <span className="rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-2 py-0.5 text-[10px] font-medium text-[var(--dt-status-warning)]">
                               {t.kanbanImport.alreadyImported}
                             </span>
                           )}
                         </div>
                         {issue.body && (
-                          <p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-400">
+                          <p className="mt-1 line-clamp-2 text-sm text-desktop-text-secondary">
                             {issue.body}
                           </p>
                         )}
-                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-desktop-text-secondary">
                           {issue.labels.map((label) => (
-                            <span key={label} className="rounded-full bg-slate-100 px-2 py-0.5 dark:bg-[#191c28]">
+                            <span key={label} className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5">
                               {label}
                             </span>
                           ))}
@@ -395,7 +395,7 @@ export function KanbanGitHubImportModal({
             )
           ) : (
             selectablePulls.length === 0 ? (
-              <div className="flex h-40 items-center justify-center px-6 text-center text-sm text-slate-500 dark:text-slate-400">
+              <div className="flex h-40 items-center justify-center px-6 text-center text-sm text-desktop-text-secondary">
                 {t.kanbanImport.noPulls}
               </div>
             ) : (
@@ -407,8 +407,8 @@ export function KanbanGitHubImportModal({
                     <label
                       key={pull.id}
                       className={`flex gap-3 px-4 py-3 transition-colors ${imported
-                        ? "bg-slate-50/70 dark:bg-[#161925]"
-                        : "hover:bg-slate-50 dark:hover:bg-[#161925]"
+                        ? "bg-desktop-surface-muted"
+                        : "hover:bg-desktop-surface-muted"
                       }`}
                     >
                       <input
@@ -423,7 +423,7 @@ export function KanbanGitHubImportModal({
                             return current.filter((id) => id !== pull.id);
                           });
                         }}
-                        className="mt-1 h-4 w-4 rounded border-slate-300"
+                        className="mt-1 h-4 w-4 rounded border-desktop-border text-desktop-accent focus:ring-[var(--dt-focus-ring)]"
                       />
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
@@ -431,46 +431,46 @@ export function KanbanGitHubImportModal({
                             href={pull.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-sm font-medium text-slate-900 hover:text-purple-600 dark:text-slate-100 dark:hover:text-purple-300"
+                            className="text-sm font-medium text-desktop-text-primary hover:text-desktop-accent"
                           >
                             #{pull.number} {pull.title}
                           </a>
                           {pull.draft && (
-                            <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                            <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5 text-[10px] font-medium text-desktop-text-secondary">
                               {t.kanbanImport.draftBadge}
                             </span>
                           )}
                           {pull.mergedAt ? (
-                            <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-medium text-purple-700 dark:bg-purple-900/20 dark:text-purple-300">
+                            <span className="rounded-full border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-2 py-0.5 text-[10px] font-medium text-[var(--dt-status-info)]">
                               {t.kanbanImport.mergedBadge}
                             </span>
                           ) : (
                             <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${pull.state === "open"
-                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300"
-                              : "bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                              ? "border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
+                              : "border border-desktop-border bg-desktop-surface-muted text-desktop-text-secondary"
                             }`}>
                               {pull.state === "open" ? t.kanbanImport.stateOpen : t.kanbanImport.stateClosed}
                             </span>
                           )}
                           {imported && (
-                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+                            <span className="rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-2 py-0.5 text-[10px] font-medium text-[var(--dt-status-warning)]">
                               {t.kanbanImport.alreadyImported}
                             </span>
                           )}
                         </div>
                         {pull.body && (
-                          <p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-400">
+                          <p className="mt-1 line-clamp-2 text-sm text-desktop-text-secondary">
                             {pull.body}
                           </p>
                         )}
-                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-desktop-text-secondary">
                           {pull.headRef && pull.baseRef && (
                             <span className="font-mono">
                               {pull.headRef} {t.kanbanImport.branchInfo} {pull.baseRef}
                             </span>
                           )}
                           {pull.labels.map((label) => (
-                            <span key={label} className="rounded-full bg-slate-100 px-2 py-0.5 dark:bg-[#191c28]">
+                            <span key={label} className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5">
                               {label}
                             </span>
                           ))}
@@ -490,7 +490,7 @@ export function KanbanGitHubImportModal({
           <button
             onClick={onClose}
             disabled={submitting}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 dark:border-slate-700 dark:text-slate-300"
+            className="rounded-lg border border-desktop-border px-4 py-2 text-sm text-desktop-text-secondary hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
           >
             {t.common.cancel}
           </button>
@@ -519,10 +519,7 @@ export function KanbanGitHubImportModal({
               }
             }}
             disabled={!canImport || submitting}
-            className={`rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50 ${activeTab === "pulls"
-              ? "bg-purple-500 hover:bg-purple-600"
-              : "bg-amber-500 hover:bg-amber-600"
-            }`}
+            className="rounded-lg bg-desktop-accent px-4 py-2 text-sm font-medium text-desktop-accent-text hover:bg-desktop-accent-strong disabled:opacity-50"
           >
             {submitting ? t.kanbanImport.importing : t.kanbanImport.importSelected}
           </button>

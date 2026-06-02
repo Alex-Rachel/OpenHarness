@@ -12,6 +12,6 @@ export const dangerGhostButtonClassName =
   "transition-colors text-[var(--danger-fg)] hover:bg-[var(--danger-subtle-hover)] hover:text-[var(--danger-fg-strong)]";
 
 export const dangerGhostIconButtonClassName =
-  "text-slate-400 transition-colors hover:bg-[var(--danger-subtle-hover)] hover:text-[var(--danger-fg)]";
+  "text-desktop-text-tertiary transition-colors hover:bg-[var(--danger-subtle-hover)] hover:text-[var(--danger-fg)]";
 
 export const dangerRequiredMarkClassName = "text-[var(--danger-ring)]";

@@ -11,7 +11,7 @@ export function LanguageSwitcher() {
   const { locale, setLocale } = useTranslation();
 
   return (
-    <div className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-700 dark:bg-[#111423]">
+    <div className="flex items-center gap-0.5 rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface-muted p-0.5">
       {SUPPORTED_LOCALES.map((loc) => (
         <button
           key={loc}
@@ -19,8 +19,8 @@ export function LanguageSwitcher() {
           onClick={() => setLocale(loc)}
           className={`rounded-md px-2 py-1 text-[10px] font-medium transition-colors ${
             locale === loc
-              ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-slate-100"
-              : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              ? "bg-desktop-surface text-desktop-text-primary shadow-[var(--dt-shadow-sm)]"
+              : "text-desktop-text-secondary hover:text-desktop-text-primary"
           }`}
         >
           {LOCALE_LABELS[loc]}

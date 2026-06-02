@@ -254,7 +254,7 @@ export function KanbanCodebaseModal({
             </button>
           </div>
           {addError ? (
-            <div className="mt-2 text-[11px] text-rose-500">{addError}</div>
+            <div className="mt-2 text-[11px] text-desktop-danger-text">{addError}</div>
           ) : null}
         </div>
 
@@ -265,11 +265,11 @@ export function KanbanCodebaseModal({
             <aside className="flex min-h-0 flex-col border-b border-desktop-border bg-desktop-bg-secondary/60 xl:border-b-0 xl:border-r">
               {repoHealth && healthIssuesCount > 0 ? (
                 <div className="border-b border-desktop-border px-3 py-2.5">
-                  <div className="flex items-start gap-2 rounded-sm border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-200">
-                    <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-300" />
+                  <div className="flex items-start gap-2 rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-3 py-2 text-[11px] text-[var(--dt-status-warning)]">
+                    <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                     <div className="min-w-0">
-                      <div className="font-medium text-amber-100">{t.kanbanModals.workspaceHealthTitle}</div>
-                      <div className="mt-0.5 text-amber-200/80">
+                      <div className="font-medium">{t.kanbanModals.workspaceHealthTitle}</div>
+                      <div className="mt-0.5 opacity-80">
                         {`${repoHealth.missingRepoTasks} ${t.kanban.missing} · ${repoHealth.cwdMismatchTasks} ${t.kanban.sessionMismatch}`}
                       </div>
                     </div>
@@ -318,7 +318,7 @@ export function KanbanCodebaseModal({
                             </div>
                           </div>
                           {codebase.isDefault ? (
-                            <span className="rounded-sm border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-300">
+                            <span className="rounded-sm border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--dt-status-success)]">
                               {t.workspace.defaultLabel}
                             </span>
                           ) : null}
@@ -337,11 +337,11 @@ export function KanbanCodebaseModal({
           <section className="min-h-0 overflow-y-auto bg-desktop-bg-primary">
             {!showRepositoryRail && repoHealth && healthIssuesCount > 0 ? (
               <div className="border-b border-desktop-border px-3 py-2.5">
-                <div className="flex items-start gap-2 rounded-sm border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-200">
-                  <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-300" />
+                <div className="flex items-start gap-2 rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-3 py-2 text-[11px] text-[var(--dt-status-warning)]">
+                  <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                   <div className="min-w-0">
-                    <div className="font-medium text-amber-100">{t.kanbanModals.workspaceHealthTitle}</div>
-                    <div className="mt-0.5 text-amber-200/80">
+                    <div className="font-medium">{t.kanbanModals.workspaceHealthTitle}</div>
+                    <div className="mt-0.5 opacity-80">
                       {`${repoHealth.missingRepoTasks} ${t.kanban.missing} · ${repoHealth.cwdMismatchTasks} ${t.kanban.sessionMismatch}`}
                     </div>
                   </div>
@@ -378,28 +378,28 @@ export function KanbanCodebaseModal({
                     />
                   </div>
                   {editError ? (
-                    <div className="text-[11px] text-rose-500">{editError}</div>
+                    <div className="text-[11px] text-desktop-danger-text">{editError}</div>
                   ) : null}
                   {recloneError ? (
-                    <div className="text-[11px] text-rose-500">{recloneError}</div>
+                    <div className="text-[11px] text-desktop-danger-text">{recloneError}</div>
                   ) : null}
                   {editSaving ? (
-                    <div className="text-[11px] text-amber-400">{t.kanbanModals.updatingRepo}</div>
+                    <div className="text-[11px] text-[var(--dt-status-warning)]">{t.kanbanModals.updatingRepo}</div>
                   ) : null}
 
                   {codebases.length > 1 && editRepoSelection ? (
-                    <div className="rounded-sm border border-amber-500/30 bg-amber-500/10 px-3 py-3">
+                    <div className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-3 py-3">
                       <div className="flex items-start gap-2">
-                        <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"/>
+                        <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--dt-status-warning)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"/>
                         <div className="flex-1">
-                          <p className="text-[11px] text-amber-100/90">
+                          <p className="text-[11px] text-[var(--dt-status-warning)]">
                             {`${codebases.length} ${t.kanbanModals.replaceAllHint}`}
                           </p>
                           <button
                             type="button"
                             onClick={() => setShowReplaceAllConfirm(true)}
                             disabled={editSaving || replacingAll}
-                            className="mt-2 inline-flex items-center rounded-sm border border-amber-500/30 px-2 py-1 text-[11px] font-medium text-amber-200 transition hover:bg-amber-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="mt-2 inline-flex items-center rounded-sm border border-[var(--dt-status-warning)]/25 px-2 py-1 text-[11px] font-medium text-[var(--dt-status-warning)] transition hover:bg-[var(--dt-status-warning-subtle)] disabled:cursor-not-allowed disabled:opacity-50"
                           >
                             {t.kanbanModals.replaceAllRepos}
                           </button>
@@ -455,7 +455,7 @@ export function KanbanCodebaseModal({
                   hint={t.kanbanModals.branchesHint}
                 >
                   {branchActionError ? (
-                    <div className="rounded-sm border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-[11px] text-rose-300">
+                    <div className="rounded-sm border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2 text-[11px] text-desktop-danger-text">
                       {branchActionError}
                     </div>
                   ) : null}
@@ -477,7 +477,7 @@ export function KanbanCodebaseModal({
                                 type="button"
                                 onClick={() => void handleDeleteIssueBranches(removableIssueBranches)}
                                 disabled={removableIssueBranches.some((branch) => deletingBranchSet.has(branch))}
-                                className="rounded-sm border border-rose-500/30 px-2 py-1 text-[10px] font-medium text-rose-300 transition hover:bg-rose-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="rounded-sm border border-desktop-danger-border px-2 py-1 text-[10px] font-medium text-desktop-danger-text transition hover:bg-desktop-danger-subtle disabled:cursor-not-allowed disabled:opacity-50"
                               >
                                 {removableIssueBranches.some((branch) => deletingBranchSet.has(branch))
                                   ? t.kanbanModals.removing
@@ -533,7 +533,7 @@ export function KanbanCodebaseModal({
                   hint={t.kanbanModals.worktreeHint}
                 >
                   {worktreeActionError ? (
-                    <div className="rounded-sm border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-[11px] text-rose-300">
+                    <div className="rounded-sm border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2 text-[11px] text-desktop-danger-text">
                       {worktreeActionError}
                     </div>
                   ) : null}
@@ -602,7 +602,7 @@ export function KanbanCodebaseModal({
                                     <span className="font-mono text-[11px] text-desktop-text-primary">{worktree.branch}</span>
                                     <span className="text-[10px] text-desktop-text-secondary">{t.kanban.baseLabel} {worktree.baseBranch}</span>
                                     {linkedTasks.length > 0 ? (
-                                      <span className="rounded-sm border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 text-[10px] font-medium text-sky-300">
+                                      <span className="rounded-sm border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--dt-status-info)]">
                                         {linkedTasks.length} {t.kanbanModals.linkedTasks}{linkedTasks.length > 1 ? "s" : ""}
                                       </span>
                                     ) : null}
@@ -671,10 +671,10 @@ export function KanbanCodebaseModal({
                       </button>
                     </div>
                     {recloneError ? (
-                      <div className="text-[11px] text-rose-500">{recloneError}</div>
+                      <div className="text-[11px] text-desktop-danger-text">{recloneError}</div>
                     ) : null}
                     {recloneSuccess ? (
-                      <div className="text-[11px] text-emerald-400">{recloneSuccess}</div>
+                      <div className="text-[11px] text-[var(--dt-status-success)]">{recloneSuccess}</div>
                     ) : null}
                   </InspectorSection>
                 ) : null}
@@ -697,7 +697,7 @@ function CompactStat({
   tone?: "neutral" | "warning";
 }) {
   const toneClassName = tone === "warning"
-    ? "border-amber-500/30 bg-amber-500/10 text-amber-200"
+    ? "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]"
     : "border-desktop-border bg-desktop-bg-secondary text-desktop-text-secondary";
 
   return (
@@ -791,7 +791,7 @@ function toolbarButtonClassName(
   const toneClassName = tone === "primary"
     ? "border-desktop-accent bg-desktop-accent text-white hover:brightness-110"
     : tone === "danger"
-      ? "border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/15"
+      ? "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text hover:bg-desktop-danger-subtle"
       : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary hover:bg-desktop-bg-active hover:text-desktop-text-primary";
 
   return [baseClassName, toneClassName, extraClassName].filter(Boolean).join(" ");
@@ -800,16 +800,16 @@ function toolbarButtonClassName(
 function commandIconButtonClassName(tone: "default" | "danger" = "default"): string {
   const baseClassName = "inline-flex h-8 w-8 items-center justify-center rounded-sm transition";
   const toneClassName = tone === "danger"
-    ? "text-rose-300 hover:bg-rose-500/10 hover:text-rose-200"
+    ? "text-desktop-danger-text hover:bg-desktop-danger-subtle hover:text-desktop-danger-text"
     : "text-desktop-text-secondary hover:bg-desktop-bg-active hover:text-desktop-text-primary";
 
   return `${baseClassName} ${toneClassName}`;
 }
 
 function getWorktreeStatusTone(status: WorktreeInfo["status"]): string {
-  if (status === "active") return "bg-emerald-500/15 text-emerald-300";
-  if (status === "creating") return "bg-amber-500/15 text-amber-300";
-  return "bg-rose-500/15 text-rose-300";
+  if (status === "active") return "bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
+  if (status === "creating") return "bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
+  return "bg-desktop-danger-subtle text-desktop-danger-text";
 }
 
 function compareBranches(
@@ -867,18 +867,18 @@ function BranchChip({
     <div
       className={`inline-flex max-w-full items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] ${
         issueBranch
-          ? "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-300"
-          : "border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-[#12141c] dark:text-slate-300"
+          ? "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]"
+          : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary"
       }`}
     >
       <span className="truncate font-mono">{branch}</span>
       {isCurrent && (
-        <span className="rounded-full bg-blue-100 px-1.5 py-0.5 text-[9px] font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
+        <span className="rounded-full bg-[var(--dt-status-info-subtle)] px-1.5 py-0.5 text-[9px] font-medium text-[var(--dt-status-info)]">
           {labels.currentBranchLabel}
         </span>
       )}
       {hasWorktree && (
-        <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
+        <span className="rounded-full bg-[var(--dt-status-success-subtle)] px-1.5 py-0.5 text-[9px] font-medium text-[var(--dt-status-success)]">
           {labels.worktreeBranchLabel}
         </span>
       )}
@@ -887,7 +887,7 @@ function BranchChip({
           type="button"
           onClick={onDelete}
           disabled={deleting}
-          className="rounded-full p-0.5 text-rose-500 transition hover:bg-rose-100 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-rose-900/20 dark:hover:text-rose-300"
+          className="rounded-full p-0.5 text-desktop-danger-text transition hover:bg-desktop-danger-subtle disabled:cursor-not-allowed disabled:opacity-50"
           aria-label={labels.removeBranchLabel.replace("{branch}", branch)}
           title={labels.removeBranchLabel.replace("{branch}", branch)}
         >
@@ -917,37 +917,37 @@ export function KanbanDeleteCodebaseModal({
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 px-4 animate-in fade-in duration-150">
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-[#1c1f2e] dark:bg-[#12141c] animate-in zoom-in-95 duration-150">
+      <div className="relative w-full max-w-md overflow-hidden rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-bg-primary shadow-[var(--dt-shadow-lg)] animate-in zoom-in-95 duration-150">
         <div className="p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
-              <TriangleAlert className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"/>
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-desktop-danger-subtle">
+              <TriangleAlert className="h-6 w-6 text-desktop-danger-text" fill="none" viewBox="0 0 24 24" stroke="currentColor"/>
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t.kanbanModals.removeRepoTitle}</h3>
-              <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                {t.kanbanModals.removeRepoConfirm} <span className="font-medium text-slate-900 dark:text-slate-100">&quot;{selectedCodebase.label ?? selectedCodebase.repoPath.split("/").pop()}&quot;</span>?
+              <h3 className="text-lg font-semibold text-desktop-text-primary">{t.kanbanModals.removeRepoTitle}</h3>
+              <p className="mt-2 text-sm text-desktop-text-secondary">
+                {t.kanbanModals.removeRepoConfirm} <span className="font-medium text-desktop-text-primary">&quot;{selectedCodebase.label ?? selectedCodebase.repoPath.split("/").pop()}&quot;</span>?
               </p>
-              <p className="mt-2 text-xs text-slate-500 dark:text-slate-500">
+              <p className="mt-2 text-xs text-desktop-text-tertiary">
                 {t.kanbanModals.removeRepoHint}
               </p>
             </div>
           </div>
           {editError && (
-            <div className="mt-3 text-xs text-rose-600 dark:text-rose-400">{editError}</div>
+            <div className="mt-3 text-xs text-desktop-danger-text">{editError}</div>
           )}
           <div className="mt-6 flex gap-3">
             <button
               onClick={onCancel}
               disabled={deletingCodebase}
-              className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300 dark:hover:bg-[#191c28]"
+              className="flex-1 rounded-sm border border-desktop-border bg-desktop-bg-primary px-4 py-2 text-sm font-medium text-desktop-text-secondary hover:bg-desktop-bg-active disabled:opacity-50"
             >
               {t.common.cancel}
             </button>
             <button
               onClick={() => void onConfirm()}
               disabled={deletingCodebase}
-              className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 dark:bg-red-500 dark:hover:bg-red-600"
+              className="flex-1 rounded-sm bg-desktop-danger-solid px-4 py-2 text-sm font-medium text-desktop-danger-on-solid hover:brightness-95 disabled:opacity-50"
             >
               {deletingCodebase ? t.kanbanModals.removing : t.common.remove}
             </button>
@@ -979,41 +979,41 @@ export function KanbanReplaceAllReposModal({
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 px-4 animate-in fade-in duration-150">
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-[#1c1f2e] dark:bg-[#12141c] animate-in zoom-in-95 duration-150">
+      <div className="relative w-full max-w-md overflow-hidden rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-bg-primary shadow-[var(--dt-shadow-lg)] animate-in zoom-in-95 duration-150">
         <div className="p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/20">
-              <RefreshCw className="h-6 w-6 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"/>
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--dt-status-warning-subtle)]">
+              <RefreshCw className="h-6 w-6 text-[var(--dt-status-warning)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"/>
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t.kanbanModals.replaceAllTitle}</h3>
-              <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                This will update all <span className="font-medium text-slate-900 dark:text-slate-100">{codebasesCount} {t.kanbanModals.replaceAllDesc}</span> in this workspace to use:
+              <h3 className="text-lg font-semibold text-desktop-text-primary">{t.kanbanModals.replaceAllTitle}</h3>
+              <p className="mt-2 text-sm text-desktop-text-secondary">
+                This will update all <span className="font-medium text-desktop-text-primary">{codebasesCount} {t.kanbanModals.replaceAllDesc}</span> in this workspace to use:
               </p>
-              <div className="mt-2 rounded-lg bg-slate-50 p-2 dark:bg-[#0d1018]">
-                <div className="text-sm font-medium text-slate-700 dark:text-slate-300">{editRepoSelection.name}</div>
-                <div className="truncate font-mono text-xs text-slate-500 dark:text-slate-400">{editRepoSelection.path}</div>
+              <div className="mt-2 rounded-sm bg-desktop-bg-secondary p-2">
+                <div className="text-sm font-medium text-desktop-text-primary">{editRepoSelection.name}</div>
+                <div className="truncate font-mono text-xs text-desktop-text-secondary">{editRepoSelection.path}</div>
               </div>
-              <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
+              <p className="mt-2 text-xs text-[var(--dt-status-warning)]">
                 {t.kanbanModals.replaceAllUseful}
               </p>
             </div>
           </div>
           {recloneError && (
-            <div className="mt-3 text-xs text-rose-600 dark:text-rose-400">{recloneError}</div>
+            <div className="mt-3 text-xs text-desktop-danger-text">{recloneError}</div>
           )}
           <div className="mt-6 flex gap-3">
             <button
               onClick={onCancel}
               disabled={replacingAll}
-              className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300 dark:hover:bg-[#191c28]"
+              className="flex-1 rounded-sm border border-desktop-border bg-desktop-bg-primary px-4 py-2 text-sm font-medium text-desktop-text-secondary hover:bg-desktop-bg-active disabled:opacity-50"
             >
               {t.common.cancel}
             </button>
             <button
               onClick={() => void onConfirm()}
               disabled={replacingAll}
-              className="flex-1 rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+              className="flex-1 rounded-sm bg-desktop-accent px-4 py-2 text-sm font-medium text-white hover:brightness-110 disabled:opacity-50"
             >
               {replacingAll ? t.kanbanModals.replacing : t.kanbanModals.replaceAll}
             </button>
@@ -1041,19 +1041,19 @@ export function KanbanDeleteTaskModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 animate-in fade-in duration-150">
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-[#1c1f2e] dark:bg-[#12141c] animate-in zoom-in-95 duration-150">
+      <div className="relative w-full max-w-md overflow-hidden rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-bg-primary shadow-[var(--dt-shadow-lg)] animate-in zoom-in-95 duration-150">
         <div className="p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
-              <TriangleAlert className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"/>
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-desktop-danger-subtle">
+              <TriangleAlert className="h-6 w-6 text-desktop-danger-text" fill="none" viewBox="0 0 24 24" stroke="currentColor"/>
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t.kanbanModals.deleteTaskTitle}</h3>
-              <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                {t.kanbanModals.deleteTaskConfirm} <span className="font-medium text-slate-900 dark:text-slate-100">&quot;{deleteConfirmTask.title}&quot;</span>?
+              <h3 className="text-lg font-semibold text-desktop-text-primary">{t.kanbanModals.deleteTaskTitle}</h3>
+              <p className="mt-2 text-sm text-desktop-text-secondary">
+                {t.kanbanModals.deleteTaskConfirm} <span className="font-medium text-desktop-text-primary">&quot;{deleteConfirmTask.title}&quot;</span>?
               </p>
               {deleteConfirmTask.githubNumber && (
-                <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
+                <p className="mt-2 text-xs text-[var(--dt-status-warning)]">
                   {t.kanbanModals.deleteTaskGithubNote} #{deleteConfirmTask.githubNumber} will remain unchanged.
                 </p>
               )}
@@ -1063,14 +1063,14 @@ export function KanbanDeleteTaskModal({
             <button
               onClick={onCancel}
               disabled={isDeleting}
-              className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300 dark:hover:bg-[#191c28]"
+              className="flex-1 rounded-sm border border-desktop-border bg-desktop-bg-primary px-4 py-2 text-sm font-medium text-desktop-text-secondary hover:bg-desktop-bg-active disabled:opacity-50"
             >
               {t.common.cancel}
             </button>
             <button
               onClick={() => void onConfirm()}
               disabled={isDeleting}
-              className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 dark:bg-red-500 dark:hover:bg-red-600"
+              className="flex-1 rounded-sm bg-desktop-danger-solid px-4 py-2 text-sm font-medium text-desktop-danger-on-solid hover:brightness-95 disabled:opacity-50"
             >
               {isDeleting ? t.kanbanModals.deleting : t.common.delete}
             </button>
@@ -1132,35 +1132,35 @@ export function KanbanMoveBlockedModal({
       <div
         role="dialog"
         aria-modal="true"
-        className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-[#1c1f2e] dark:bg-[#12141c] animate-in zoom-in-95 duration-150"
+        className="relative w-full max-w-lg overflow-hidden rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-bg-primary shadow-[var(--dt-shadow-lg)] animate-in zoom-in-95 duration-150"
       >
         <div className="p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/20">
-              <TriangleAlert className="h-6 w-6 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"/>
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--dt-status-warning-subtle)]">
+              <TriangleAlert className="h-6 w-6 text-[var(--dt-status-warning)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"/>
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t.kanbanModals.moveBlockedTitle}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">{blocked.message}</p>
+              <h3 className="text-lg font-semibold text-desktop-text-primary">{t.kanbanModals.moveBlockedTitle}</h3>
+              <p className="mt-2 text-sm leading-6 text-desktop-text-secondary">{blocked.message}</p>
               {blocked.storyReadiness ? (
-                <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50/70 px-3 py-3 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-900/10 dark:text-amber-100">
+                <div className="mt-3 rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-3 py-3 text-sm text-[var(--dt-status-warning)]">
                   <div className="font-medium">
                     {t.kanbanModals.moveBlockedStoryReadinessHint}
                   </div>
-                  <div className="mt-2 text-xs leading-5 text-amber-800 dark:text-amber-200">
+                  <div className="mt-2 text-xs leading-5">
                     {requiredLabels.length > 0
                       ? `${t.kanbanDetail.requiredForNextMove}: ${requiredLabels.join(", ")}`
                       : t.kanbanDetail.gateNotConfigured}
                   </div>
-                  <div className="mt-1 text-xs leading-5 text-amber-800 dark:text-amber-200">
+                  <div className="mt-1 text-xs leading-5">
                     {fallbackMissingLabels.length > 0
                       ? `${t.kanbanDetail.missingFields}: ${fallbackMissingLabels.join(", ")}`
                       : t.kanbanDetail.allRequiredFields}
                   </div>
                 </div>
               ) : null}
-              <p className="mt-3 text-xs leading-5 text-amber-700 dark:text-amber-300">{t.kanbanModals.moveBlockedToolHint}</p>
-              <p className="mt-2 text-xs leading-5 text-amber-700 dark:text-amber-300">{t.kanbanModals.moveBlockedHint}</p>
+              <p className="mt-3 text-xs leading-5 text-[var(--dt-status-warning)]">{t.kanbanModals.moveBlockedToolHint}</p>
+              <p className="mt-2 text-xs leading-5 text-[var(--dt-status-warning)]">{t.kanbanModals.moveBlockedHint}</p>
             </div>
           </div>
           <div className="mt-6 flex justify-end gap-3">
@@ -1168,7 +1168,7 @@ export function KanbanMoveBlockedModal({
               <button
                 onClick={onDelegateFix}
                 disabled={isDelegating}
-                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300 dark:bg-amber-500 dark:text-slate-950 dark:hover:bg-amber-400 dark:disabled:bg-slate-700 dark:disabled:text-slate-300"
+                className="rounded-sm bg-desktop-accent px-4 py-2 text-sm font-medium text-white hover:brightness-110 disabled:cursor-not-allowed disabled:bg-desktop-bg-active disabled:text-desktop-text-tertiary"
               >
                 {isDelegating ? t.kanbanModals.moveBlockedDelegating : t.kanbanModals.moveBlockedDelegate}
               </button>
@@ -1176,14 +1176,14 @@ export function KanbanMoveBlockedModal({
             {onOpenCard ? (
               <button
                 onClick={onOpenCard}
-                className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-800 hover:bg-amber-100 dark:border-amber-900/50 dark:bg-amber-900/20 dark:text-amber-200 dark:hover:bg-amber-900/30"
+                className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-4 py-2 text-sm font-medium text-[var(--dt-status-warning)] hover:brightness-95"
               >
                 {t.kanban.openCard}
               </button>
             ) : null}
             <button
               onClick={onClose}
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300 dark:hover:bg-[#191c28]"
+              className="rounded-sm border border-desktop-border bg-desktop-bg-primary px-4 py-2 text-sm font-medium text-desktop-text-secondary hover:bg-desktop-bg-active"
             >
               {t.common.dismiss}
             </button>

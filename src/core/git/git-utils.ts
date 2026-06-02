@@ -18,6 +18,7 @@ import { LRUCache } from "lru-cache";
 
 import { getServerBridge } from "@/core/platform";
 import { gitExec } from "@/core/utils/safe-exec";
+import { detectVcsType } from "@/core/vcs/vcs-detect";
 
 // ─── GitHub URL Parsing ──────────────────────────────────────────────────
 
@@ -1197,25 +1198,9 @@ export function validateRepoInput(input: string): ValidationResult {
   const normalizedPath = normalizeLocalRepoPath(trimmed);
   const bridge = getServerBridge();
   if (bridge.fs.existsSync(normalizedPath)) {
-    // Auto-detect VCS type from directory contents
-    let vcsType: "git" | "svn" | "none" = "none";
-    if (bridge.fs.existsSync(path.join(normalizedPath, ".git"))) {
-      vcsType = "git";
-    } else if (bridge.fs.existsSync(path.join(normalizedPath, ".svn"))) {
-      vcsType = "svn";
-    } else {
-      // SVN 1.7+: .svn only at working copy root — walk up to find it
-      let current = path.dirname(normalizedPath);
-      while (true) {
-        if (bridge.fs.existsSync(path.join(current, ".svn"))) {
-          vcsType = "svn";
-          break;
-        }
-        const parent = path.dirname(current);
-        if (parent === current) break; // reached filesystem root
-        current = parent;
-      }
-    }
+    // Use dedicated VCS detector: handles git, svn (including SVN 1.7+ ancestor walk), and none
+    const detected = detectVcsType(normalizedPath);
+    const vcsType: "git" | "svn" | "none" = detected === "git" || detected === "svn" ? detected : "none";
     return { valid: true, vcsType };
   }
 

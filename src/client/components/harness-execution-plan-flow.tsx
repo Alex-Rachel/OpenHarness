@@ -173,26 +173,26 @@ function getStatusTone(status: EdgeStatus | undefined) {
   switch (status) {
     case "hard":
       return {
-        badge: "border-red-200 bg-red-50 text-red-700",
-        border: "border-red-200",
+        badge: "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text",
+        border: "border-desktop-danger-border",
         glow: "",
       };
     case "warn":
       return {
-        badge: "border-amber-200 bg-amber-50 text-amber-700",
-        border: "border-amber-200",
+        badge: "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
+        border: "border-[var(--dt-status-warning)]/25",
         glow: "",
       };
     case "pass":
       return {
-        badge: "border-emerald-200 bg-emerald-50 text-emerald-700",
-        border: "border-emerald-200",
+        badge: "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]",
+        border: "border-[var(--dt-status-success)]/25",
         glow: "",
       };
     case "blocked":
       return {
-        badge: "border-slate-300 bg-slate-100 text-slate-700",
-        border: "border-slate-300",
+        badge: "border-desktop-border bg-desktop-surface-muted text-desktop-text-secondary",
+        border: "border-desktop-border",
         glow: "",
       };
     default:
@@ -328,15 +328,15 @@ const nodeTypes = {
 function buildEdgeStyle(status: EdgeStatus) {
   switch (status) {
     case "hard":
-      return { stroke: "#dc2626", strokeWidth: 1.8 };
+      return { stroke: "var(--dt-status-danger)", strokeWidth: 1.8 };
     case "warn":
-      return { stroke: "#d97706", strokeWidth: 1.8 };
+      return { stroke: "var(--dt-status-warning)", strokeWidth: 1.8 };
     case "pass":
-      return { stroke: "#059669", strokeWidth: 1.8 };
+      return { stroke: "var(--dt-status-success)", strokeWidth: 1.8 };
     case "blocked":
-      return { stroke: "#64748b", strokeWidth: 1.8, strokeDasharray: "6 4" };
+      return { stroke: "var(--dt-text-tertiary)", strokeWidth: 1.8, strokeDasharray: "6 4" };
     default:
-      return { stroke: "#94a3b8", strokeWidth: 1.3 };
+      return { stroke: "var(--dt-border)", strokeWidth: 1.3 };
   }
 }
 
@@ -453,7 +453,7 @@ function buildPlanGraph(
       sourceHandle: "right",
       targetHandle: "left",
       style: buildEdgeStyle("flow"),
-      markerEnd: { type: MarkerType.ArrowClosed, color: "#94a3b8" },
+      markerEnd: { type: MarkerType.ArrowClosed, color: "var(--dt-border)" },
     },
     {
       id: "filter-dispatch",
@@ -463,7 +463,7 @@ function buildPlanGraph(
       sourceHandle: "right",
       targetHandle: "left",
       style: buildEdgeStyle("pass"),
-      markerEnd: { type: MarkerType.ArrowClosed, color: "#059669" },
+      markerEnd: { type: MarkerType.ArrowClosed, color: "var(--dt-status-success)" },
     },
     {
       id: "dispatch-gates",
@@ -473,7 +473,7 @@ function buildPlanGraph(
       sourceHandle: "right",
       targetHandle: "left",
       style: buildEdgeStyle(plan.hardGateCount > 0 ? "blocked" : "pass"),
-      markerEnd: { type: MarkerType.ArrowClosed, color: plan.hardGateCount > 0 ? "#64748b" : "#059669" },
+      markerEnd: { type: MarkerType.ArrowClosed, color: plan.hardGateCount > 0 ? "var(--dt-text-tertiary)" : "var(--dt-status-success)" },
     },
     {
       id: "gates-report",
@@ -483,7 +483,7 @@ function buildPlanGraph(
       sourceHandle: "right",
       targetHandle: "left",
       style: buildEdgeStyle(plan.hardGateCount > 0 ? "blocked" : "pass"),
-      markerEnd: { type: MarkerType.ArrowClosed, color: plan.hardGateCount > 0 ? "#64748b" : "#059669" },
+      markerEnd: { type: MarkerType.ArrowClosed, color: plan.hardGateCount > 0 ? "var(--dt-text-tertiary)" : "var(--dt-status-success)" },
     },
   );
 
@@ -525,7 +525,7 @@ function buildPlanGraph(
       style: buildEdgeStyle(dispatchEdgeStatus),
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        color: dispatchEdgeStatus === "hard" ? "#dc2626" : dispatchEdgeStatus === "pass" ? "#059669" : "#94a3b8",
+        color: dispatchEdgeStatus === "hard" ? "var(--dt-status-danger)" : dispatchEdgeStatus === "pass" ? "var(--dt-status-success)" : "var(--dt-border)",
       },
     });
 
@@ -593,7 +593,7 @@ function buildPlanGraph(
       sourceHandle: "bottom",
       targetHandle: "entry",
       style: buildEdgeStyle(activeDimensionHasHardMetric ? "hard" : "pass"),
-      markerEnd: { type: MarkerType.ArrowClosed, color: activeDimensionHasHardMetric ? "#dc2626" : "#059669" },
+      markerEnd: { type: MarkerType.ArrowClosed, color: activeDimensionHasHardMetric ? "var(--dt-status-danger)" : "var(--dt-status-success)" },
     });
 
     contentBottom = detailLaneY + detailLaneHeight;
@@ -730,10 +730,10 @@ export function HarnessExecutionPlanFlow({
         ) : null}
         {plan ? (
           <>
-            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] text-emerald-700">{t.harness.executionPlan.legendPass}</span>
-            <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] text-amber-700">{t.harness.executionPlan.legendWarn}</span>
-            <span className="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[10px] text-red-700">{t.harness.executionPlan.legendHard}</span>
-            <span className="rounded-full border border-slate-300 bg-slate-100 px-2.5 py-1 text-[10px] text-slate-700">{t.harness.executionPlan.legendBlocked}</span>
+            <span className="rounded-full border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] px-2.5 py-1 text-[10px] text-[var(--dt-status-success)]">{t.harness.executionPlan.legendPass}</span>
+            <span className="rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-2.5 py-1 text-[10px] text-[var(--dt-status-warning)]">{t.harness.executionPlan.legendWarn}</span>
+            <span className="rounded-full border border-desktop-danger-border bg-desktop-danger-subtle px-2.5 py-1 text-[10px] text-desktop-danger-text">{t.harness.executionPlan.legendHard}</span>
+            <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-[10px] text-desktop-text-secondary">{t.harness.executionPlan.legendBlocked}</span>
           </>
         ) : null}
       </div>
@@ -749,7 +749,7 @@ export function HarnessExecutionPlanFlow({
       ) : null}
 
       {error && !unsupportedMessage ? (
-        <div className="mt-4 rounded-sm border border-red-200 bg-red-50 px-4 py-5 text-[11px] text-red-700">
+        <div className="mt-4 rounded-sm border border-desktop-danger-border bg-desktop-danger-subtle px-4 py-5 text-[11px] text-desktop-danger-text">
           {error}
         </div>
       ) : null}
@@ -779,7 +779,7 @@ export function HarnessExecutionPlanFlow({
                   layoutKey={flowKey}
                   fitViewOptions={fitViewOptions}
                 />
-                <Background color="#d7dee7" gap={20} size={1} />
+                <Background color="var(--dt-border-light)" gap={20} size={1} />
                 <Controls
                   showInteractive={false}
                   showZoom

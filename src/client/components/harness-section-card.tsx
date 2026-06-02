@@ -11,9 +11,9 @@ const CARD_CLASS: Record<"compact" | "full", string> = {
 
 const STATE_TONE_CLASS: Record<HarnessSectionStateTone, string> = {
   neutral: "border-desktop-border bg-desktop-bg-secondary/70 text-desktop-text-secondary",
-  warning: "border border-amber-300 bg-amber-50 text-amber-900 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-100",
-  error: "border border-red-300 bg-red-50 text-red-900 dark:border-red-700 dark:bg-red-950/30 dark:text-red-100",
-  success: "border border-emerald-300 bg-emerald-50 text-emerald-900 dark:border-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-100",
+  warning: "border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
+  error: "border border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text",
+  success: "border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]",
 };
 
 type HarnessSectionCardProps = {

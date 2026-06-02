@@ -14,6 +14,23 @@ import { createKanbanSpecialistResolver } from "./kanban-card-session-utils";
 import { GripVertical, Trash2 } from "lucide-react";
 
 
+const badgeTone = {
+  neutral: "bg-desktop-surface-muted text-desktop-text-secondary ring-1 ring-inset ring-desktop-border",
+  success: "bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)] ring-1 ring-inset ring-[var(--dt-status-success)]/25",
+  warning: "bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)] ring-1 ring-inset ring-[var(--dt-status-warning)]/25",
+  danger: "bg-desktop-danger-subtle text-desktop-danger-text ring-1 ring-inset ring-desktop-danger-border",
+  info: "bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)] ring-1 ring-inset ring-[var(--dt-status-info)]/25",
+} as const;
+
+const reviewFeedbackToneClasses = {
+  danger: "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text",
+  success: "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]",
+  warning: "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
+} as const;
+
+const cardIconButton =
+  "rounded-lg p-1 text-desktop-text-tertiary transition hover:bg-desktop-surface-muted hover:text-desktop-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--dt-focus-ring)]/50";
+
 interface SpecialistOption {
   id: string;
   name: string;
@@ -70,13 +87,13 @@ function getPriorityTone(priority?: string) {
   switch ((priority ?? "medium").toLowerCase()) {
     case "high":
     case "urgent":
-      return "bg-rose-100 text-rose-700 ring-1 ring-inset ring-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:ring-rose-900/40";
+      return badgeTone.danger;
     case "medium":
-      return "bg-amber-100 text-amber-800 ring-1 ring-inset ring-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:ring-amber-900/40";
+      return badgeTone.warning;
     case "low":
-      return "bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:ring-emerald-900/40";
+      return badgeTone.success;
     default:
-      return "bg-slate-200 text-slate-700 ring-1 ring-inset ring-slate-200 dark:bg-[#1c1f2e] dark:text-slate-300 dark:ring-white/5";
+      return badgeTone.neutral;
   }
 }
 
@@ -95,18 +112,18 @@ function getPrioritySizeLabel(priority?: string) {
 
 function getSessionTone(sessionStatus?: "connecting" | "ready" | "error", queuePosition?: number) {
   if (queuePosition) {
-    return "bg-amber-100 text-amber-700 ring-1 ring-inset ring-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:ring-amber-900/40";
+    return badgeTone.warning;
   }
 
   switch (sessionStatus) {
     case "ready":
-      return "bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:ring-emerald-900/40";
+      return badgeTone.success;
     case "error":
-      return "bg-rose-100 text-rose-700 ring-1 ring-inset ring-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:ring-rose-900/40";
+      return badgeTone.danger;
     case "connecting":
-      return "bg-sky-100 text-sky-700 ring-1 ring-inset ring-sky-200 dark:bg-sky-900/20 dark:text-sky-300 dark:ring-sky-900/40";
+      return badgeTone.info;
     default:
-      return "bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200 dark:bg-[#181c28] dark:text-slate-300 dark:ring-white/5";
+      return badgeTone.neutral;
   }
 }
 
@@ -126,15 +143,15 @@ function getSyncTone(
   githubSyncedAt?: string,
 ) {
   if (sessionStatus === "connecting" || queuePosition) {
-    return "bg-sky-100 text-sky-700 ring-1 ring-inset ring-sky-200 dark:bg-sky-900/20 dark:text-sky-300 dark:ring-sky-900/40";
+    return badgeTone.info;
   }
   if (sessionStatus === "error" || hasSyncError) {
-    return "bg-rose-100 text-rose-700 ring-1 ring-inset ring-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:ring-rose-900/40";
+    return badgeTone.danger;
   }
   if (githubSyncedAt) {
-    return "bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:ring-emerald-900/40";
+    return badgeTone.success;
   }
-  return "bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200 dark:bg-[#181c28] dark:text-slate-300 dark:ring-white/5";
+  return badgeTone.neutral;
 }
 
 function getSyncLabel(
@@ -243,7 +260,7 @@ function KanbanCardSurface({
   const priorityTone = getPriorityTone(task.priority);
   const prioritySizeLabel = getPrioritySizeLabel(task.priority);
   const sessionTone = isTerminalCard
-    ? "bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:ring-emerald-900/40"
+    ? badgeTone.success
     : getSessionTone(sessionStatus, queuePosition);
   const statusLabel = getStatusLabel(sessionStatus, queuePosition);
   const resolvedStatusLabel = isTerminalCard
@@ -269,8 +286,8 @@ function KanbanCardSurface({
     (artifactType) => (task.artifactSummary?.byType?.[artifactType] ?? 0) === 0,
   );
   const artifactGateTone = missingNextArtifacts.length === 0
-    ? "bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:ring-emerald-900/40"
-    : "bg-amber-100 text-amber-800 ring-1 ring-inset ring-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:ring-amber-900/40";
+    ? badgeTone.success
+    : badgeTone.warning;
   const artifactCount = task.artifactSummary?.total ?? 0;
   const artifactCountLabel = `${artifactCount} artifact${artifactCount === 1 ? "" : "s"}`;
   const artifactCountTooltip = formatArtifactCountTooltip(task);
@@ -290,14 +307,14 @@ function KanbanCardSurface({
         ? t.kanbanDetail.reviewApprovedVerdict
         : t.kanbanDetail.reviewFeedback;
   const reviewFeedbackTone = task.verificationVerdict === "BLOCKED"
-    ? "border-rose-200/80 bg-rose-50/80 text-rose-800 dark:border-rose-900/40 dark:bg-rose-900/15 dark:text-rose-200"
+    ? reviewFeedbackToneClasses.danger
     : task.verificationVerdict === "APPROVED"
-      ? "border-emerald-200/80 bg-emerald-50/80 text-emerald-800 dark:border-emerald-900/40 dark:bg-emerald-900/15 dark:text-emerald-200"
-      : "border-amber-200/80 bg-amber-50/80 text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/15 dark:text-amber-200";
-  const cardClassName = `group relative flex flex-col gap-2 border border-slate-200/80 bg-white/90 p-2.5 transition-[background-color,border-color,box-shadow,opacity] duration-150 hover:border-slate-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400/50 dark:border-[#262938] dark:bg-[#0d1018] dark:hover:border-[#34384a] ${dragOverlay
-    ? "pointer-events-none border-amber-300/80 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.28)] ring-2 ring-amber-300/55 will-change-transform dark:border-amber-700/60 dark:bg-[#11141d] dark:ring-amber-700/45"
+      ? reviewFeedbackToneClasses.success
+      : reviewFeedbackToneClasses.warning;
+  const cardClassName = `group relative flex flex-col gap-2 rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface p-2.5 shadow-[var(--dt-shadow-sm)] transition-[background-color,border-color,box-shadow,opacity] duration-150 hover:border-desktop-border-light hover:bg-desktop-surface-elevated focus:outline-none focus:ring-2 focus:ring-[var(--dt-focus-ring)]/50 ${dragOverlay
+    ? "pointer-events-none border-desktop-accent bg-desktop-surface-elevated shadow-[0_24px_70px_rgb(0_0_0/0.18)] ring-2 ring-[var(--dt-focus-ring)]/35 will-change-transform"
     : isDragging
-      ? "opacity-15 ring-1 ring-slate-300/70 dark:ring-white/10"
+      ? "opacity-15 ring-1 ring-desktop-border"
       : ""}`.trim();
 
   void availableProviders;
@@ -330,7 +347,7 @@ function KanbanCardSurface({
         type="button"
         {...dragHandleProps}
         onClickCapture={stopCardInteraction}
-        className="absolute left-2.5 top-2.5 rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-400/50 dark:text-slate-500 dark:hover:bg-[#191c28] dark:hover:text-slate-300"
+        className={`absolute left-2.5 top-2.5 ${cardIconButton}`}
         aria-label={`${t.kanban.dragCard} ${task.title}`}
         title={t.kanban.dragCard}
         style={{ touchAction: "none" }}
@@ -343,7 +360,7 @@ function KanbanCardSurface({
           event.stopPropagation();
           onDelete();
         }}
-        className="absolute right-2.5 top-2.5 rounded-lg p-1 text-red-500 opacity-0 transition-all hover:bg-red-100 hover:text-red-600 group-hover:opacity-100 dark:text-red-400 dark:hover:bg-red-900/20"
+        className="absolute right-2.5 top-2.5 rounded-lg p-1 text-desktop-danger-text opacity-0 transition-all hover:bg-desktop-danger-subtle hover:text-[var(--dt-danger-text-strong)] focus:outline-none focus:ring-2 focus:ring-[var(--danger-ring)] group-hover:opacity-100"
         title={t.kanban.deleteTask}
         data-testid="kanban-card-delete"
       >
@@ -360,8 +377,8 @@ function KanbanCardSurface({
                 rel="noreferrer"
                 onClick={stopCardInteraction}
                 className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-medium ring-1 ring-inset hover:opacity-80 ${task.isPullRequest
-                  ? "bg-purple-50 text-purple-700 ring-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:ring-purple-900/40"
-                  : "bg-amber-50 text-amber-700 ring-amber-200 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-300 dark:ring-amber-900/40"
+                  ? badgeTone.info
+                  : badgeTone.warning
                 }`}
               >
                 {task.isPullRequest ? `PR #${task.githubNumber}` : `Issue #${task.githubNumber}`}
@@ -381,8 +398,8 @@ function KanbanCardSurface({
               onClick={() => void onRetryTrigger(task.id)}
               onClickCapture={stopCardInteraction}
               className={`shrink-0 rounded-full px-2 py-0.5 text-[9px] font-semibold ${canRetry
-                ? "border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-800/50 dark:bg-amber-900/10 dark:text-amber-300"
-                : "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800/50 dark:bg-emerald-900/10 dark:text-emerald-300"
+                ? `border ${badgeTone.warning} hover:bg-[var(--dt-status-warning-subtle)]`
+                : `border ${badgeTone.success} hover:bg-[var(--dt-status-success-subtle)]`
                 }`}
             >
               {canRetry ? t.kanban.rerun : t.kanban.run}
@@ -394,7 +411,7 @@ function KanbanCardSurface({
         </div>
       </div>
 
-      <div className="text-[14px] font-semibold leading-[1.2] text-slate-900 dark:text-slate-100">
+      <div className="text-[14px] font-semibold leading-[1.2] text-desktop-text-primary">
         {task.title}
       </div>
 
@@ -411,7 +428,7 @@ function KanbanCardSurface({
           )}
           {artifactCount > 0 && (
             <span
-              className="inline-flex items-center rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-medium text-slate-600 ring-1 ring-inset ring-slate-200 dark:bg-[#181c28] dark:text-slate-300 dark:ring-white/5"
+              className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-medium ${badgeTone.neutral}`}
               title={artifactCountTooltip}
               data-testid="kanban-card-artifact-count"
             >
@@ -421,7 +438,7 @@ function KanbanCardSurface({
         </div>
       )}
 
-      <p className="line-clamp-3 text-[11px] leading-[1.35] text-slate-600 dark:text-slate-400">{objectiveText}</p>
+      <p className="line-clamp-3 text-[11px] leading-[1.35] text-desktop-text-secondary">{objectiveText}</p>
       {hasReviewFeedback && (
         <div
           className={`rounded-lg border px-2 py-1.5 ${reviewFeedbackTone}`}
@@ -431,7 +448,7 @@ function KanbanCardSurface({
             <div className="text-[9px] font-semibold uppercase tracking-[0.14em]">
               {t.kanbanDetail.reviewFeedback}
             </div>
-            <span className="rounded-full bg-white/70 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] dark:bg-black/20">
+            <span className="rounded-full bg-desktop-surface-muted px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em]">
               {task.columnId === "dev" && task.verificationVerdict !== "APPROVED"
                 ? t.kanbanDetail.reviewReturnedToDev
                 : reviewVerdictLabel}
@@ -448,12 +465,12 @@ function KanbanCardSurface({
         </div>
       )}
       {!isTerminalCard && liveMessageTail && (
-        <div className="rounded-lg border border-sky-200/80 bg-sky-50/70 px-2 py-1.5 dark:border-sky-900/50 dark:bg-sky-900/10">
-          <div className="text-[9px] font-semibold uppercase tracking-[0.14em] text-sky-600 dark:text-sky-300">
+        <div className="rounded-lg border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-2 py-1.5">
+          <div className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--dt-status-info)]">
             {t.kanban.liveSession}
           </div>
           <div
-            className="mt-1 line-clamp-2 font-mono text-[10px] leading-[1.35] text-sky-700 dark:text-sky-200"
+            className="mt-1 line-clamp-2 font-mono text-[10px] leading-[1.35] text-[var(--dt-status-info)]"
             title={liveMessageTail}
             data-testid="kanban-card-live-tail"
           >
@@ -467,12 +484,12 @@ function KanbanCardSurface({
         || task.worktreeId) && (
         <div className="flex flex-wrap gap-1">
           {visibleLabels.map((label) => (
-            <span key={label} className="rounded-full bg-amber-100/80 px-1.5 py-0.5 text-[9px] font-medium text-amber-800 ring-1 ring-inset ring-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:ring-amber-900/40">
+            <span key={label} className={`rounded-full px-1.5 py-0.5 text-[9px] font-medium ${badgeTone.warning}`}>
               {label}
             </span>
           ))}
           {remainingLabelCount > 0 && (
-            <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-medium text-slate-500 ring-1 ring-inset ring-slate-200 dark:bg-[#181c28] dark:text-slate-400 dark:ring-white/5">
+            <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-medium ${badgeTone.neutral}`}>
               +{remainingLabelCount}
             </span>
           )}
@@ -481,20 +498,20 @@ function KanbanCardSurface({
             return cb ? (
               <span
                 key={cbId}
-                className="inline-flex items-center gap-1 rounded-full bg-blue-100/90 px-1.5 py-0.5 text-[9px] font-medium text-blue-700 ring-1 ring-inset ring-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:ring-blue-900/40"
+                className={`inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-medium ${badgeTone.info}`}
                 data-testid="repo-badge"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--dt-status-info)]" />
                 {cb.label ?? cb.repoPath.split("/").pop() ?? cb.repoPath}
               </span>
             ) : (
-              <span key={cbId} className="rounded-full bg-red-100 px-1.5 py-0.5 text-[9px] font-medium text-red-600 ring-1 ring-inset ring-red-200 dark:bg-red-900/20 dark:text-red-400 dark:ring-red-900/40" title={t.kanban.repoMissing}>
+              <span key={cbId} className={`rounded-full px-1.5 py-0.5 text-[9px] font-medium ${badgeTone.danger}`} title={t.kanban.repoMissing}>
                 {t.kanban.repoMissing}
               </span>
             );
           })}
           {remainingCodebaseCount > 0 && (
-            <span className="inline-flex items-center rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-medium text-slate-500 ring-1 ring-inset ring-slate-200 dark:bg-[#181c28] dark:text-slate-400 dark:ring-white/5">
+            <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-medium ${badgeTone.neutral}`}>
               +{remainingCodebaseCount} repo{remainingCodebaseCount > 1 ? "s" : ""}
             </span>
           )}
@@ -550,23 +567,23 @@ function WorktreeBadge({ task, worktreeCache, onOpenDetail, stopCardInteraction 
   const wt = worktreeCache[task.worktreeId];
   if (!wt) {
     return (
-      <div className="inline-flex items-center text-[9px] text-slate-500 dark:text-slate-400">
+      <div className="inline-flex items-center text-[9px] text-desktop-text-secondary">
         worktree {t.common.loading}...
       </div>
     );
   }
 
   const wtDotColor = wt.status === "active"
-    ? "bg-emerald-500"
+    ? "bg-[var(--dt-status-success)]"
     : wt.status === "creating"
-      ? "bg-amber-500"
-      : "bg-rose-500";
+      ? "bg-[var(--dt-status-warning)]"
+      : "bg-[var(--dt-status-danger)]";
 
   return (
     <button
       onClick={onOpenDetail}
       onClickCapture={stopCardInteraction}
-      className="inline-flex max-w-full items-center gap-1 text-[9px] text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+      className="inline-flex max-w-full items-center gap-1 text-[9px] text-desktop-text-secondary transition hover:text-desktop-text-primary"
       title={t.kanban.worktreeLoading}
       data-testid="worktree-badge"
     >

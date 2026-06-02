@@ -194,6 +194,29 @@ export interface TranslationDictionary extends ExtendedTranslationDictionarySect
     spec: string;
   };
 
+  desktopWindow: {
+    appLabel: string;
+    fileMenu: string;
+    editMenu: string;
+    viewMenu: string;
+    windowMenu: string;
+    helpMenu: string;
+    reload: string;
+    quit: string;
+    undo: string;
+    redo: string;
+    cut: string;
+    copy: string;
+    paste: string;
+    selectAll: string;
+    toggleToolMode: string;
+    installAgents: string;
+    mcpTools: string;
+    minimize: string;
+    maximize: string;
+    closeWindow: string;
+  };
+
   canvas: {
     renderModeDynamic: string;
     renderModePrebuilt: string;

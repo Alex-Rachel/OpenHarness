@@ -1002,19 +1002,19 @@ export function ReviewFeedbackPanel({
 
   const verdictLabel = formatVerificationVerdictLabel(verdict, t);
   const verdictTone = verdict === "BLOCKED"
-    ? "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-200"
+    ? "border border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text"
     : verdict === "APPROVED"
-      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200"
-      : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200";
+      ? "border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
+      : "border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
 
   return (
     <div className="space-y-3">
       <div className={`border-l-2 px-3 py-2.5 ${
         verdict === "APPROVED"
-          ? "border-l-emerald-400/80 dark:border-l-emerald-500/70"
+          ? "border-l-[var(--dt-status-success)]"
           : verdict === "BLOCKED"
-            ? "border-l-rose-400/80 dark:border-l-rose-500/70"
-            : "border-l-amber-400/80 dark:border-l-amber-500/70"
+            ? "border-l-desktop-danger-border"
+            : "border-l-[var(--dt-status-warning)]"
       }`}>
         <div className="flex flex-wrap items-center gap-2">
           <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${verdictTone}`}>
@@ -1370,7 +1370,7 @@ export function JitContextPanel({
                 void handleOpenHistoryAnalysis();
               }}
               disabled={openingAnalysis}
-              className="rounded-md border border-sky-200 px-2 py-1 text-[11px] font-medium text-sky-700 transition-colors hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-sky-900/50 dark:text-sky-300 dark:hover:bg-sky-900/20"
+              className="rounded-md border border-[var(--dt-status-info)]/25 px-2 py-1 text-[11px] font-medium text-[var(--dt-status-info)] transition-colors hover:bg-[var(--dt-status-info-subtle)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {openingAnalysis ? t.kanbanDetail.openingJitContextHistoryAnalysis : t.kanbanDetail.openJitContextHistoryAnalysis}
             </button>
@@ -1412,19 +1412,19 @@ export function JitContextPanel({
       {expanded && (
         <div className="space-y-3">
           {analysisError ? (
-            <div className="rounded-xl border border-rose-200/80 bg-rose-50/80 px-3 py-2.5 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-900/10 dark:text-rose-200">
+            <div className="rounded-xl border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2.5 text-sm text-desktop-danger-text">
               {analysisError}
             </div>
           ) : null}
 
           {analysisSuccess ? (
-            <div className="rounded-xl border border-sky-200/80 bg-sky-50/80 px-3 py-2.5 text-sm text-sky-700 dark:border-sky-900/50 dark:bg-sky-900/10 dark:text-sky-200">
+            <div className="rounded-xl border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-3 py-2.5 text-sm text-[var(--dt-status-info)]">
               {t.kanbanDetail.jitContextHistoryAnalysisOpened}
             </div>
           ) : null}
 
           {injectError ? (
-            <div className="rounded-xl border border-rose-200/80 bg-rose-50/80 px-3 py-2.5 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-900/10 dark:text-rose-200">
+            <div className="rounded-xl border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2.5 text-sm text-desktop-danger-text">
               {injectError}
             </div>
           ) : null}
@@ -1436,13 +1436,13 @@ export function JitContextPanel({
           ) : null}
 
           {savedAnalysis ? (
-            <div className="rounded-xl border border-sky-200/80 bg-sky-50/70 px-3 py-2.5 dark:border-sky-900/50 dark:bg-sky-900/10">
+            <div className="rounded-xl border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-3 py-2.5">
               <div className="flex flex-wrap items-center gap-2">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-700 dark:text-sky-300">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--dt-status-info)]">
                   {t.kanbanDetail.savedHistoryAnalysis}
                 </div>
                 {formatTimestamp(savedAnalysis.updatedAt) ? (
-                  <span className="text-[11px] text-sky-700/80 dark:text-sky-200/80">
+                  <span className="text-[11px] text-[var(--dt-status-info)]">
                     {t.kanbanDetail.updatedAt}: {formatTimestamp(savedAnalysis.updatedAt)}
                   </span>
                 ) : null}
@@ -1522,7 +1522,7 @@ export function JitContextPanel({
               {t.kanbanDetail.loadingJitContext}
             </div>
           ) : !hasSavedAnalysis && error ? (
-            <div className="rounded-xl border border-rose-200/80 bg-rose-50/80 px-3 py-2.5 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-900/10 dark:text-rose-200">
+            <div className="rounded-xl border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2.5 text-sm text-desktop-danger-text">
               {error}
             </div>
           ) : !hasSavedAnalysis && backlogNeedsRefinementFirst ? (

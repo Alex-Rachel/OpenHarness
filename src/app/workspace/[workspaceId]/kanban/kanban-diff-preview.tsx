@@ -55,12 +55,12 @@ const PIERRE_DIFF_OPTIONS = {
   themeType: "light" as const,
   unsafeCSS: `
     :host {
-      --diffs-bg: light-dark(#ffffff, #0d1018) !important;
-      --diffs-bg-context-override: light-dark(#ffffff, #0d1018);
-      --diffs-bg-separator-override: light-dark(#f8fafc, #171b27);
-      --diffs-bg-addition-emphasis-override: rgba(0, 188, 125, 0.2);
-      --diffs-bg-deletion-emphasis-override: rgba(240, 100, 73, 0.2);
-      --diffs-addition-color-override: #00a86b;
+      --diffs-bg: var(--dt-surface) !important;
+      --diffs-bg-context-override: var(--dt-surface);
+      --diffs-bg-separator-override: var(--dt-surface-muted);
+      --diffs-bg-addition-emphasis-override: var(--dt-status-success-subtle);
+      --diffs-bg-deletion-emphasis-override: var(--dt-danger-subtle);
+      --diffs-addition-color-override: var(--dt-status-success);
     }
     pre[data-diffs] {
       background: var(--diffs-bg) !important;
@@ -83,7 +83,7 @@ const PIERRE_DIFF_OPTIONS = {
       height: 32px;
       margin-block: 0;
       background: var(--diffs-bg);
-      border-block: 1px dashed light-dark(#d4d4d8, #374151);
+      border-block: 1px dashed var(--dt-border);
     }
     [data-separator='line-info'] [data-separator-wrapper] {
       padding-inline: 0;
@@ -91,8 +91,8 @@ const PIERRE_DIFF_OPTIONS = {
     }
     [data-separator='line-info'] [data-expand-button],
     [data-separator='line-info'] [data-separator-content] {
-      background: light-dark(#f4f4f5, #171b27);
-      color: light-dark(#71717a, #a1a1aa);
+      background: var(--dt-surface-muted);
+      color: var(--dt-text-tertiary);
     }
     [data-separator='line-info'] [data-expand-button] {
       min-width: 32px;
@@ -260,7 +260,7 @@ function addDiffSearchHighlight(match: DiffSearchMatch, results: DiffSearchResul
   const after = text.slice(match.end);
   const highlight = document.createElement("span");
   highlight.className = "kanban-diff-search-highlight";
-  highlight.style.backgroundColor = "rgba(250, 204, 21, 0.45)";
+  highlight.style.backgroundColor = "var(--dt-status-warning-subtle)";
   highlight.style.color = "inherit";
   highlight.textContent = matchedText;
 
@@ -282,7 +282,7 @@ function addDiffSearchHighlight(match: DiffSearchMatch, results: DiffSearchResul
 
 function selectDiffSearchResult(results: DiffSearchResult[], index: number) {
   results.forEach(({ element }) => {
-    element.style.backgroundColor = "rgba(250, 204, 21, 0.45)";
+    element.style.backgroundColor = "var(--dt-status-warning-subtle)";
   });
 
   const result = results[index];
@@ -290,7 +290,7 @@ function selectDiffSearchResult(results: DiffSearchResult[], index: number) {
     return;
   }
 
-  result.element.style.backgroundColor = "rgba(59, 130, 246, 0.55)";
+  result.element.style.backgroundColor = "var(--dt-status-info-subtle)";
   result.element.scrollIntoView?.({ behavior: "smooth", block: "center", inline: "nearest" });
 }
 
@@ -578,9 +578,9 @@ export function renderUnifiedDiffLines(parsedDiff: ParsedDiffPreview) {
         line.kind === "add"
           ? "grid grid-cols-[3rem_3rem_1.5rem_minmax(0,1fr)] bg-emerald-950/70 px-3 text-emerald-100"
           : line.kind === "remove"
-            ? "grid grid-cols-[3rem_3rem_1.5rem_minmax(0,1fr)] bg-rose-950/60 px-3 text-rose-100"
+            ? "grid grid-cols-[3rem_3rem_1.5rem_minmax(0,1fr)] bg-desktop-danger-subtle px-3 text-desktop-danger-text"
             : line.kind === "hunk"
-              ? "bg-sky-950/60 px-3 text-sky-100"
+              ? "bg-[var(--dt-status-info-subtle)] px-3 text-[var(--dt-status-info)]"
               : line.kind === "meta"
                 ? "bg-slate-900 px-3 text-slate-400"
                 : "grid grid-cols-[3rem_3rem_1.5rem_minmax(0,1fr)] px-3 text-slate-200"
@@ -721,8 +721,8 @@ export function TaskFileDiffPreview({
   const deletions = parsedDiff?.deletions ?? diff?.deletions ?? file.deletions ?? 0;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white dark:border-[#202433] dark:bg-[#0d1018]">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/70 px-3 py-2 dark:border-[#202433]">
+    <div className="overflow-hidden rounded-xl border border-desktop-border bg-desktop-surface-elevated">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-desktop-border px-3 py-2">
         <div className="grid min-w-0 flex-1 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-1">
           <span className={`inline-flex rounded-sm px-1.5 py-0.5 text-[10px] font-semibold tracking-wide ${badge.className}`}>
             {badge.short}
@@ -749,7 +749,7 @@ export function TaskFileDiffPreview({
         <div className="shrink-0 text-[11px] font-mono">
           <span className="text-emerald-600 dark:text-emerald-300">+{additions}</span>
           {" "}
-          <span className="text-rose-600 dark:text-rose-300">-{deletions}</span>
+          <span className="text-desktop-danger-text">-{deletions}</span>
         </div>
       </div>
 
@@ -758,7 +758,7 @@ export function TaskFileDiffPreview({
           {t.kanbanDetail.loadingFileDiff}
         </div>
       ) : error ? (
-        <div className={`border-l-2 border-rose-400/80 px-3 py-2 text-sm text-rose-700 dark:border-rose-500/70 dark:text-rose-300 ${compact ? "leading-5" : "leading-6"}`}>
+        <div className={`border-l-2 border-desktop-danger-border px-3 py-2 text-sm text-desktop-danger-text ${compact ? "leading-5" : "leading-6"}`}>
           {error}
         </div>
       ) : !diff?.patch.trim() || !parsedDiff ? (
@@ -791,7 +791,7 @@ export function CommitRow({
     <button
       type="button"
       className={`grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2 rounded-md px-2 py-1.5 text-left transition-colors ${
-        selected ? "bg-amber-50/80 dark:bg-amber-900/10" : "hover:bg-slate-100/80 dark:hover:bg-[#171b27]"
+        selected ? "bg-[var(--dt-status-warning-subtle)]" : "hover:bg-desktop-surface-muted"
       }`}
       onClick={onClick}
       aria-pressed={selected}
@@ -809,7 +809,7 @@ export function CommitRow({
       </div>
       <div className="mt-0.5 flex min-w-[3.25rem] shrink-0 items-center justify-end gap-1 self-start text-[10px] font-mono leading-4">
         <span className="text-emerald-600 dark:text-emerald-300">+{commit.additions}</span>
-        <span className="text-rose-600 dark:text-rose-300">-{commit.deletions}</span>
+        <span className="text-desktop-danger-text">-{commit.deletions}</span>
       </div>
     </button>
   );
@@ -832,16 +832,16 @@ export function CommitFileList({
   const statusBadges = {
     modified: { icon: "M", className: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200" },
     added: { icon: "A", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200" },
-    deleted: { icon: "D", className: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200" },
-    renamed: { icon: "R", className: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200" },
+    deleted: { icon: "D", className: "border border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text" },
+    renamed: { icon: "R", className: "border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]" },
   };
 
   return (
-    <div className="border-b border-slate-200/70 dark:border-[#202433]">
+    <div className="border-b border-desktop-border">
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition-colors hover:bg-slate-50 dark:hover:bg-[#171b27]"
+        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition-colors hover:bg-desktop-surface-muted"
       >
         <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
           {t.kanbanDetail.filesChanged} ({files.length})
@@ -872,7 +872,7 @@ export function CommitFileList({
                 className={`grid w-full grid-cols-[20px_minmax(0,1fr)_auto] items-start gap-x-2 rounded-md px-2 py-1.5 text-left transition-colors ${
                   active
                     ? "bg-amber-50/80 dark:bg-amber-900/10"
-                    : "hover:bg-slate-100/80 dark:hover:bg-[#171b27]"
+                    : "hover:bg-desktop-surface-muted"
                 }`}
               >
                 <span className={`mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm text-[9px] font-bold ${badge.className}`}>
@@ -895,7 +895,7 @@ export function CommitFileList({
                 </div>
                 <div className="flex min-w-[3.5rem] shrink-0 items-center justify-end gap-1 self-start text-[10px] font-mono leading-4">
                   <span className="text-emerald-600 dark:text-emerald-300">+{file.additions}</span>
-                  <span className="text-rose-600 dark:text-rose-300">-{file.deletions}</span>
+                  <span className="text-desktop-danger-text">-{file.deletions}</span>
                 </div>
               </button>
             );
@@ -918,8 +918,8 @@ function CommitFileDiffSection({
   const statusBadges = {
     modified: { icon: "M", className: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200" },
     added: { icon: "A", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200" },
-    deleted: { icon: "D", className: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200" },
-    renamed: { icon: "R", className: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200" },
+    deleted: { icon: "D", className: "border border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text" },
+    renamed: { icon: "R", className: "border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]" },
   };
   const badge = statusBadges[file.status];
   const parsedDiff = parseUnifiedDiffPreview({
@@ -932,12 +932,12 @@ function CommitFileDiffSection({
 
   return (
     <details
-      className="group overflow-hidden border-b border-slate-200/70 last:border-b-0 dark:border-[#202433]"
+      className="group overflow-hidden border-b border-desktop-border last:border-b-0"
       open={isOpen}
       onToggle={(event) => setIsOpen(event.currentTarget.open)}
       data-testid={`kanban-commit-file-section-${file.path}`}
     >
-      <summary className="grid cursor-pointer list-none grid-cols-[auto_20px_minmax(0,1fr)_auto] items-center gap-x-2 px-3 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-[#171b27] [&::-webkit-details-marker]:hidden">
+      <summary className="grid cursor-pointer list-none grid-cols-[auto_20px_minmax(0,1fr)_auto] items-center gap-x-2 px-3 py-2 transition-colors hover:bg-desktop-surface-muted [&::-webkit-details-marker]:hidden">
         <svg
           className="h-3.5 w-3.5 text-slate-400 transition-transform group-open:rotate-90"
           fill="none"
@@ -963,11 +963,11 @@ function CommitFileDiffSection({
         </div>
         <div className="flex min-w-[3.5rem] shrink-0 items-center justify-end gap-1 self-start text-[10px] font-mono leading-4">
           <span className="text-emerald-600 dark:text-emerald-300">+{file.additions}</span>
-          <span className="text-rose-600 dark:text-rose-300">-{file.deletions}</span>
+          <span className="text-desktop-danger-text">-{file.deletions}</span>
         </div>
       </summary>
       {isOpen ? (
-        <div className="overflow-auto border-t border-slate-200/70 dark:border-[#202433]">
+        <div className="overflow-auto border-t border-desktop-border">
           {pierreDiff ? (
             <KanbanPierreFileDiff fileDiff={pierreDiff} />
           ) : (
@@ -1011,8 +1011,8 @@ function CommitDiffSearchOverlay({
   const countText = invalidPattern ? "!" : resultCount > 0 ? `${currentIndex + 1}/${resultCount}` : "0/0";
 
   return (
-    <div className="absolute right-3 top-12 z-20 flex min-w-[min(22rem,calc(100%-1.5rem))] items-center gap-1 rounded-md border border-slate-200 bg-white/98 p-1.5 text-[11px] font-normal normal-case tracking-normal shadow-xl shadow-slate-900/10 dark:border-slate-700 dark:bg-[#0d1018]/98 dark:shadow-black/30">
-      <div className="flex min-w-0 flex-1 items-center rounded border border-slate-200 bg-white px-2 py-1 dark:border-slate-700 dark:bg-[#0a0d14]">
+    <div className="absolute right-3 top-12 z-20 flex min-w-[min(22rem,calc(100%-1.5rem))] items-center gap-1 rounded-md border border-desktop-border bg-desktop-surface-elevated p-1.5 text-[11px] font-normal normal-case tracking-normal shadow-[var(--dt-shadow-lg)]">
+      <div className="flex min-w-0 flex-1 items-center rounded border border-desktop-border bg-desktop-surface px-2 py-1">
         <input
           ref={inputRef}
           className="min-w-0 flex-1 bg-transparent text-slate-800 outline-none placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
@@ -1032,7 +1032,7 @@ function CommitDiffSearchOverlay({
         />
         {query ? (
           <span
-            className={`ml-2 shrink-0 tabular-nums ${invalidPattern ? "font-semibold text-rose-500" : "text-slate-400"}`}
+            className={`ml-2 shrink-0 tabular-nums ${invalidPattern ? "font-semibold text-desktop-danger-text" : "text-slate-400"}`}
             data-testid="kanban-commit-diff-search-count"
           >
             {countText}
@@ -1240,13 +1240,13 @@ export function TaskCommitDiffPreview({
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white dark:border-[#202433] dark:bg-[#0d1018]">
+    <div className="overflow-hidden rounded-xl border border-desktop-border bg-desktop-surface-elevated">
       {loading ? (
         <div className={`px-3 py-3 text-sm text-slate-500 dark:text-slate-400 ${compact ? "leading-5" : "leading-6"}`}>
           {t.kanbanDetail.loadingCommitDiff}
         </div>
       ) : error ? (
-        <div className={`border-l-2 border-rose-400/80 px-3 py-2 text-sm text-rose-700 dark:border-rose-500/70 dark:text-rose-300 ${compact ? "leading-5" : "leading-6"}`}>
+        <div className={`border-l-2 border-desktop-danger-border px-3 py-2 text-sm text-desktop-danger-text ${compact ? "leading-5" : "leading-6"}`}>
           {error}
         </div>
       ) : fileSections.length > 0 ? (
@@ -1256,7 +1256,7 @@ export function TaskCommitDiffPreview({
           onKeyDown={handleCommitDiffKeyDown}
           tabIndex={-1}
         >
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/70 bg-slate-50/80 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-[#202433] dark:bg-[#0a0d14] dark:text-slate-400">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-desktop-border bg-desktop-surface-muted px-3 py-2 text-xs font-semibold uppercase tracking-wide text-desktop-text-secondary">
             <span className="shrink-0">{fileSections.length} {t.kanbanDetail.filesChanged}</span>
             <div className="flex items-center gap-2">
               <button

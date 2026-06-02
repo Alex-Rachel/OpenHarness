@@ -66,38 +66,38 @@ function toneStyles(tone: HookFlowNodeTone) {
   switch (tone) {
     case "success":
       return {
-        border: "border-emerald-200",
-        badge: "border-emerald-200 bg-emerald-50 text-emerald-700",
+        border: "border-[var(--dt-status-success)]/25",
+        badge: "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]",
         glow: "",
-        line: "#059669",
+        line: "var(--dt-status-success)",
       };
     case "warning":
       return {
-        border: "border-amber-200",
-        badge: "border-amber-200 bg-amber-50 text-amber-800",
+        border: "border-[var(--dt-status-warning)]/25",
+        badge: "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
         glow: "",
-        line: "#d97706",
+        line: "var(--dt-status-warning)",
       };
     case "danger":
       return {
-        border: "border-red-200",
-        badge: "border-red-200 bg-red-50 text-red-700",
+        border: "border-desktop-danger-border",
+        badge: "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text",
         glow: "",
-        line: "#dc2626",
+        line: "var(--dt-status-danger)",
       };
     case "accent":
       return {
-        border: "border-sky-200",
-        badge: "border-sky-200 bg-sky-50 text-sky-700",
+        border: "border-[var(--dt-status-info)]/25",
+        badge: "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]",
         glow: "",
-        line: "#0284c7",
+        line: "var(--dt-status-info)",
       };
     default:
       return {
         border: "border-desktop-border",
         badge: "border-desktop-border bg-desktop-bg-secondary text-desktop-text-secondary",
         glow: "",
-        line: "#94a3b8",
+        line: "var(--dt-border)",
       };
   }
 }
@@ -195,7 +195,7 @@ function HookLifecycleRail() {
     <aside className="rounded-sm border border-desktop-border bg-desktop-bg-primary p-3">
       <div className="flex items-center justify-between gap-3 border-b border-desktop-border pb-2">
         <div className="text-[12px] font-semibold text-desktop-text-primary">Git hooks</div>
-        <div className="rounded-full border border-desktop-border bg-white/80 px-2.5 py-1 text-[10px] text-desktop-text-secondary">
+        <div className="rounded-full border border-desktop-border bg-desktop-surface px-2.5 py-1 text-[10px] text-desktop-text-secondary">
           {groupedEntries.reduce((sum, group) => sum + group.entries.length, 0)} hooks
         </div>
       </div>
@@ -230,36 +230,36 @@ function HookLifecycleRail() {
                     }}
                     className={`w-full rounded-sm border px-3 py-3 text-left transition ${
                       dimmed
-                        ? "cursor-not-allowed border-slate-200 bg-slate-50/90 text-slate-500 opacity-80"
+                        ? "cursor-not-allowed border-desktop-border bg-desktop-surface-muted text-desktop-text-tertiary opacity-80"
                         : selected
-                        ? "border-sky-300 bg-sky-50/80"
-                        : "border-desktop-border bg-white/85 hover:bg-desktop-bg-primary"
+                        ? "border-desktop-accent bg-desktop-surface-muted"
+                        : "border-desktop-border bg-desktop-surface hover:bg-desktop-surface-muted"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <div className={`text-[12px] font-semibold ${dimmed ? "text-slate-500" : "text-desktop-text-primary"}`}>{entry.name}</div>
-                        <div className={`mt-1 text-[10px] ${dimmed ? "text-slate-400" : "text-desktop-text-secondary"}`}>
+                        <div className={`text-[12px] font-semibold ${dimmed ? "text-desktop-text-tertiary" : "text-desktop-text-primary"}`}>{entry.name}</div>
+                        <div className={`mt-1 text-[10px] ${dimmed ? "text-desktop-text-tertiary" : "text-desktop-text-secondary"}`}>
                           {entry.channelLabel} · {entry.blockingLabel} · {entry.bypassabilityLabel}
                         </div>
                       </div>
                       <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] ${
                         entry.enabled
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                          : "border-slate-200 bg-slate-100 text-slate-500"
+                          ? "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
+                          : "border-desktop-border bg-desktop-surface-muted text-desktop-text-secondary"
                       }`}>
                         {entry.enabled ? "enabled" : entry.configured ? "partial" : "missing"}
                       </span>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1.5">
-                      <span className={`rounded-full border px-2 py-0.5 text-[10px] ${dimmed ? "border-slate-200 bg-white text-slate-500" : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary"}`}>
+                      <span className={`rounded-full border px-2 py-0.5 text-[10px] ${dimmed ? "border-desktop-border bg-desktop-surface text-desktop-text-tertiary" : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary"}`}>
                         {entry.stats.taskCount} tasks
                       </span>
-                      <span className={`rounded-full border px-2 py-0.5 text-[10px] ${dimmed ? "border-slate-200 bg-white text-slate-500" : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary"}`}>
+                      <span className={`rounded-full border px-2 py-0.5 text-[10px] ${dimmed ? "border-desktop-border bg-desktop-surface text-desktop-text-tertiary" : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary"}`}>
                         {entry.phases.length} phases
                       </span>
                       {entry.stats.reviewGate ? (
-                        <span className={`rounded-full border px-2 py-0.5 text-[10px] ${dimmed ? "border-slate-200 bg-white text-slate-500" : "border-amber-200 bg-amber-50 text-amber-800"}`}>
+                        <span className={`rounded-full border px-2 py-0.5 text-[10px] ${dimmed ? "border-desktop-border bg-desktop-surface text-desktop-text-tertiary" : "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]"}`}>
                           review gate
                         </span>
                       ) : null}
@@ -348,13 +348,13 @@ function HookFlowCanvas() {
         </div>
         {activeEntry ? (
           <div className="flex flex-wrap gap-2 text-[10px]">
-            <span className="rounded-full border border-desktop-border bg-white/80 px-2.5 py-1 text-desktop-text-secondary">
+            <span className="rounded-full border border-desktop-border bg-desktop-surface px-2.5 py-1 text-desktop-text-secondary">
               {activeEntry.channelLabel}
             </span>
-            <span className="rounded-full border border-desktop-border bg-white/80 px-2.5 py-1 text-desktop-text-secondary">
+            <span className="rounded-full border border-desktop-border bg-desktop-surface px-2.5 py-1 text-desktop-text-secondary">
               {activeEntry.stats.taskCount} tasks
             </span>
-            <span className="rounded-full border border-desktop-border bg-white/80 px-2.5 py-1 text-desktop-text-secondary">
+            <span className="rounded-full border border-desktop-border bg-desktop-surface px-2.5 py-1 text-desktop-text-secondary">
               {activeEntry.stats.hardGateCount} hard gates
             </span>
           </div>
@@ -378,7 +378,7 @@ function HookFlowCanvas() {
             panOnDrag
             zoomOnScroll={false}
           >
-            <Background color="#dbe4f0" gap={20} />
+            <Background color="var(--dt-border-light)" gap={20} />
             <Controls showInteractive={false} />
           </ReactFlow>
         </div>
@@ -445,7 +445,7 @@ function HookInspector() {
         </div>
         <span className={`rounded-full border px-2.5 py-1 text-[10px] ${
           activeEntry.enabled
-            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+            ? "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
             : "border-desktop-border bg-desktop-bg-secondary text-desktop-text-secondary"
         }`}>
           {activeEntry.mode}
@@ -462,7 +462,7 @@ function HookInspector() {
             }}
             className={`rounded-full border px-3 py-1 text-[10px] font-medium transition ${
               state.inspectorTab === tab.id
-                ? "border-sky-300 bg-sky-50 text-sky-700"
+                ? "border-desktop-accent bg-desktop-surface-muted text-desktop-text-primary"
                 : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary"
             }`}
           >
@@ -504,7 +504,7 @@ function HookInspector() {
                 {activeEntry.phases.map((phase) => (
                   <span key={phase} className={`rounded-full border px-2.5 py-1 text-[10px] ${
                     phase === "review"
-                      ? "border-amber-200 bg-amber-50 text-amber-800"
+                      ? "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]"
                       : "border-desktop-border bg-desktop-bg-secondary text-desktop-text-secondary"
                   }`}>
                     {formatPhaseLabel(phase)}
@@ -566,8 +566,8 @@ function HookInspector() {
                 <div className="flex flex-wrap gap-2 text-[10px]">
                   <span className={`rounded-full border px-2.5 py-1 ${
                     task.resolved
-                      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                      : "border-amber-200 bg-amber-50 text-amber-800"
+                      ? "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
+                      : "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]"
                   }`}>
                     {task.resolved ? "resolved" : "unresolved"}
                   </span>
@@ -575,7 +575,7 @@ function HookInspector() {
                     {task.fileScope}
                   </span>
                   {task.hardGate ? (
-                    <span className="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-red-700">
+                    <span className="rounded-full border border-desktop-danger-border bg-desktop-danger-subtle px-2.5 py-1 text-desktop-danger-text">
                       hard gate
                     </span>
                   ) : null}
@@ -609,7 +609,7 @@ function HookInspector() {
                 }}
                 className={`rounded-full border px-3 py-1 text-[10px] font-medium transition ${
                   state.scriptTab === tab.id
-                    ? "border-sky-300 bg-sky-50 text-sky-700"
+                    ? "border-desktop-accent bg-desktop-surface-muted text-desktop-text-primary"
                     : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary"
                 }`}
               >
@@ -684,13 +684,13 @@ export function HarnessHookWorkbench({
             : "rounded-sm border border-desktop-border bg-desktop-bg-secondary/40 p-5"}
       >
         {unsupportedMessage ? (
-          <HarnessUnsupportedState className="rounded-sm border border-amber-200 bg-amber-50 px-4 py-4 text-[11px] text-amber-800" />
+          <HarnessUnsupportedState className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-4 py-4 text-[11px] text-[var(--dt-status-warning)]" />
         ) : null}
 
         {!unsupportedMessage && warnings.length > 0 ? (
           <div className="grid gap-2">
             {warnings.map((warning) => (
-              <div key={warning} className="rounded-sm border border-amber-200 bg-amber-50 px-4 py-3 text-[11px] text-amber-800">
+              <div key={warning} className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-4 py-3 text-[11px] text-[var(--dt-status-warning)]">
                 {warning}
               </div>
             ))}

@@ -28,7 +28,7 @@ export function KanbanInlineDiffViewer({
   const parsedDiff = diff ? parseUnifiedDiffPreview({ patch: diff }) : null;
 
   return (
-    <div className={embedded ? "border-t border-slate-200/70 pt-2 dark:border-slate-800/80" : "rounded-lg border border-slate-200/70 bg-white dark:border-slate-700 dark:bg-[#12141c]"}>
+    <div className={embedded ? "border-t border-desktop-border pt-2" : "rounded-lg border border-desktop-border bg-desktop-surface-elevated"}>
       {/* Header */}
       <div className={`flex items-center justify-between gap-3 ${embedded ? "border-b border-slate-200/70 px-0 pb-2 dark:border-slate-800/80" : "border-b border-slate-200/70 px-3 py-2 dark:border-slate-700"}`}>
         <div className="min-w-0 flex-1">
@@ -57,7 +57,7 @@ export function KanbanInlineDiffViewer({
             Loading diff...
           </div>
         ) : error ? (
-          <div className={`${embedded ? "px-0 py-3" : "px-3 py-4"} text-xs text-rose-600 dark:text-rose-400`}>
+          <div className={`${embedded ? "px-0 py-3" : "px-3 py-4"} text-xs text-desktop-danger-text`}>
             {error}
           </div>
         ) : !diff ? (
@@ -79,15 +79,15 @@ export function KanbanInlineDiffViewer({
                 }
                 if (line.kind === "remove") {
                   return {
-                    bgClass: "bg-rose-50 dark:bg-rose-900/20",
-                    textClass: "text-rose-900 dark:text-rose-300",
+                    bgClass: "bg-desktop-danger-subtle",
+                    textClass: "text-desktop-danger-text",
                     prefix,
                   };
                 }
                 if (line.kind === "meta" || line.kind === "hunk") {
                   return {
-                    bgClass: "bg-sky-50 dark:bg-sky-900/20",
-                    textClass: "text-sky-900 dark:text-sky-300",
+                    bgClass: "bg-[var(--dt-status-info-subtle)]",
+                    textClass: "text-[var(--dt-status-info)]",
                     prefix: "",
                   };
                 }

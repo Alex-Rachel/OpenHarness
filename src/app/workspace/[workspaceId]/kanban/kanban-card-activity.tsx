@@ -66,16 +66,16 @@ function formatTaskRunStatus(status: TaskRunInfo["status"] | undefined): string 
 function getTaskRunStatusClasses(status: TaskRunInfo["status"] | undefined): string {
   switch (status) {
     case "completed":
-      return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200";
+      return "bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
     case "failed":
     case "timed_out":
-      return "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-200";
+      return "bg-desktop-danger-subtle text-desktop-danger-text";
     case "running":
-      return "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-200";
+      return "bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]";
     case "transitioned":
-      return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200";
+      return "bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
     default:
-      return "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300";
+      return "bg-desktop-bg-secondary text-desktop-text-secondary";
   }
 }
 
@@ -83,10 +83,10 @@ function getLaneBadgeClasses(laneLabel: string | undefined): string {
   const normalized = laneLabel?.trim().toLowerCase() ?? "";
 
   if (normalized.includes("backlog") || normalized.includes("梳理")) {
-    return "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200";
+    return "bg-desktop-bg-secondary text-desktop-text-secondary";
   }
   if (normalized.includes("todo") || normalized.includes("编排")) {
-    return "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-200";
+    return "bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]";
   }
   if (
     normalized.includes("dev")
@@ -94,19 +94,19 @@ function getLaneBadgeClasses(laneLabel: string | undefined): string {
     || normalized.includes("开发")
     || normalized.includes("execute")
   ) {
-    return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200";
+    return "bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
   }
   if (normalized.includes("review") || normalized.includes("评审") || normalized.includes("gate")) {
-    return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200";
+    return "bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
   }
   if (normalized.includes("pr") || normalized.includes("publish")) {
-    return "bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/30 dark:text-fuchsia-200";
+    return "bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]";
   }
   if (normalized.includes("done") || normalized.includes("complete") || normalized.includes("completed")) {
-    return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200";
+    return "bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
   }
 
-  return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300";
+  return "bg-desktop-bg-secondary text-desktop-text-secondary";
 }
 
 function getRunTabClasses(status: TaskRunInfo["status"] | undefined, active: boolean): string {
@@ -114,25 +114,25 @@ function getRunTabClasses(status: TaskRunInfo["status"] | undefined, active: boo
     switch (status) {
       case "completed":
         return active
-          ? "border-emerald-300 bg-emerald-50 text-slate-900 dark:border-emerald-700/70 dark:bg-emerald-900/20 dark:text-slate-100"
-          : "border-emerald-200/80 bg-white text-slate-600 hover:border-emerald-300 hover:bg-emerald-50 dark:border-emerald-800/70 dark:bg-transparent dark:text-slate-300 dark:hover:border-emerald-700 dark:hover:bg-emerald-900/10";
+          ? "border-[var(--dt-status-success)]/35 bg-[var(--dt-status-success-subtle)] text-desktop-text-primary"
+          : "border-[var(--dt-status-success)]/25 bg-desktop-bg-primary text-desktop-text-secondary hover:bg-[var(--dt-status-success-subtle)]";
       case "failed":
       case "timed_out":
         return active
-          ? "border-rose-300 bg-rose-50 text-slate-900 dark:border-rose-700/70 dark:bg-rose-900/20 dark:text-slate-100"
-          : "border-rose-200/80 bg-white text-slate-600 hover:border-rose-300 hover:bg-rose-50 dark:border-rose-800/70 dark:bg-transparent dark:text-slate-300 dark:hover:border-rose-700 dark:hover:bg-rose-900/10";
+          ? "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-text-primary"
+          : "border-desktop-danger-border bg-desktop-bg-primary text-desktop-text-secondary hover:bg-desktop-danger-subtle";
       case "running":
         return active
-          ? "border-sky-300 bg-sky-50 text-slate-900 dark:border-sky-700/70 dark:bg-sky-900/20 dark:text-slate-100"
-          : "border-sky-200/80 bg-white text-slate-600 hover:border-sky-300 hover:bg-sky-50 dark:border-sky-800/70 dark:bg-transparent dark:text-slate-300 dark:hover:border-sky-700 dark:hover:bg-sky-900/10";
+          ? "border-[var(--dt-status-info)]/35 bg-[var(--dt-status-info-subtle)] text-desktop-text-primary"
+          : "border-[var(--dt-status-info)]/25 bg-desktop-bg-primary text-desktop-text-secondary hover:bg-[var(--dt-status-info-subtle)]";
       case "transitioned":
         return active
-          ? "border-amber-300 bg-amber-50 text-slate-900 dark:border-amber-700/70 dark:bg-amber-900/20 dark:text-slate-100"
-          : "border-amber-200/80 bg-white text-slate-600 hover:border-amber-300 hover:bg-amber-50 dark:border-amber-800/70 dark:bg-transparent dark:text-slate-300 dark:hover:border-amber-700 dark:hover:bg-amber-900/10";
+          ? "border-[var(--dt-status-warning)]/35 bg-[var(--dt-status-warning-subtle)] text-desktop-text-primary"
+          : "border-[var(--dt-status-warning)]/25 bg-desktop-bg-primary text-desktop-text-secondary hover:bg-[var(--dt-status-warning-subtle)]";
       default:
         return active
-          ? "border-slate-300 bg-slate-100 text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-          : "border-slate-200/80 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-transparent dark:text-slate-400 dark:hover:border-slate-600 dark:hover:bg-slate-900/40";
+          ? "border-desktop-border bg-desktop-bg-active text-desktop-text-primary"
+          : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary hover:bg-desktop-bg-active";
     }
   })();
 
@@ -243,11 +243,11 @@ function ActivitySection({
   compact?: boolean;
 }) {
   return (
-    <section className="space-y-2 border-b border-slate-200/80 py-2 dark:border-[#232736]">
+    <section className="space-y-2 border-b border-desktop-border py-2">
       <div className={compact ? "mb-2" : "mb-3"}>
-        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">{title}</div>
+        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-desktop-text-tertiary">{title}</div>
         {description && (
-          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{description}</div>
+          <div className="mt-1 text-xs text-desktop-text-secondary">{description}</div>
         )}
       </div>
       {children}
@@ -292,7 +292,7 @@ function SessionIdChip({
   return (
     <div className={`flex min-w-0 items-center gap-1.5 ${compact ? "max-w-[13rem]" : "max-w-[18rem]"}`}>
       <span
-        className={`min-w-0 break-all rounded-lg bg-slate-100 font-mono text-[10px] text-slate-600 dark:bg-slate-800 dark:text-slate-300 ${compact ? "px-1.5 py-0.5" : "px-2 py-1"}`}
+        className={`min-w-0 break-all rounded-sm bg-desktop-bg-secondary font-mono text-[10px] text-desktop-text-secondary ${compact ? "px-1.5 py-0.5" : "px-2 py-1"}`}
         title={sessionId}
       >
         {sessionId}
@@ -300,7 +300,7 @@ function SessionIdChip({
       <button
         type="button"
         onClick={handleCopy}
-        className="shrink-0 rounded p-0.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+        className="shrink-0 rounded p-0.5 text-desktop-text-tertiary transition-colors hover:bg-desktop-bg-active hover:text-desktop-text-primary"
         title={t.common.copyToClipboard}
         aria-label={t.common.copyToClipboard}
       >
@@ -352,11 +352,11 @@ export function KanbanCardActivityPanel({
     >
       <div>
         {error && (
-          <div className="mb-2 border-l-2 border-amber-300 px-3 py-2 text-xs text-amber-800 dark:border-amber-700/80 dark:text-amber-200">
+          <div className="mb-2 border-l-2 border-[var(--dt-status-warning)]/35 px-3 py-2 text-xs text-[var(--dt-status-warning)]">
             Run ledger unavailable, showing local run history. {error}
           </div>
         )}
-        <div className="flex flex-wrap border-b border-slate-200/70 dark:border-[#232736]">
+        <div className="flex flex-wrap border-b border-desktop-border">
           {tabs.map((tab) => {
             const active = tab.id === activeTab;
             return (
@@ -366,13 +366,13 @@ export function KanbanCardActivityPanel({
                 onClick={() => setActiveTab(tab.id)}
                 className={`inline-flex items-center justify-between gap-1 border-b-2 border-transparent px-3 py-2 text-[11px] font-medium transition-colors ${
                   active
-                    ? "border-b-[#b45309] text-amber-800 dark:border-b-[#f59e0b] dark:text-amber-200"
-                    : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                    ? "border-b-desktop-accent text-desktop-text-primary"
+                    : "text-desktop-text-secondary hover:text-desktop-text-primary"
                 }`}
               >
                 <span>{tab.label}</span>
                 {typeof tab.count === "number" && (
-                  <span className={`rounded-none border px-1 py-0.5 text-[10px] ${active ? "border-amber-300 bg-amber-50 text-amber-900 dark:border-amber-700/50 dark:bg-amber-900/10 dark:text-amber-100" : "border-slate-200 bg-slate-100 text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"}`}>
+                  <span className={`rounded-none border px-1 py-0.5 text-[10px] ${active ? "border-desktop-accent bg-desktop-bg-active text-desktop-text-primary" : "border-desktop-border bg-desktop-bg-secondary text-desktop-text-secondary"}`}>
                     {tab.count}
                   </span>
                 )}
@@ -453,13 +453,13 @@ export function KanbanCardActivityBar({
 
   if (orderedSessionIds.length === 0) {
     return (
-      <div className="flex items-center justify-between gap-3 border-b border-dashed border-slate-300 px-3 py-2 text-[11px] text-slate-500 dark:border-slate-700 dark:text-slate-400">
+      <div className="flex items-center justify-between gap-3 border-b border-dashed border-desktop-border px-3 py-2 text-[11px] text-desktop-text-secondary">
         <span>{copy.noRunsInline}</span>
         {onCloseSession && (
           <button
             type="button"
             onClick={onCloseSession}
-            className="inline-flex h-6 w-6 shrink-0 items-center justify-center border border-slate-200 text-sm font-semibold text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200"
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center border border-desktop-border text-sm font-semibold text-desktop-text-secondary transition-colors hover:border-desktop-accent hover:text-desktop-text-primary"
             aria-label={copy.closeSessionPane}
             title={copy.closeSessionPane}
           >
@@ -473,12 +473,12 @@ export function KanbanCardActivityBar({
   return (
     <div className="space-y-2 px-1 py-1">
       {error && (
-        <div className="border-l-2 border-amber-300 px-3 py-2 text-[11px] text-amber-800 dark:border-amber-700/80 dark:text-amber-200">
+        <div className="border-l-2 border-[var(--dt-status-warning)]/35 px-3 py-2 text-[11px] text-[var(--dt-status-warning)]">
           Run ledger unavailable, using cached task history.
         </div>
       )}
-      <div className="flex items-start gap-2 border-b border-slate-200/70 pb-2 dark:border-[#232736]">
-        <div className="flex min-w-0 flex-1 flex-wrap items-end gap-1.5 border-slate-200/70 pr-1 pb-1">
+      <div className="flex items-start gap-2 border-b border-desktop-border pb-2">
+        <div className="flex min-w-0 flex-1 flex-wrap items-end gap-1.5 border-desktop-border pr-1 pb-1">
           {orderedSessionIds.map((sessionId, index) => {
             const active = sessionId === selectedRunId;
             const laneSession = laneSessionMap.get(sessionId);
@@ -508,8 +508,8 @@ export function KanbanCardActivityBar({
                 </span>
                 <span className={`px-0.5 text-[10px] font-semibold tabular-nums ${
                   active
-                    ? "text-slate-700 dark:text-slate-200"
-                    : "text-slate-500 dark:text-slate-400"
+                    ? "text-desktop-text-primary"
+                    : "text-desktop-text-secondary"
                 }`}>
                   {index + 1}
                 </span>
@@ -521,7 +521,7 @@ export function KanbanCardActivityBar({
           <button
             type="button"
             onClick={onCloseSession}
-            className="inline-flex h-6 w-6 shrink-0 items-center justify-center border border-slate-200 text-sm font-semibold text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200"
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center border border-desktop-border text-sm font-semibold text-desktop-text-secondary transition-colors hover:border-desktop-accent hover:text-desktop-text-primary"
             aria-label={copy.closeSessionPane}
             title={copy.closeSessionPane}
           >
@@ -530,14 +530,14 @@ export function KanbanCardActivityBar({
         )}
       </div>
       {(selectedLaneSession?.columnName || selectedStepLabel || selectedLaneSession?.status) && (
-        <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-200/80 pb-1 text-[10px] dark:border-[#232736]">
+        <div className="flex flex-wrap items-center gap-1.5 border-b border-desktop-border pb-1 text-[10px]">
           {selectedLaneSession?.columnName && (
-            <span className="rounded-full bg-sky-100 px-2 py-0.5 font-semibold uppercase tracking-wide text-sky-700 dark:bg-sky-900/30 dark:text-sky-300">
+            <span className="rounded-full bg-[var(--dt-status-info-subtle)] px-2 py-0.5 font-semibold uppercase tracking-wide text-[var(--dt-status-info)]">
               {selectedLaneSession.columnName}
             </span>
           )}
           {selectedLaneSession?.transport && (
-            <span className="rounded-full bg-violet-100 px-2 py-0.5 font-semibold uppercase tracking-wide text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
+            <span className="rounded-full bg-[var(--dt-status-info-subtle)] px-2 py-0.5 font-semibold uppercase tracking-wide text-[var(--dt-status-info)]">
               {selectedLaneSession.transport}
             </span>
           )}
@@ -547,12 +547,12 @@ export function KanbanCardActivityBar({
             </span>
           )}
           {selectedStepLabel && (
-            <span className="rounded-full bg-blue-100 px-2 py-0.5 font-semibold uppercase tracking-wide text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+            <span className="rounded-full bg-[var(--dt-status-info-subtle)] px-2 py-0.5 font-semibold uppercase tracking-wide text-[var(--dt-status-info)]">
               {selectedStepLabel}
             </span>
           )}
           {selectedLaneSession?.status && (
-            <span className="rounded-full bg-emerald-100 px-2 py-0.5 font-semibold uppercase tracking-wide text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
+            <span className="rounded-full bg-[var(--dt-status-success-subtle)] px-2 py-0.5 font-semibold uppercase tracking-wide text-[var(--dt-status-success)]">
               {selectedLaneSession.status}
             </span>
           )}
@@ -588,8 +588,8 @@ function SessionHistoryPanel({
 
   if (orderedSessionIds.length === 0) {
     return (
-      <div className={`border-b border-dashed border-slate-300 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400 ${compact ? "px-3 py-3" : "px-4 py-4"}`}>
-        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">{copy.runHistoryTitle}</div>
+      <div className={`border-b border-dashed border-desktop-border text-sm text-desktop-text-secondary ${compact ? "px-3 py-3" : "px-4 py-4"}`}>
+        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-desktop-text-tertiary">{copy.runHistoryTitle}</div>
         <div className="mt-2">{copy.noRunsHistory} {copy.noRunsHistoryHint}</div>
       </div>
     );
@@ -603,12 +603,12 @@ function SessionHistoryPanel({
     <>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">{copy.runHistoryTitle}</div>
-          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-desktop-text-tertiary">{copy.runHistoryTitle}</div>
+          <div className="mt-1 text-xs text-desktop-text-secondary">
             {copy.runHistoryCount(orderedSessionIds.length)}
           </div>
         </div>
-        <div className="border border-slate-200 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:border-slate-700 dark:text-slate-300">
+        <div className="border border-desktop-border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-desktop-text-secondary">
           {t.kanban.currentLane}: {task.columnId ?? t.kanban.backlog}
         </div>
       </div>
@@ -635,39 +635,39 @@ function SessionHistoryPanel({
               tabIndex={0}
               onClick={() => onSelectSession?.(selectedSessionId)}
               onKeyDown={(event) => handleSessionRowKeyDown(event, onSelectSession, selectedSessionId)}
-              className={`w-full border-b border-slate-200/70 text-left transition-colors last:border-b-0 ${compact ? "px-2.5 py-2" : "px-3 py-2.5"} ${
+              className={`w-full border-b border-desktop-border text-left transition-colors last:border-b-0 ${compact ? "px-2.5 py-2" : "px-3 py-2.5"} ${
                 isCurrent
-                  ? "text-amber-900 dark:text-amber-200"
-                  : "text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300"
-              } focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950`}
+                  ? "text-desktop-text-primary"
+                  : "text-desktop-text-secondary hover:border-desktop-accent"
+              } focus:outline-none focus-visible:ring-2 focus-visible:ring-desktop-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-desktop-bg-primary`}
               aria-pressed={isCurrent}
             >
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                <span className="rounded-full bg-desktop-bg-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-desktop-text-secondary">
                   {t.kanban.runLabel} {index + 1}
                 </span>
                 {run && (
-                  <span className="rounded-full border border-slate-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700 dark:border-slate-700 dark:text-slate-200">
+                  <span className="rounded-full border border-desktop-border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-desktop-text-secondary">
                     {formatTaskRunKind(run.kind)}
                   </span>
                 )}
                 {laneSession?.columnName && (
-                  <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:bg-sky-900/30 dark:text-sky-300">
+                  <span className="rounded-full bg-[var(--dt-status-info-subtle)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--dt-status-info)]">
                     {laneSession.columnName}
                   </span>
                 )}
                 {laneSession?.transport && (
-                  <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
+                  <span className="rounded-full bg-[var(--dt-status-info-subtle)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--dt-status-info)]">
                     {laneSession.transport}
                   </span>
                 )}
                 {stepLabel && (
-                  <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                  <span className="rounded-full bg-[var(--dt-status-info-subtle)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--dt-status-info)]">
                     {stepLabel}
                   </span>
                 )}
                 {isCurrent && (
-                  <span className="rounded-full bg-amber-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900 dark:bg-amber-800/40 dark:text-amber-200">
+                  <span className="rounded-full bg-[var(--dt-status-warning-subtle)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--dt-status-warning)]">
                     {t.common.active}
                   </span>
                 )}
@@ -679,10 +679,10 @@ function SessionHistoryPanel({
               </div>
               <div className="mt-2 flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className={`truncate font-medium text-slate-900 dark:text-slate-100 ${compact ? "text-[13px]" : "text-sm"}`}>
+                  <div className={`truncate font-medium text-desktop-text-primary ${compact ? "text-[13px]" : "text-sm"}`}>
                     {laneSession ? formatLaneSessionHeading(laneSession, session) : (session?.name ?? session?.provider ?? t.kanban.acpSession)}
                   </div>
-                  <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                  <div className="mt-0.5 text-xs text-desktop-text-secondary">
                     {isA2ARun
                       ? [
                         "Remote task",
@@ -695,7 +695,7 @@ function SessionHistoryPanel({
                         laneSpecialist,
                       ].filter(Boolean).join(" · ")}
                   </div>
-                  <div className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
+                  <div className="mt-1 text-[11px] text-desktop-text-tertiary">
                     {formatSessionTimestamp(run?.startedAt ?? session?.createdAt ?? laneSession?.startedAt)}
                   </div>
                 </div>
@@ -704,13 +704,13 @@ function SessionHistoryPanel({
                   compact={compact}
                 />
               </div>
-              <div className="mt-2 flex items-center justify-between gap-3 text-[11px] text-slate-500 dark:text-slate-400">
+              <div className="mt-2 flex items-center justify-between gap-3 text-[11px] text-desktop-text-secondary">
                 <span className="truncate">
                   {isA2ARun
                     ? (run?.contextId ?? laneSession?.contextId) ? `Context ${run?.contextId ?? laneSession?.contextId}` : "Remote task metadata available"
                     : session?.cwd ?? t.kanban.workingDirUnavailable}
                 </span>
-                <span className="font-medium text-amber-600 dark:text-amber-300">{reconnectLabel}</span>
+                <span className="font-medium text-desktop-accent">{reconnectLabel}</span>
               </div>
             </div>
           );
@@ -750,7 +750,7 @@ export function KanbanEmptySessionPane({
 
   return (
     <div className="flex h-full min-w-0 flex-1 flex-col overflow-hidden">
-      <div className="shrink-0 border-b border-slate-200/80 p-2 dark:border-[#202433]">
+      <div className="shrink-0 border-b border-desktop-border p-2">
         <KanbanCardActivityBar
           task={task}
           specialistLanguage={specialistLanguage}
@@ -758,12 +758,12 @@ export function KanbanEmptySessionPane({
         />
       </div>
       <div className="flex min-h-0 flex-1 items-center justify-center p-4">
-        <div className="w-full max-w-lg border border-slate-200/80 p-4 dark:border-[#232736]">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-600 dark:text-sky-300">{copy.emptyPaneEyebrow}</div>
-          <div className="mt-1 text-lg font-semibold text-slate-950 dark:text-slate-50">{copy.emptyPaneTitle}</div>
-          <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{copy.emptyPaneDescription}</p>
-          <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{copy.emptyPaneHint}</p>
-          <div className="mt-3 border-l-2 border-sky-300 bg-sky-50/50 px-3 py-2.5 text-sm font-medium text-sky-900 dark:border-sky-800/60 dark:bg-sky-900/20 dark:text-sky-100">
+        <div className="w-full max-w-lg border border-desktop-border p-4">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--dt-status-info)]">{copy.emptyPaneEyebrow}</div>
+          <div className="mt-1 text-lg font-semibold text-desktop-text-primary">{copy.emptyPaneTitle}</div>
+          <p className="mt-2 text-sm leading-6 text-desktop-text-secondary">{copy.emptyPaneDescription}</p>
+          <p className="mt-2 text-sm leading-6 text-desktop-text-secondary">{copy.emptyPaneHint}</p>
+          <div className="mt-3 border-l-2 border-[var(--dt-status-info)]/35 bg-[var(--dt-status-info-subtle)] px-3 py-2.5 text-sm font-medium text-[var(--dt-status-info)]">
             {copy.expectedTarget(target)}
           </div>
         </div>
@@ -777,8 +777,8 @@ function HandoffPanel({ task, compact = false }: { task: TaskInfo; compact?: boo
   const handoffs = task.laneHandoffs ?? [];
   if (handoffs.length === 0) {
     return (
-      <div className={`border-b border-dashed border-slate-300 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400 ${compact ? "px-3 py-3" : "px-4 py-4"}`}>
-        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">{t.kanban.laneHandoffs}</div>
+      <div className={`border-b border-dashed border-desktop-border text-sm text-desktop-text-secondary ${compact ? "px-3 py-3" : "px-4 py-4"}`}>
+        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-desktop-text-tertiary">{t.kanban.laneHandoffs}</div>
         <div className="mt-2">{t.kanban.noLaneHandoffsYet}</div>
       </div>
     );
@@ -791,8 +791,8 @@ function HandoffPanel({ task, compact = false }: { task: TaskInfo; compact?: boo
   return (
     <>
       <div>
-        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">{t.kanban.laneHandoffs}</div>
-        <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-desktop-text-tertiary">{t.kanban.laneHandoffs}</div>
+        <div className="mt-1 text-xs text-desktop-text-secondary">
           {t.kanban.laneHandoffsDescription}
         </div>
       </div>
@@ -800,23 +800,23 @@ function HandoffPanel({ task, compact = false }: { task: TaskInfo; compact?: boo
         {orderedHandoffs.map((handoff) => (
           <div
             key={handoff.id}
-            className="border-b border-slate-200/70 px-3 py-2 dark:border-slate-700/70"
+            className="border-b border-desktop-border px-3 py-2"
           >
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:bg-sky-900/30 dark:text-sky-300">
+              <span className="rounded-full bg-[var(--dt-status-info-subtle)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--dt-status-info)]">
                 {handoff.requestType.replace(/_/g, " ")}
               </span>
-              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+              <span className="rounded-full bg-[var(--dt-status-warning-subtle)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--dt-status-warning)]">
                 {handoff.status}
               </span>
             </div>
-            <div className="mt-2 text-sm text-slate-800 dark:text-slate-200">{handoff.request}</div>
+            <div className="mt-2 text-sm text-desktop-text-primary">{handoff.request}</div>
             {handoff.responseSummary && (
-              <div className="mt-2 border-l-2 border-emerald-200 px-3 py-2 text-xs text-emerald-800 dark:border-emerald-900/30 dark:text-emerald-200">
+              <div className="mt-2 border-l-2 border-[var(--dt-status-success)]/35 px-3 py-2 text-xs text-[var(--dt-status-success)]">
                 {handoff.responseSummary}
               </div>
             )}
-            <div className="mt-2 text-[11px] text-slate-400 dark:text-slate-500">
+            <div className="mt-2 text-[11px] text-desktop-text-tertiary">
               {t.kanban.requested} {formatSessionTimestamp(handoff.requestedAt)}{handoff.respondedAt ? ` · ${t.kanban.responded} ${formatSessionTimestamp(handoff.respondedAt)}` : ""}
             </div>
           </div>
@@ -833,26 +833,26 @@ function GitHubPanel({ task, compact = false }: { task: TaskInfo; compact?: bool
   }
 
   return (
-    <div className={`border-b border-slate-200/70 dark:border-slate-700/70 ${compact ? "px-3 py-3" : "px-4 py-4"}`}>
-      <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">GitHub</div>
+    <div className={`border-b border-desktop-border ${compact ? "px-3 py-3" : "px-4 py-4"}`}>
+      <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-desktop-text-tertiary">GitHub</div>
       <div className="mt-2 flex flex-wrap items-center gap-2">
-        <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+        <span className="rounded-full bg-[var(--dt-status-info-subtle)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--dt-status-info)]">
           {task.githubState ?? t.kanban.linkedLabel}
         </span>
         {task.githubRepo && (
-          <span className="text-xs text-slate-500 dark:text-slate-400">{task.githubRepo}</span>
+          <span className="text-xs text-desktop-text-secondary">{task.githubRepo}</span>
         )}
       </div>
       <a
         href={task.githubUrl}
         target="_blank"
         rel="noreferrer"
-        className={`mt-3 inline-flex text-amber-600 hover:underline dark:text-amber-400 ${compact ? "text-[13px]" : "text-sm"}`}
+        className={`mt-3 inline-flex text-desktop-accent hover:underline ${compact ? "text-[13px]" : "text-sm"}`}
       >
         #{task.githubNumber}
       </a>
       {task.githubSyncedAt && (
-        <div className="mt-2 text-[11px] text-slate-400 dark:text-slate-500">
+        <div className="mt-2 text-[11px] text-desktop-text-tertiary">
           {t.kanban.syncedAt} {formatSessionTimestamp(task.githubSyncedAt)}
         </div>
       )}

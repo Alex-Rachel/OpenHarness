@@ -130,12 +130,12 @@ function parseInstructionSections(source: string) {
 
 function getAuditStatusClass(status: "ok" | "heuristic" | "error") {
   if (status === "ok") {
-    return "border-emerald-200 bg-emerald-50 text-emerald-700";
+    return "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
   }
   if (status === "heuristic") {
-    return "border-amber-200 bg-amber-50 text-amber-700";
+    return "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
   }
-  return "border-red-200 bg-red-50 text-red-700";
+  return "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text";
 }
 
 function getScoreCardClass(score: number | null, maxScore: number) {
@@ -145,12 +145,12 @@ function getScoreCardClass(score: number | null, maxScore: number) {
 
   const ratio = maxScore > 0 ? score / maxScore : 0;
   if (ratio >= 0.8) {
-    return "border-emerald-200 bg-emerald-50/70 text-emerald-800";
+    return "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
   }
   if (ratio >= 0.6) {
-    return "border-amber-200 bg-amber-50/70 text-amber-800";
+    return "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
   }
-  return "border-red-200 bg-red-50/80 text-red-800";
+  return "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text";
 }
 
 function AuditScoreCard({
@@ -176,7 +176,7 @@ function AuditScoreCard({
             >
               ?
             </span>
-            <div className="pointer-events-none absolute left-2.5 top-full z-20 mt-2 w-52 rounded-lg border border-slate-200 bg-slate-950 px-3 py-2 text-[10px] font-medium leading-4 text-white opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100">
+            <div className="pointer-events-none absolute left-2.5 top-full z-20 mt-2 w-52 rounded-lg border border-desktop-border bg-desktop-surface-elevated px-3 py-2 text-[10px] font-medium leading-4 text-desktop-text-primary opacity-0 shadow-[var(--dt-shadow-md)] transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100">
               {description}
             </div>
           </>
@@ -450,7 +450,7 @@ export function HarnessAgentInstructionsPanel({
               Audit has not been run yet in this view. Click Re-run audit to generate a fresh summary.
             </div>
           ) : auditSummary.status === "error" ? (
-            <div className="mt-2 rounded-sm border border-red-200 bg-red-50 px-2.5 py-2 text-[11px] text-red-700">
+            <div className="mt-2 rounded-sm border border-desktop-danger-border bg-desktop-danger-subtle px-2.5 py-2 text-[11px] text-desktop-danger-text">
               {auditSummary.error ?? "Audit execution failed."}
             </div>
           ) : compactMode ? (
@@ -492,7 +492,7 @@ export function HarnessAgentInstructionsPanel({
                 {auditSummary.oneSentence ? ` · ${auditSummary.oneSentence}` : ""}
               </div>
               {auditSummary.error ? (
-                <div className="mt-1 text-[10px] text-amber-700">
+                <div className="mt-1 text-[10px] text-[var(--dt-status-warning)]">
                   {auditSummary.error}
                 </div>
               ) : null}
@@ -508,7 +508,7 @@ export function HarnessAgentInstructionsPanel({
       ) : null}
 
       {unsupportedMessage ? (
-        <HarnessUnsupportedState className="rounded-sm border border-amber-200 bg-amber-50 px-4 py-5 text-[11px] text-amber-800" />
+        <HarnessUnsupportedState className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-4 py-5 text-[11px] text-[var(--dt-status-warning)]" />
       ) : null}
 
       {resolvedInstructionsState.error && !unsupportedMessage ? (

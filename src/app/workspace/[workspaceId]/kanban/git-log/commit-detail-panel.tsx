@@ -28,35 +28,35 @@ const STATUS_CONFIG: Record<
     label: "Added",
     letter: "A",
     className:
-      "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+      "bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]",
     icon: Plus,
   },
   modified: {
     label: "Modified",
     letter: "M",
     className:
-      "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+      "bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
     icon: FileText,
   },
   deleted: {
     label: "Deleted",
     letter: "D",
     className:
-      "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
+      "bg-desktop-danger-subtle text-desktop-danger-text",
     icon: Trash2,
   },
   renamed: {
     label: "Renamed",
     letter: "R",
     className:
-      "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300",
+      "bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]",
     icon: ArrowRightLeft,
   },
   copied: {
     label: "Copied",
     letter: "C",
     className:
-      "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300",
+      "bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]",
     icon: Copy,
   },
 };
@@ -69,37 +69,37 @@ function FileChangeRow({ file }: { file: CommitFileChange }) {
   const dirPath = parts.join("/");
 
   return (
-    <div className="flex items-center gap-1.5 rounded px-2 py-[3px] text-[11px] hover:bg-slate-100 dark:hover:bg-[#1a1d29]">
+    <div className="flex items-center gap-1.5 rounded px-2 py-[3px] text-[11px] hover:bg-desktop-bg-active">
       <span
         className={`inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-[9px] font-bold ${config.className}`}
       >
         {config.letter}
       </span>
-      <Icon className="h-3 w-3 shrink-0 text-slate-400" />
-      <span className="min-w-0 truncate font-medium text-slate-700 dark:text-slate-200">
+      <Icon className="h-3 w-3 shrink-0 text-desktop-text-tertiary" />
+      <span className="min-w-0 truncate font-medium text-desktop-text-primary">
         {fileName}
       </span>
       {dirPath && (
-        <span className="min-w-0 truncate text-[10px] text-slate-400 dark:text-slate-500">
+        <span className="min-w-0 truncate text-[10px] text-desktop-text-tertiary">
           {dirPath}
         </span>
       )}
       {file.previousPath && (
-        <span className="text-[10px] text-slate-400 dark:text-slate-500">
+        <span className="text-[10px] text-desktop-text-tertiary">
           ← {file.previousPath.split("/").pop()}
         </span>
       )}
       <span className="ml-auto shrink-0 tabular-nums">
         {file.additions > 0 && (
-          <span className="text-emerald-600 dark:text-emerald-400">
+          <span className="text-[var(--dt-status-success)]">
             +{file.additions}
           </span>
         )}
         {file.additions > 0 && file.deletions > 0 && (
-          <span className="mx-0.5 text-slate-300 dark:text-slate-600">/</span>
+          <span className="mx-0.5 text-desktop-text-tertiary">/</span>
         )}
         {file.deletions > 0 && (
-          <span className="text-rose-600 dark:text-rose-400">
+          <span className="text-desktop-danger-text">
             −{file.deletions}
           </span>
         )}
@@ -111,7 +111,7 @@ function FileChangeRow({ file }: { file: CommitFileChange }) {
 export function CommitDetailPanel({ detail, loading }: CommitDetailPanelProps) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-6 text-slate-400">
+      <div className="flex items-center justify-center py-6 text-desktop-text-tertiary">
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         <span className="text-[11px]">Loading…</span>
       </div>
@@ -120,7 +120,7 @@ export function CommitDetailPanel({ detail, loading }: CommitDetailPanelProps) {
 
   if (!detail) {
     return (
-      <div className="flex flex-col items-center justify-center gap-1 py-8 text-slate-400 dark:text-slate-500">
+      <div className="flex flex-col items-center justify-center gap-1 py-8 text-desktop-text-tertiary">
         <GitCommitIcon className="h-5 w-5" />
         <span className="text-[11px]">Select a commit to view details</span>
       </div>
@@ -134,18 +134,18 @@ export function CommitDetailPanel({ detail, loading }: CommitDetailPanelProps) {
   return (
     <div className="flex flex-col overflow-hidden">
       {/* Commit header */}
-      <div className="space-y-1.5 border-b border-slate-200 px-3 py-2 dark:border-[#1c1f2e]">
-        <p className="text-[12px] font-medium leading-snug text-slate-800 dark:text-slate-100">
+      <div className="space-y-1.5 border-b border-desktop-border px-3 py-2">
+        <p className="text-[12px] font-medium leading-snug text-desktop-text-primary">
           {commit.summary}
         </p>
 
         {commit.message && commit.message !== commit.summary && (
-          <p className="whitespace-pre-wrap text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+          <p className="whitespace-pre-wrap text-[11px] leading-relaxed text-desktop-text-secondary">
             {commit.message.replace(commit.summary, "").trim()}
           </p>
         )}
 
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-500 dark:text-slate-400">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-desktop-text-secondary">
           <span className="inline-flex items-center gap-1">
             <Hash className="h-2.5 w-2.5" />
             <span className="font-mono">{commit.shortSha}</span>
@@ -153,7 +153,7 @@ export function CommitDetailPanel({ detail, loading }: CommitDetailPanelProps) {
           <span className="inline-flex items-center gap-1">
             <User className="h-2.5 w-2.5" />
             <span>{commit.authorName}</span>
-            <span className="text-slate-400 dark:text-slate-500">
+            <span className="text-desktop-text-tertiary">
               &lt;{commit.authorEmail}&gt;
             </span>
           </span>
@@ -164,7 +164,7 @@ export function CommitDetailPanel({ detail, loading }: CommitDetailPanelProps) {
         </div>
 
         {commit.parents.length > 0 && (
-          <div className="text-[10px] text-slate-400 dark:text-slate-500">
+          <div className="text-[10px] text-desktop-text-tertiary">
             Parents:{" "}
             {commit.parents.map((p, i) => (
               <span key={p}>
@@ -177,15 +177,15 @@ export function CommitDetailPanel({ detail, loading }: CommitDetailPanelProps) {
       </div>
 
       {/* Changed files */}
-      <div className="flex items-center justify-between border-b border-slate-200 px-3 py-1 dark:border-[#1c1f2e]">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+      <div className="flex items-center justify-between border-b border-desktop-border px-3 py-1">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-desktop-text-tertiary">
           Changed Files
         </span>
-        <span className="text-[10px] tabular-nums text-slate-400 dark:text-slate-500">
+        <span className="text-[10px] tabular-nums text-desktop-text-tertiary">
           {files.length} files{" "}
-          <span className="text-emerald-600 dark:text-emerald-400">+{totalAdditions}</span>
+          <span className="text-[var(--dt-status-success)]">+{totalAdditions}</span>
           {" / "}
-          <span className="text-rose-600 dark:text-rose-400">−{totalDeletions}</span>
+          <span className="text-desktop-danger-text">−{totalDeletions}</span>
         </span>
       </div>
 

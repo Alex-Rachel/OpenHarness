@@ -28,7 +28,7 @@ export interface SelectProps
 }
 
 const baseSelectClassName =
-  "border border-slate-200 dark:border-slate-600 bg-white dark:bg-[#1e2130] text-slate-900 dark:text-slate-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500";
+  "rounded-[var(--dt-radius-sm)] border border-desktop-border bg-desktop-surface px-2 py-1 text-desktop-text-primary shadow-[var(--dt-shadow-sm)] outline-none transition-colors duration-[var(--dt-motion-fast)] placeholder:text-desktop-text-muted hover:bg-desktop-surface-muted focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/20";
 
 export function Select({
   value = "",

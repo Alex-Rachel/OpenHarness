@@ -46,7 +46,7 @@ function DimensionDensityTooltip({ active, payload }: TooltipContentProps<ValueT
   };
 
   return (
-    <div className="rounded-sm border border-desktop-border bg-white/95 px-3 py-2 text-[11px] dark:bg-slate-950/95">
+    <div className="rounded-sm border border-desktop-border bg-desktop-surface-elevated px-3 py-2 text-[11px] shadow-[var(--dt-shadow-md)]">
       <div className="font-semibold text-desktop-text-primary">{datum.label}</div>
       <div className="mt-1 text-desktop-text-secondary">{datum.fileName}</div>
       <div className="mt-2 text-desktop-text-primary">score {datum.score}</div>
@@ -75,7 +75,7 @@ export function HarnessFitnessFilesDashboard({
   const content = (
     <>
       {unsupportedMessage ? (
-        <HarnessUnsupportedState className="rounded-sm border border-amber-200 bg-amber-50 px-4 py-4 text-[11px] text-amber-800" />
+        <HarnessUnsupportedState className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-4 py-4 text-[11px] text-[var(--dt-status-warning)]" />
       ) : null}
 
       {loading ? (
@@ -86,7 +86,7 @@ export function HarnessFitnessFilesDashboard({
 
       {!unsupportedMessage && !loading && !error ? (
         <div className="mt-3" data-testid="harness-fitness-files-dashboard">
-          <section className="rounded-sm border border-desktop-border bg-desktop-bg-primary/80 p-4 dark:bg-white/6">
+          <section className="rounded-sm border border-desktop-border bg-desktop-bg-primary/80 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-desktop-text-secondary">{t.harness.fitnessFiles.dimensionRadar}</div>
@@ -95,7 +95,7 @@ export function HarnessFitnessFilesDashboard({
                 </p>
               </div>
               {model.selectedDimension ? (
-                <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-700">
+                <div className="rounded-full border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--dt-status-success)]">
                   {model.selectedDimension.label} · score {model.selectedDimension.score}
                 </div>
               ) : null}
@@ -105,20 +105,20 @@ export function HarnessFitnessFilesDashboard({
               <div className="mt-4 h-[360px] w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                   <RadarChart data={model.dimensions} outerRadius="70%">
-                    <PolarGrid stroke="#d8dee8" />
-                    <PolarAngleAxis dataKey="label" tick={{ fontSize: 11, fill: "#1f2937" }} />
+                    <PolarGrid stroke="var(--dt-border-light)" />
+                    <PolarAngleAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--dt-text-secondary)" }} />
                     <PolarRadiusAxis
                       angle={90}
                       domain={[0, 100]}
-                      tick={{ fontSize: 10, fill: "#68707f" }}
+                      tick={{ fontSize: 10, fill: "var(--dt-text-tertiary)" }}
                       tickCount={6}
                     />
                     <Tooltip content={(props) => <DimensionDensityTooltip {...props} />} />
                     <Radar
                       name={t.harness.fitnessFiles.specScore}
                       dataKey="score"
-                      stroke="#2563eb"
-                      fill="#2563eb"
+                      stroke="var(--dt-status-info)"
+                      fill="var(--dt-status-info)"
                       fillOpacity={0.28}
                       isAnimationActive={false}
                     />

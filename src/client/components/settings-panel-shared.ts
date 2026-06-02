@@ -171,10 +171,33 @@ export type SettingsTab =
   | "workflows";
 
 export const inputCls =
-  "w-full text-xs px-2 py-1.5 rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#1e2130] text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none";
-export const labelCls = "text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider";
-export const sectionHeadCls = "text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider";
-export const settingsCardCls = "rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-[#1e2130]";
+  "w-full rounded-[var(--dt-radius-sm)] border border-desktop-border bg-desktop-surface px-2 py-1.5 text-xs text-desktop-text-primary placeholder:text-desktop-text-muted focus:outline-none focus:ring-2 focus:ring-[var(--dt-focus-ring)]/20";
+export const labelCls = "text-[10px] font-medium uppercase tracking-wider text-desktop-text-tertiary";
+export const sectionHeadCls = "text-xs font-semibold uppercase tracking-wider text-desktop-text-tertiary";
+export const settingsCardCls = "rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-surface p-4 shadow-[var(--dt-shadow-sm)]";
+export const primaryActionCls =
+  "inline-flex items-center justify-center gap-1.5 rounded-[var(--dt-radius-md)] bg-desktop-accent px-3 py-1.5 text-xs font-semibold text-desktop-accent-text shadow-[var(--dt-shadow-sm)] transition-colors hover:bg-desktop-accent-strong disabled:cursor-not-allowed disabled:opacity-40";
+export const secondaryActionCls =
+  "inline-flex items-center justify-center gap-1.5 rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface px-3 py-1.5 text-xs font-medium text-desktop-text-secondary shadow-[var(--dt-shadow-sm)] transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary disabled:opacity-50";
+export const quietActionCls =
+  "inline-flex items-center justify-center gap-1.5 rounded-[var(--dt-radius-sm)] px-2 py-1 text-xs font-medium text-desktop-text-secondary transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary disabled:opacity-50";
+export const iconActionCls =
+  "rounded-[var(--dt-radius-sm)] p-1 text-desktop-text-tertiary transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary disabled:opacity-50";
+export const linkActionCls =
+  "text-xs font-medium text-desktop-accent transition-colors hover:text-desktop-accent-strong hover:underline";
+export const mutedTextCls = "text-desktop-text-tertiary";
+export const successChipCls =
+  "border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
+export const warningChipCls =
+  "border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
+export const infoChipCls =
+  "border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]";
+export const neutralChipCls =
+  "border border-desktop-border bg-desktop-surface-muted text-desktop-text-secondary";
+export const successSurfaceCls =
+  "border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
+export const warningSurfaceCls =
+  "border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
 
 export const BASE_URL_SUGGESTIONS = [
   "https://open.bigmodel.cn/api/anthropic",

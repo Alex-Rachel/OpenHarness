@@ -60,38 +60,38 @@ function toneStyles(tone: AgentHookFlowNodeTone) {
   switch (tone) {
     case "success":
       return {
-        border: "border-emerald-200",
-        badge: "border-emerald-200 bg-emerald-50 text-emerald-700",
+        border: "border-[var(--dt-status-success)]/25",
+        badge: "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]",
         glow: "",
-        line: "#059669",
+        line: "var(--dt-status-success)",
       };
     case "warning":
       return {
-        border: "border-amber-200",
-        badge: "border-amber-200 bg-amber-50 text-amber-800",
+        border: "border-[var(--dt-status-warning)]/25",
+        badge: "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
         glow: "",
-        line: "#d97706",
+        line: "var(--dt-status-warning)",
       };
     case "danger":
       return {
-        border: "border-red-200",
-        badge: "border-red-200 bg-red-50 text-red-700",
+        border: "border-desktop-danger-border",
+        badge: "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text",
         glow: "",
-        line: "#dc2626",
+        line: "var(--dt-status-danger)",
       };
     case "accent":
       return {
-        border: "border-sky-200",
-        badge: "border-sky-200 bg-sky-50 text-sky-700",
+        border: "border-[var(--dt-status-info)]/25",
+        badge: "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]",
         glow: "",
-        line: "#0284c7",
+        line: "var(--dt-status-info)",
       };
     default:
       return {
         border: "border-desktop-border",
         badge: "border-desktop-border bg-desktop-bg-secondary text-desktop-text-secondary",
         glow: "",
-        line: "#94a3b8",
+        line: "var(--dt-border)",
       };
   }
 }
@@ -172,7 +172,7 @@ function AgentHookLifecycleRail() {
     <aside className="rounded-sm border border-desktop-border bg-desktop-bg-primary p-3">
       <div className="flex items-center justify-between gap-3 border-b border-desktop-border pb-2">
         <div className="text-[12px] font-semibold text-desktop-text-primary">Agent hooks</div>
-        <div className="rounded-full border border-desktop-border bg-white/80 px-2.5 py-1 text-[10px] text-desktop-text-secondary">
+        <div className="rounded-full border border-desktop-border bg-desktop-surface px-2.5 py-1 text-[10px] text-desktop-text-secondary">
           {groupedEntries.reduce((sum, group) => sum + group.entries.length, 0)} {t.harness.agentHookWorkbench.events}
         </div>
       </div>
@@ -197,23 +197,23 @@ function AgentHookLifecycleRail() {
                     onClick={() => dispatch({ type: "select-event", event: entry.event })}
                     className={`w-full rounded-sm border px-2.5 py-2 text-left transition ${
                       selected
-                        ? "border-sky-300 bg-sky-50/80"
-                        : "border-desktop-border bg-white/85 hover:bg-desktop-bg-primary"
+                        ? "border-desktop-accent bg-desktop-surface-muted"
+                        : "border-desktop-border bg-desktop-surface hover:bg-desktop-surface-muted"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0 truncate text-[11px] font-semibold text-desktop-text-primary">{entry.event}</div>
                       <span className={`shrink-0 rounded-full border px-1.5 py-0.5 text-[10px] ${
                         entry.stats.hookCount > 0
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                          : "border-slate-200 bg-slate-100 text-slate-500"
+                          ? "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
+                          : "border-desktop-border bg-desktop-surface-muted text-desktop-text-secondary"
                       }`}>
                         {entry.stats.hookCount > 0 ? `${entry.stats.hookCount}` : "–"}
                       </span>
                     </div>
                     {entry.stats.hookCount > 0 && entry.stats.blockingCount > 0 ? (
                       <div className="mt-1 flex gap-1">
-                        <span className="rounded-full border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] text-amber-800">
+                        <span className="rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-1.5 py-0.5 text-[10px] text-[var(--dt-status-warning)]">
                           {entry.stats.blockingCount} {t.harness.agentHookWorkbench.blocking}
                         </span>
                       </div>
@@ -302,13 +302,13 @@ function AgentHookFlowCanvas() {
         </div>
         {activeEntry ? (
           <div className="flex flex-wrap gap-2 text-[10px]">
-            <span className="rounded-full border border-desktop-border bg-white/80 px-2.5 py-1 text-desktop-text-secondary">
+            <span className="rounded-full border border-desktop-border bg-desktop-surface px-2.5 py-1 text-desktop-text-secondary">
               {activeEntry.lifecycleLabel}
             </span>
-            <span className="rounded-full border border-desktop-border bg-white/80 px-2.5 py-1 text-desktop-text-secondary">
+            <span className="rounded-full border border-desktop-border bg-desktop-surface px-2.5 py-1 text-desktop-text-secondary">
               {activeEntry.stats.hookCount} hooks
             </span>
-            <span className="rounded-full border border-desktop-border bg-white/80 px-2.5 py-1 text-desktop-text-secondary">
+            <span className="rounded-full border border-desktop-border bg-desktop-surface px-2.5 py-1 text-desktop-text-secondary">
               {activeEntry.stats.blockingCount} {t.harness.agentHookWorkbench.blocking}
             </span>
           </div>
@@ -332,7 +332,7 @@ function AgentHookFlowCanvas() {
             panOnDrag
             zoomOnScroll={false}
           >
-            <Background color="#dbe4f0" gap={20} />
+            <Background color="var(--dt-border-light)" gap={20} />
             <Controls showInteractive={false} />
           </ReactFlow>
         </div>
@@ -375,7 +375,7 @@ function AgentHookInspector() {
               onClick={() => setActiveTab(tab.id as "basic" | "source")}
               className={`rounded-sm px-2.5 py-1 text-[10px] font-medium transition ${
                 activeTab === tab.id
-                  ? "border border-sky-200 bg-sky-50 text-sky-700"
+                  ? "border border-desktop-accent bg-desktop-surface-muted text-desktop-text-primary"
                   : "border border-transparent text-desktop-text-secondary hover:bg-desktop-bg-secondary"
               }`}
             >
@@ -385,11 +385,11 @@ function AgentHookInspector() {
         </div>
 
         {warnings.length > 0 ? (
-          <div className="rounded-sm border border-amber-200 bg-amber-50 p-3">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-800">{t.harness.agentHookWorkbench.warnings}</div>
+          <div className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] p-3">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--dt-status-warning)]">{t.harness.agentHookWorkbench.warnings}</div>
             <ul className="mt-1 space-y-1">
               {warnings.map((warning) => (
-                <li key={warning} className="text-[11px] text-amber-700">• {warning}</li>
+                <li key={warning} className="text-[11px] text-[var(--dt-status-warning)]">• {warning}</li>
               ))}
             </ul>
           </div>
@@ -421,13 +421,13 @@ function AgentHookInspector() {
                           </div>
                           {hook.matcher ? (
                             <div className="mt-0.5 text-[10px] text-desktop-text-secondary">
-                              matcher: <code className="rounded bg-slate-100 px-1 py-0.5 text-[10px]">{hook.matcher}</code>
+                              matcher: <code className="rounded bg-desktop-surface-muted px-1 py-0.5 text-[10px]">{hook.matcher}</code>
                             </div>
                           ) : null}
                         </div>
                         <div className="flex shrink-0 flex-wrap justify-end gap-1">
                           {hook.blocking ? (
-                            <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] text-amber-800">{t.harness.agentHookWorkbench.blocking}</span>
+                            <span className="rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-2 py-0.5 text-[10px] text-[var(--dt-status-warning)]">{t.harness.agentHookWorkbench.blocking}</span>
                           ) : null}
                           <span className="rounded-full border border-desktop-border bg-desktop-bg-secondary px-2 py-0.5 text-[10px] text-desktop-text-secondary">
                             {hook.type}
@@ -435,12 +435,12 @@ function AgentHookInspector() {
                         </div>
                       </div>
                       <div className="mt-2 space-y-0.5 text-[10px] text-desktop-text-secondary">
-                        {hook.command ? <div>command: <code className="break-all rounded bg-slate-100 px-1 py-0.5">{hook.command}</code></div> : null}
-                        {hook.url ? <div>url: <code className="rounded bg-slate-100 px-1 py-0.5">{hook.url}</code></div> : null}
-                        {hook.prompt ? <div>prompt: <code className="rounded bg-slate-100 px-1 py-0.5">{hook.prompt}</code></div> : null}
+                        {hook.command ? <div>command: <code className="break-all rounded bg-desktop-surface-muted px-1 py-0.5">{hook.command}</code></div> : null}
+                        {hook.url ? <div>url: <code className="rounded bg-desktop-surface-muted px-1 py-0.5">{hook.url}</code></div> : null}
+                        {hook.prompt ? <div>prompt: <code className="rounded bg-desktop-surface-muted px-1 py-0.5">{hook.prompt}</code></div> : null}
                         <div>timeout: {hook.timeout}s</div>
                         {hook.source ? (
-                          <div>source: <span className="font-medium text-sky-600">{hook.source}</span></div>
+                          <div>source: <span className="font-medium text-desktop-accent">{hook.source}</span></div>
                         ) : null}
                       </div>
                     </li>

@@ -105,9 +105,9 @@ export function HarnessLifecycleView({
                   width={node.width}
                   height={node.height}
                   fill="transparent"
-                  stroke={activeSelectedNodeId === node.nodeId ? "#3b82f6" : "transparent"}
+                  stroke={activeSelectedNodeId === node.nodeId ? "var(--dt-accent)" : "transparent"}
                   strokeWidth={activeSelectedNodeId === node.nodeId ? 3 : 0}
-                  className="cursor-pointer transition-all hover:fill-blue-500/5 pointer-events-auto"
+                  className="cursor-pointer transition-all hover:fill-desktop-accent/5 pointer-events-auto"
                   onClick={() => handleNodeClick(node.nodeId)}
                   role="button"
                   aria-label={node.title}

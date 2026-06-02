@@ -150,8 +150,8 @@ export function QueueStatusBadge({
       title={tooltip}
     >
       {label} {count}
-      <span className="pointer-events-none absolute left-0 top-full z-20 mt-2 hidden w-72 rounded-xl border border-gray-200 bg-white p-3 text-left text-xs text-gray-700 shadow-xl group-hover:block dark:border-gray-700 dark:bg-[#12141c] dark:text-gray-200">
-        <div className="mb-2 font-semibold text-gray-900 dark:text-gray-100">{label}</div>
+      <span className="pointer-events-none absolute left-0 top-full z-20 mt-2 hidden w-72 rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-bg-primary p-3 text-left text-xs text-desktop-text-secondary shadow-[var(--dt-shadow-lg)] group-hover:block">
+        <div className="mb-2 font-semibold text-desktop-text-primary">{label}</div>
         {cards.length > 0 ? (
           <div className="space-y-1">
             {cards.map((card, index) => (
@@ -161,7 +161,7 @@ export function QueueStatusBadge({
             ))}
           </div>
         ) : (
-          <div className="text-gray-500 dark:text-gray-400">No cards</div>
+          <div className="text-desktop-text-secondary">No cards</div>
         )}
       </span>
     </span>

@@ -27,9 +27,9 @@ function ListBlock({
 }) {
   const border =
     tone === "rose"
-      ? "border-rose-200 bg-rose-50/60"
+      ? "border-desktop-danger-border bg-desktop-danger-subtle"
       : tone === "amber"
-        ? "border-amber-200 bg-amber-50/60"
+        ? "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)]"
         : "border-desktop-border bg-desktop-bg-primary/80";
   if (items.length === 0) {
     return null;
@@ -89,7 +89,7 @@ export function HarnessCodeownersPanel({
       ) : null}
 
       {unsupportedMessage ? (
-        <HarnessUnsupportedState className="rounded-sm border border-amber-200 bg-amber-50 px-4 py-5 text-[11px] text-amber-800" />
+        <HarnessUnsupportedState className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-4 py-5 text-[11px] text-[var(--dt-status-warning)]" />
       ) : null}
 
       {error && !unsupportedMessage ? (
@@ -99,7 +99,7 @@ export function HarnessCodeownersPanel({
       {!loading && !error && !unsupportedMessage && data ? (
         <div className="space-y-4">
           {warnings.length > 0 ? (
-            <div className="rounded-sm border border-amber-200 bg-amber-50/80 px-3 py-2 text-[11px] text-amber-900">
+            <div className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-3 py-2 text-[11px] text-[var(--dt-status-warning)]">
               <div className="font-semibold">Warnings</div>
               <ul className="mt-1 list-inside list-disc space-y-0.5">
                 {warnings.map((w) => (
@@ -137,12 +137,12 @@ export function HarnessCodeownersPanel({
                     </div>
                     <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-desktop-text-secondary">
                       {correlation.hasOwnershipGap ? (
-                        <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-amber-800">
+                        <span className="rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-2 py-0.5 text-[var(--dt-status-warning)]">
                           ownership gap
                         </span>
                       ) : null}
                       {correlation.spansMultipleOwnerGroups ? (
-                        <span className="rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-sky-700">
+                        <span className="rounded-full border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-2 py-0.5 text-[var(--dt-status-info)]">
                           cross-owner
                         </span>
                       ) : null}
@@ -166,9 +166,9 @@ export function HarnessCodeownersPanel({
           ) : null}
 
           {hotspots.length > 0 ? (
-            <div className="rounded-sm border border-rose-200 bg-rose-50/60 px-3 py-2">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-rose-800">Governance hotspots</div>
-              <ul className="mt-1.5 space-y-1 text-[11px] text-rose-900">
+            <div className="rounded-sm border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-desktop-danger-text">Governance hotspots</div>
+              <ul className="mt-1.5 space-y-1 text-[11px] text-desktop-danger-text">
                 {hotspots.map((hotspot) => (
                   <li key={`${hotspot.triggerName}-${hotspot.reason}`}>
                     <span className="font-medium">{formatTriggerLabel(hotspot.triggerName)}</span>

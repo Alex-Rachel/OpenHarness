@@ -66,7 +66,7 @@ export function SettingsPopupMenu({
   const themeSubmenuPositionClass = isTopbar
     ? "right-full top-0"
     : "left-full top-0";
-  const themeDotClass = resolvedTheme === "dark" ? "text-sky-300" : "text-amber-500";
+  const themeDotClass = resolvedTheme === "dark" ? "text-desktop-text-primary" : "text-[var(--dt-status-warning)]";
   const menuWidthClass = isSidebar ? "w-full min-w-full" : "min-w-48";
 
   const getThemeLabel = (preference: ThemePreference) => {

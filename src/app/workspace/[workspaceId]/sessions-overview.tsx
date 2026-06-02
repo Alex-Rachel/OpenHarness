@@ -112,22 +112,22 @@ export function SessionsOverview({ sessions, workspaceId, onNavigate, onRefresh,
     return (
       <div key={session.sessionId} style={{ marginLeft: depth * 20 }}>
         <div
-          className="group w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#151720] transition-colors"
+          className="group flex w-full items-center gap-3 rounded-[var(--dt-radius-md)] px-3.5 py-2.5 transition-colors hover:bg-desktop-surface-muted"
           onContextMenu={(e) => handleContextMenu(e, session.sessionId)}
         >
           {depth > 0 && (
-            <ChevronRight className="w-3 h-3 text-slate-300 dark:text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+            <ChevronRight className="h-3 w-3 shrink-0 text-desktop-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
           )}
-          <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${
+          <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--dt-radius-sm)] ${
             depth > 0
-              ? "bg-slate-100 dark:bg-slate-900/20"
-              : "bg-blue-50 dark:bg-blue-900/20"
+              ? "bg-desktop-surface-muted"
+              : "bg-desktop-bg-active"
           }`}>
-            <MessageCircleMore className={`w-3.5 h-3.5 ${depth > 0
-        ? "text-slate-500 dark:text-slate-400"
-        : "text-blue-500 dark:text-blue-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+            <MessageCircleMore className={`h-3.5 w-3.5 ${depth > 0
+        ? "text-desktop-text-secondary"
+        : "text-desktop-accent"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
           </div>
-          <div className="flex-1 min-w-0" onClick={() => !isRenaming && onNavigate(session.sessionId)}>
+          <div className="min-w-0 flex-1" onClick={() => !isRenaming && onNavigate(session.sessionId)}>
             <div className="flex items-center gap-2">
               {isRenaming ? (
                 <input
@@ -140,30 +140,30 @@ export function SessionsOverview({ sessions, workspaceId, onNavigate, onRefresh,
                   }}
                   onBlur={() => handleSaveRename(session.sessionId)}
                   autoFocus
-                  className="text-[13px] font-medium px-2 py-1 rounded border border-blue-500 dark:border-blue-400 bg-white dark:bg-[#0e1019] text-slate-700 dark:text-slate-300 outline-none"
+                  className="rounded-[var(--dt-radius-sm)] border border-desktop-accent bg-desktop-surface px-2 py-1 text-[13px] font-medium text-desktop-text-primary outline-none focus:ring-2 focus:ring-[var(--dt-focus-ring)]/20"
                   onClick={(e) => e.stopPropagation()}
                 />
               ) : (
-                <div className="text-[13px] font-medium text-slate-700 dark:text-slate-300 truncate group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors cursor-pointer">
+                <div className="cursor-pointer truncate text-[13px] font-medium text-desktop-text-primary transition-colors">
                   {session.name || session.provider || `Session ${session.sessionId.slice(0, 8)}`}
                 </div>
               )}
               {hasChildren && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 font-mono">
+                <span className="rounded-full bg-desktop-bg-active px-1.5 py-0.5 font-mono text-[10px] text-desktop-text-secondary">
                   {children.length}
                 </span>
               )}
             </div>
-            <div className="text-[11px] text-slate-400 dark:text-slate-500 truncate">
+            <div className="truncate text-[11px] text-desktop-text-tertiary">
               {session.role && <span className="capitalize">{session.role.toLowerCase()}</span>}
               {session.role && session.provider && <span className="mx-1">·</span>}
               {session.provider && <span>{session.provider}</span>}
             </div>
           </div>
-          <span className="text-[10px] text-slate-400 dark:text-slate-600 font-mono shrink-0">
+          <span className="shrink-0 font-mono text-[10px] text-desktop-text-tertiary">
             {formatRelativeTime(session.createdAt)}
           </span>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-desktop-text-tertiary opacity-0 transition-opacity group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
         </div>
         {expanded && hasChildren && children.map(child => renderSession(child, depth + 1))}
       </div>
@@ -171,40 +171,40 @@ export function SessionsOverview({ sessions, workspaceId, onNavigate, onRefresh,
   };
 
   return (
-    <div className="bg-white dark:bg-[#0e1019] border border-slate-200/60 dark:border-[#191c28] rounded-xl overflow-hidden">
-      <div className="px-4 py-3 border-b border-slate-200/60 dark:border-[#191c28] flex items-center justify-between">
+    <div className="overflow-hidden rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-surface shadow-[var(--dt-shadow-sm)]">
+      <div className="flex items-center justify-between border-b border-desktop-border px-4 py-3">
         <div className="flex items-center gap-2">
-          <h3 className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">
+          <h3 className="text-[13px] font-semibold text-desktop-text-primary">
             {t.sessions.recentSessions}
           </h3>
-          <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-[#191c28] text-slate-500 dark:text-slate-400 font-mono">
+          <span className="rounded-full bg-desktop-bg-active px-1.5 py-0.5 font-mono text-[11px] text-desktop-text-secondary">
             {sessions.length}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={onRefresh}
-            className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#191c28] transition-colors"
+            className="rounded-[var(--dt-radius-sm)] p-1.5 text-desktop-text-tertiary transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
             title={t.common.refresh}
           >
-            <RefreshCw className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+            <RefreshCw className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
           </button>
           <button
             onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#191c28] transition-colors"
+            className="flex items-center gap-1.5 rounded-[var(--dt-radius-sm)] px-2.5 py-1.5 text-[11px] font-medium text-desktop-text-secondary transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
           >
             {expanded ? t.sessions.showLess : t.sessions.showAll}
-            <ChevronDown className={`w-3 h-3 transition-transform ${expanded ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+            <ChevronDown className={`h-3 w-3 transition-transform ${expanded ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
           </button>
         </div>
       </div>
       <div className={`${expanded ? "max-h-150 overflow-y-auto" : ""}`}>
         {loading ? (
-          <div className="flex items-center justify-center py-8 text-slate-400 dark:text-slate-500">
-            <PieChart className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"/>
+          <div className="flex items-center justify-center py-8 text-desktop-text-tertiary">
+            <PieChart className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24"/>
           </div>
         ) : displaySessions.length === 0 ? (
-          <div className="px-4 py-8 text-center text-[12px] text-slate-400 dark:text-slate-500">
+          <div className="px-4 py-8 text-center text-[12px] text-desktop-text-tertiary">
             {t.sessions.noSessionsHint}
           </div>
         ) : (
@@ -217,7 +217,7 @@ export function SessionsOverview({ sessions, workspaceId, onNavigate, onRefresh,
       {/* Context Menu */}
       {contextMenu && (
         <div
-          className="fixed z-50 min-w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-[#2a2d3e] dark:bg-[#1a1d2e]"
+          className="desktop-theme fixed z-50 min-w-40 rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface py-1 shadow-[var(--dt-shadow-md)]"
           style={{ left: contextMenu.x, top: contextMenu.y }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -228,24 +228,24 @@ export function SessionsOverview({ sessions, workspaceId, onNavigate, onRefresh,
                 handleRenameSession(contextMenu.sessionId, session.name || session.provider || `Session ${session.sessionId.slice(0, 8)}`);
               }
             }}
-            className="w-full px-3 py-2 text-left text-[12px] text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#252838] transition-colors flex items-center gap-2"
+            className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] text-desktop-text-primary transition-colors hover:bg-desktop-surface-muted"
           >
-            <SquarePen className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+            <SquarePen className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
             {t.sessions.rename}
           </button>
           <button
             onClick={() => onNavigate(contextMenu.sessionId)}
-            className="w-full px-3 py-2 text-left text-[12px] text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#252838] transition-colors flex items-center gap-2"
+            className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] text-desktop-text-primary transition-colors hover:bg-desktop-surface-muted"
           >
-            <SquareArrowOutUpRight className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+            <SquareArrowOutUpRight className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
             {t.sessions.open}
           </button>
-          <div className="h-px bg-slate-200 dark:bg-[#2a2d3e] my-1" />
+          <div className="my-1 h-px bg-desktop-border" />
           <button
             onClick={() => handleDeleteSession(contextMenu.sessionId)}
-            className="w-full px-3 py-2 text-left text-[12px] text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2"
+            className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] text-[var(--dt-status-danger)] transition-colors hover:bg-[var(--dt-status-danger-subtle)]"
           >
-            <Trash2 className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+            <Trash2 className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
             {t.common.delete}
           </button>
         </div>

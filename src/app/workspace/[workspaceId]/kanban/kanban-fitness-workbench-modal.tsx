@@ -91,7 +91,7 @@ function ScopedCanvasPreview({ source }: { source: string | null }): JSX.Element
             </div>
           ) : source ? (
             <div className="p-5">
-              <div className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-[12px] leading-5 text-rose-700">
+              <div className="rounded-md border border-desktop-danger-border bg-desktop-danger-subtle px-4 py-3 text-[12px] leading-5 text-desktop-danger-text">
                 {compileError ?? "Canvas compilation failed."}
               </div>
             </div>
@@ -525,13 +525,13 @@ export function KanbanFitnessWorkbenchModal({
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 px-4 py-6">
       <div
-        className="flex h-[90vh] w-full max-w-[1520px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-[#1c1f2e] dark:bg-[#12141c]"
+        className="flex h-[90vh] w-full max-w-[1520px] flex-col overflow-hidden rounded-2xl border border-desktop-border bg-desktop-surface-elevated"
         role="dialog"
         aria-modal="true"
         aria-label={t.kanban.fitnessWorkbenchTitle}
         data-testid="kanban-fitness-workbench-modal"
       >
-        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3 dark:border-[#232736]">
+        <div className="flex items-center justify-between border-b border-desktop-border px-5 py-3">
           <div className="min-w-0">
             <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
               {t.kanban.fitnessLabel}
@@ -546,7 +546,7 @@ export function KanbanFitnessWorkbenchModal({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-[#1a1d29] dark:hover:text-slate-50"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-desktop-text-secondary transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
             aria-label={t.common.close}
           >
             <X className="h-4 w-4" />
@@ -554,13 +554,13 @@ export function KanbanFitnessWorkbenchModal({
         </div>
 
         <div className="grid min-h-0 flex-1 gap-0 xl:grid-cols-[minmax(0,1.08fr)_minmax(26rem,0.92fr)]">
-          <section className="flex min-h-0 flex-col border-r border-slate-200 dark:border-[#232736]">
-            <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 px-5 py-3 text-[11px] dark:border-[#232736]">
-              <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-slate-700 dark:border-[#2b3142] dark:bg-[#161a25] dark:text-slate-300">
+          <section className="flex min-h-0 flex-col border-r border-desktop-border">
+            <div className="flex flex-wrap items-center gap-2 border-b border-desktop-border px-5 py-3 text-[11px]">
+              <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-desktop-text-secondary">
                 {repoLabel || "-"}
               </span>
               {branch ? (
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-slate-700 dark:border-[#2b3142] dark:bg-[#161a25] dark:text-slate-300">
+                <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 text-desktop-text-secondary">
                   {branch}
                 </span>
               ) : null}
@@ -570,36 +570,36 @@ export function KanbanFitnessWorkbenchModal({
                 </span>
               ) : null}
               {sessionId ? (
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 font-mono text-slate-600 dark:border-[#2b3142] dark:bg-[#161a25] dark:text-slate-300">
+                <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2.5 py-1 font-mono text-desktop-text-secondary">
                   {sessionId}
                 </span>
               ) : null}
             </div>
 
             {persistedFilePath ? (
-              <div className="border-b border-slate-200 px-5 py-2 text-[11px] text-slate-500 dark:border-[#232736] dark:text-slate-400">
+              <div className="border-b border-desktop-border px-5 py-2 text-[11px] text-desktop-text-secondary">
                 {t.kanban.fitnessWorkbenchSaved} <span className="font-mono text-slate-700 dark:text-slate-200">{persistedFilePath}</span>
               </div>
             ) : null}
 
             {(specsState.error || planState.error || previewError || persistError) ? (
-              <div className="space-y-2 border-b border-slate-200 px-5 py-3 text-[12px] dark:border-[#232736]">
+              <div className="space-y-2 border-b border-desktop-border px-5 py-3 text-[12px]">
                 {specsState.error ? <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">{specsState.error}</div> : null}
                 {planState.error ? <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">{planState.error}</div> : null}
                 {runtimeState.error ? <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">{runtimeState.error}</div> : null}
                 {entrixState.error ? <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">{entrixState.error}</div> : null}
-                {previewError ? <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">{previewError}</div> : null}
+                {previewError ? <div className="rounded-md border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2 text-desktop-danger-text">{previewError}</div> : null}
                 {persistError ? <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">{persistError}</div> : null}
               </div>
             ) : null}
 
-            <div className="min-h-0 flex-1 overflow-auto bg-slate-100/70 dark:bg-[#0f121a]">
+            <div className="min-h-0 flex-1 overflow-auto bg-desktop-surface-muted">
               {repoPath ? (
                 previewSource ? (
                   <ScopedCanvasPreview source={previewSource} />
                 ) : (
                   <div className="flex h-full min-h-[320px] items-center justify-center px-6 py-8">
-                    <div className="max-w-md rounded-xl border border-dashed border-slate-300 bg-white/80 px-5 py-6 text-center text-[13px] leading-6 text-slate-600 dark:border-[#2a3142] dark:bg-[#131823] dark:text-slate-300">
+                    <div className="max-w-md rounded-xl border border-dashed border-desktop-border bg-desktop-surface-elevated px-5 py-6 text-center text-[13px] leading-6 text-desktop-text-secondary">
                       {specsState.loading || planState.loading
                         || runtimeState.loading || entrixState.loading
                         ? t.kanban.fitnessWorkbenchContextLoading
@@ -611,7 +611,7 @@ export function KanbanFitnessWorkbenchModal({
                 )
               ) : (
                 <div className="flex h-full min-h-[320px] items-center justify-center px-6 py-8">
-                  <div className="max-w-md rounded-xl border border-dashed border-slate-300 bg-white/80 px-5 py-6 text-center text-[13px] leading-6 text-slate-600 dark:border-[#2a3142] dark:bg-[#131823] dark:text-slate-300">
+                  <div className="max-w-md rounded-xl border border-dashed border-desktop-border bg-desktop-surface-elevated px-5 py-6 text-center text-[13px] leading-6 text-desktop-text-secondary">
                     {t.kanban.fitnessWorkbenchNoRepo}
                   </div>
                 </div>
@@ -619,8 +619,8 @@ export function KanbanFitnessWorkbenchModal({
             </div>
           </section>
 
-          <section className="flex min-h-0 flex-col bg-slate-50 dark:bg-[#0f1218]">
-            <div className="border-b border-slate-200 px-5 py-3 dark:border-[#232736]">
+          <section className="flex min-h-0 flex-col bg-desktop-surface-muted">
+            <div className="border-b border-desktop-border px-5 py-3">
               <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
                 {t.kanban.fitnessWorkbenchProcess}
               </div>

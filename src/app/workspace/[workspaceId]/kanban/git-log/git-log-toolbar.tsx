@@ -23,22 +23,22 @@ export function GitLogToolbar({
   loading,
 }: GitLogToolbarProps) {
   return (
-    <div className="flex items-center gap-1.5 border-b border-slate-200 bg-slate-50/80 px-2 py-1 dark:border-[#1c1f2e] dark:bg-[#0f1117]/80">
+    <div className="flex items-center gap-1.5 border-b border-desktop-border bg-desktop-bg-secondary/80 px-2 py-1">
       {/* Search */}
       <div className="relative flex min-w-0 flex-1 items-center">
-        <Search className="pointer-events-none absolute left-1.5 h-3 w-3 text-slate-400" />
+        <Search className="pointer-events-none absolute left-1.5 h-3 w-3 text-desktop-text-tertiary" />
         <input
           type="text"
           value={searchText}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Filter by message, hash, author…"
-          className="h-6 w-full rounded border border-slate-200 bg-white pl-6 pr-2 text-[11px] text-slate-700 placeholder-slate-400 outline-none transition-colors focus:border-amber-400 dark:border-[#252837] dark:bg-[#12141c] dark:text-slate-200 dark:placeholder-slate-500 dark:focus:border-amber-500"
+          className="h-6 w-full rounded border border-desktop-border bg-desktop-bg-primary pl-6 pr-2 text-[11px] text-desktop-text-primary placeholder:text-desktop-text-tertiary outline-none transition-colors focus:border-desktop-accent"
         />
         {searchText && (
           <button
             type="button"
             onClick={() => onSearchChange("")}
-            className="absolute right-1 rounded p-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+            className="absolute right-1 rounded p-0.5 text-desktop-text-tertiary hover:text-desktop-text-primary"
           >
             <X className="h-3 w-3" />
           </button>
@@ -50,7 +50,7 @@ export function GitLogToolbar({
         <button
           type="button"
           onClick={onClearFilters}
-          className="inline-flex h-6 items-center gap-1 rounded border border-amber-200 bg-amber-50 px-1.5 text-[10px] font-medium text-amber-700 transition-colors hover:bg-amber-100 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-300 dark:hover:bg-amber-900/30"
+          className="inline-flex h-6 items-center gap-1 rounded border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-1.5 text-[10px] font-medium text-[var(--dt-status-warning)] transition-colors hover:brightness-95"
           title="Clear branch filters"
         >
           <Filter className="h-2.5 w-2.5" />
@@ -60,7 +60,7 @@ export function GitLogToolbar({
       )}
 
       {/* Commit count */}
-      <span className="shrink-0 text-[10px] tabular-nums text-slate-400 dark:text-slate-500">
+      <span className="shrink-0 text-[10px] tabular-nums text-desktop-text-tertiary">
         {total} commits
       </span>
 
@@ -68,7 +68,7 @@ export function GitLogToolbar({
       <button
         type="button"
         onClick={onRefresh}
-        className="rounded p-1 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-600 dark:hover:bg-[#1a1d29] dark:hover:text-slate-300"
+        className="rounded p-1 text-desktop-text-tertiary transition-colors hover:bg-desktop-bg-active hover:text-desktop-text-primary"
         title="Refresh"
         disabled={loading}
       >

@@ -544,7 +544,7 @@ export function RepoPicker({
             openDropdown(triggerRef.current);
             setTimeout(() => inputRef.current?.focus(), 50);
           }}
-          className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+          className="flex items-center gap-1.5 text-xs text-desktop-text-tertiary transition-colors hover:text-desktop-text-primary"
         >
           <GitRepoIcon className="w-3.5 h-3.5" />
           <span>{t.repoPicker.selectCloneOrLoad}</span>
@@ -564,10 +564,10 @@ export function RepoPicker({
             maxHeight: dropdownPos.maxHeight,
             zIndex: 9999,
           }}
-          className="flex max-h-[80vh] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800"
+          className="desktop-theme flex max-h-[80vh] flex-col overflow-hidden rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-surface text-desktop-text-primary shadow-[var(--dt-shadow-md)]"
         >
           {/* ── Tabs ── */}
-          <div className="flex border-b border-slate-100 dark:border-slate-800">
+          <div className="flex border-b border-desktop-border">
             <TabButton
               active={activeTab === "existing"}
               onClick={() => setActiveTab("existing")}
@@ -600,8 +600,8 @@ export function RepoPicker({
           {activeTab === "existing" && (
             <>
               {/* Search */}
-              <div className="p-2 border-b border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 dark:border-slate-700 dark:bg-slate-900">
+              <div className="border-b border-desktop-border p-2">
+                <div className="flex items-center gap-2 rounded-[var(--dt-radius-sm)] border border-desktop-border bg-desktop-surface-muted px-2.5 py-1.5">
                   <SearchIcon />
                   <input
                     ref={inputRef}
@@ -609,7 +609,7 @@ export function RepoPicker({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t.repoPicker.searchPlaceholder}
-                    className="flex-1 bg-transparent text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none"
+                    className="flex-1 bg-transparent text-xs text-desktop-text-primary outline-none placeholder:text-desktop-text-muted"
                     onKeyDown={(e) => {
                       if (e.key === "Escape") setShowDropdown(false);
                     }}
@@ -652,12 +652,12 @@ export function RepoPicker({
             <div className="p-3 space-y-3">
               {/* URL input */}
               <div>
-                <label className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block">
+                <label className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-desktop-text-tertiary">
                   {t.repoPicker.repositoryUrl}
                 </label>
                 <div className="flex items-center gap-1.5">
-                  <div className="flex flex-1 items-center overflow-hidden rounded-md border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900">
-                    <span className="pl-2.5 text-[10px] text-slate-400 dark:text-slate-500 font-mono whitespace-nowrap">
+                  <div className="flex flex-1 items-center overflow-hidden rounded-[var(--dt-radius-sm)] border border-desktop-border bg-desktop-surface-muted">
+                    <span className="pl-2.5 font-mono text-[10px] whitespace-nowrap text-desktop-text-tertiary">
                       github.com/
                     </span>
                     <input
@@ -673,7 +673,7 @@ export function RepoPicker({
                         setCloneError(null);
                       }}
                       placeholder={clonePlaceholder ?? t.repoPicker.ownerRepo}
-                      className="flex-1 px-1.5 py-2 bg-transparent text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none font-mono"
+                      className="flex-1 bg-transparent px-1.5 py-2 font-mono text-xs text-desktop-text-primary outline-none placeholder:text-desktop-text-muted"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && cloneUrl.trim()) {
                           handleClone(
@@ -694,16 +694,16 @@ export function RepoPicker({
               {cloneProgress && (
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                    <span className="text-[10px] text-desktop-text-secondary">
                       {cloneProgress.message}
                     </span>
-                    <span className="text-[10px] font-mono text-slate-400">
+                    <span className="font-mono text-[10px] text-desktop-text-tertiary">
                       {cloneProgress.percent}%
                     </span>
                   </div>
-                  <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-desktop-surface-muted">
                     <div
-                      className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                      className="h-full rounded-full bg-[var(--dt-status-info)] transition-all duration-300"
                       style={{ width: `${Math.max(cloneProgress.percent, 2)}%` }}
                     />
                   </div>
@@ -730,7 +730,7 @@ export function RepoPicker({
                   )
                 }
                 disabled={cloning || !cloneUrl.trim()}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex w-full items-center justify-center gap-2 rounded-[var(--dt-radius-sm)] bg-desktop-accent px-3 py-2 text-xs font-medium text-desktop-accent-text transition-colors hover:bg-desktop-accent-strong disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {cloning ? (
                   <>
@@ -745,7 +745,7 @@ export function RepoPicker({
                 )}
               </button>
 
-              <div className="text-[10px] text-slate-400 dark:text-slate-500">
+              <div className="text-[10px] text-desktop-text-tertiary">
                 {t.repoPicker.cloneHint}
               </div>
             </div>
@@ -754,7 +754,7 @@ export function RepoPicker({
           {activeTab === "local" && (
             <div className="p-3 space-y-3">
               <div>
-                <label className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block">
+                <label className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-desktop-text-tertiary">
                   {t.repoPicker.localRepositoryPath}
                 </label>
                 <input
@@ -765,7 +765,7 @@ export function RepoPicker({
                     setLocalRepoError(null);
                   }}
                   placeholder={t.repoPicker.localPathPlaceholder}
-                  className="w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                  className="w-full rounded-[var(--dt-radius-sm)] border border-desktop-border bg-desktop-surface-muted px-3 py-2 text-xs text-desktop-text-primary outline-none placeholder:text-desktop-text-muted focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/20"
                   onKeyDown={handleLocalPathKeyDown}
                   autoFocus
                 />
@@ -783,7 +783,7 @@ export function RepoPicker({
                 type="button"
                 onClick={() => void handleSelectLocalRepo(localPath)}
                 disabled={loadingLocalRepo || !localPath.trim()}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex w-full items-center justify-center gap-2 rounded-[var(--dt-radius-sm)] bg-desktop-accent px-3 py-2 text-xs font-medium text-desktop-accent-text transition-colors hover:bg-desktop-accent-strong disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {loadingLocalRepo ? (
                   <>
@@ -798,7 +798,7 @@ export function RepoPicker({
                 )}
               </button>
 
-              <div className="text-[10px] text-slate-400 dark:text-slate-500">
+              <div className="text-[10px] text-desktop-text-tertiary">
                 {t.repoPicker.localProjectHint}
               </div>
             </div>
@@ -850,13 +850,13 @@ function SelectedRepoPill({
   return (
     <div className={`min-w-0 ${showMutedPath ? "flex flex-col gap-0.5" : "flex items-center gap-1.5 overflow-hidden"}`}>
       <div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
-        <GitRepoIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        <GitRepoIcon className="h-3.5 w-3.5 shrink-0 text-desktop-text-tertiary" />
 
         <button
           ref={triggerRef}
           type="button"
           onClick={onClickName}
-          className="text-xs font-medium text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate max-w-[200px]"
+          className="max-w-[200px] truncate text-xs font-medium text-desktop-text-primary transition-colors hover:text-desktop-accent"
           title={repoTitle}
         >
           {shortName}
@@ -865,7 +865,7 @@ function SelectedRepoPill({
         <button
           type="button"
           onClick={onClickName}
-          className="shrink-0 rounded p-0.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+          className="shrink-0 rounded p-0.5 text-desktop-text-tertiary transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
           title={t.repoPicker.changeRepository}
           aria-label={t.repoPicker.changeRepository}
         >
@@ -885,7 +885,7 @@ function SelectedRepoPill({
 
         {showInlinePath && (
           <span
-            className="max-w-[200px] truncate text-[10px] font-mono text-slate-500 dark:text-slate-400"
+            className="max-w-[200px] truncate font-mono text-[10px] text-desktop-text-secondary"
             title={value.path}
           >
             {shortPath}
@@ -893,7 +893,7 @@ function SelectedRepoPill({
         )}
 
         {currentRepo && !currentRepo.status.clean && (
-          <span className="text-[9px] px-1 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+          <span className="rounded border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-1 py-0.5 text-[9px] text-[var(--dt-status-warning)]">
             {currentRepo.status.modified > 0 && `${currentRepo.status.modified}M`}
             {currentRepo.status.untracked > 0 && ` ${currentRepo.status.untracked}U`}
           </span>
@@ -902,7 +902,7 @@ function SelectedRepoPill({
         <button
           type="button"
           onClick={onClear}
-          className="ml-0.5 p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+          className="ml-0.5 rounded p-0.5 text-desktop-text-tertiary transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
           title={t.repoPicker.clearSelection}
         >
           <X className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}/>
@@ -912,7 +912,7 @@ function SelectedRepoPill({
       {showMutedPath && (
         <div className="pl-5 flex min-w-0 items-center gap-1.5">
           <div
-            className="min-w-0 flex-1 text-[10px] font-mono text-slate-400 dark:text-slate-500 truncate"
+            className="min-w-0 flex-1 truncate font-mono text-[10px] text-desktop-text-tertiary"
             title={value.path}
           >
             {shortPath}
@@ -920,7 +920,7 @@ function SelectedRepoPill({
           <button
             type="button"
             onClick={handleCopyPath}
-            className="shrink-0 rounded p-0.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+            className="shrink-0 rounded p-0.5 text-desktop-text-tertiary transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
             title={t.common.copyToClipboard}
             aria-label={t.common.copyToClipboard}
           >
@@ -944,13 +944,13 @@ function VcsTypeBadge({ vcsType }: { vcsType: "git" | "svn" | "none" }) {
   const label = vcsType === "git" ? "Git" : vcsType === "svn" ? "SVN" : "Local";
   const colorClasses =
     vcsType === "git"
-      ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+      ? "border border-desktop-border bg-desktop-surface-muted text-desktop-text-secondary"
       : vcsType === "svn"
-        ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400"
-        : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400";
+        ? "border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]"
+        : "border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
 
   return (
-    <span className={`shrink-0 text-[9px] px-1.5 py-0.5 rounded font-medium ${colorClasses}`}>
+    <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-medium ${colorClasses}`}>
       {label}
     </span>
   );
@@ -971,8 +971,8 @@ function TabButton({
       onClick={onClick}
       className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-medium transition-colors ${
         active
-          ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-blue-50/50 dark:bg-blue-900/10"
-          : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+          ? "border-b-2 border-desktop-accent bg-desktop-bg-active text-desktop-text-primary"
+          : "text-desktop-text-tertiary hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
       }`}
     >
       {children}
@@ -1008,8 +1008,8 @@ function RepoListItem({
 
   return (
     <div
-      className={`w-full px-3 py-2 flex items-center gap-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${
-        isSelected ? "bg-blue-50 dark:bg-blue-900/10" : ""
+      className={`flex w-full items-center gap-2.5 px-3 py-2 transition-colors hover:bg-desktop-surface-muted ${
+        isSelected ? "bg-desktop-bg-active" : ""
       }`}
     >
       <button
@@ -1017,26 +1017,26 @@ function RepoListItem({
         onClick={onClick}
         className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
       >
-        <div className="w-7 h-7 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
-          <Book className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" viewBox="0 0 16 16" fill="currentColor"/>
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--dt-radius-sm)] bg-desktop-surface-muted">
+          <Book className="h-3.5 w-3.5 text-desktop-text-secondary" viewBox="0 0 16 16" fill="currentColor"/>
         </div>
         <div className="flex-1 text-left min-w-0">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-slate-900 dark:text-slate-100 truncate">
+            <span className="truncate text-xs font-medium text-desktop-text-primary">
               {repo.name}
             </span>
             {isSelected && <CheckIcon />}
           </div>
-          <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-0.5">
+          <div className="mt-0.5 flex items-center gap-2">
+            <span className="flex items-center gap-0.5 font-mono text-[10px] text-desktop-text-secondary">
               <BranchIcon />
               {repo.branch}
             </span>
             {!repo.status.clean && (
-              <span className="text-[9px] text-amber-600 dark:text-amber-400">{t.repoPicker.modified}</span>
+              <span className="text-[9px] text-[var(--dt-status-warning)]">{t.repoPicker.modified}</span>
             )}
             {repo.status.behind > 0 && (
-              <span className="text-[9px] text-blue-600 dark:text-blue-400">
+              <span className="text-[9px] text-[var(--dt-status-info)]">
                 {repo.status.behind} {t.repoPicker.behind}
               </span>
             )}
@@ -1068,7 +1068,7 @@ function RepoListItem({
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
-    <div className="px-3 py-1.5 text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+    <div className="px-3 py-1.5 text-[10px] font-medium uppercase tracking-wider text-desktop-text-tertiary">
       {children}
     </div>
   );
@@ -1076,7 +1076,7 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
 
 function EmptyState({ children }: { children: React.ReactNode }) {
   return (
-    <div className="px-3 py-4 text-center text-xs text-slate-400">
+    <div className="px-3 py-4 text-center text-xs text-desktop-text-tertiary">
       {children}
     </div>
   );
@@ -1100,13 +1100,13 @@ function BranchIcon() {
 
 function CheckIcon() {
   return (
-    <Check className="w-3 h-3 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}/>
+    <Check className="h-3 w-3 shrink-0 text-desktop-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}/>
   );
 }
 
 function SearchIcon() {
   return (
-    <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}/>
+    <Search className="h-3.5 w-3.5 shrink-0 text-desktop-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}/>
   );
 }
 

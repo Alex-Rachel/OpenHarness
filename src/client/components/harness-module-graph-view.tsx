@@ -25,7 +25,7 @@ type HarnessModuleGraphViewProps = {
 
 const ModuleNode = ({ data }: NodeProps<Node<ModuleNodeData>>) => {
   return (
-    <div className="px-3 py-2 rounded border border-gray-700 bg-opacity-90 text-white text-xs">
+    <div className="px-3 py-2 rounded border border-desktop-border bg-desktop-surface-elevated text-desktop-text-primary text-xs shadow-[var(--dt-shadow-sm)]">
       <Handle type="target" position={Position.Top} className="w-2 h-2" />
       <div className="font-semibold truncate" title={data.fullPath}>
         {data.label}
@@ -124,7 +124,7 @@ export function HarnessModuleGraphView({
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-[600px] border border-desktop-border rounded-sm bg-desktop-bg-primary">
-        <div className="text-red-500 text-sm mb-2">
+        <div className="text-desktop-danger-text text-sm mb-2">
           {t.settings.harness.moduleGraph.error || "Failed to load graph"}
         </div>
         <div className="text-desktop-text-secondary text-xs">{error}</div>
@@ -212,14 +212,14 @@ export function HarnessModuleGraphView({
           panOnDrag
           zoomOnScroll
         >
-          <Background color="#d7dee7" gap={20} size={1} />
+          <Background color="var(--dt-border-light)" gap={20} size={1} />
           <Controls showInteractive={false} />
           <MiniMap
             nodeColor={(node) => {
               const color = node.style?.background as string;
-              return color || "#6b7280";
+              return color || "var(--dt-border)";
             }}
-            maskColor="rgba(0, 0, 0, 0.1)"
+            maskColor="color-mix(in srgb, var(--dt-bg-primary) 24%, transparent)"
           />
         </ReactFlow>
       </div>
@@ -230,27 +230,27 @@ export function HarnessModuleGraphView({
           {t.settings.harness.moduleGraph.legend || "Legend:"}
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-sm" style={{ background: "#3178c6" }} />
+          <div className="w-3 h-3 rounded-sm bg-[var(--dt-status-info)]" />
           <span>TypeScript</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-sm" style={{ background: "#ce422b" }} />
+          <div className="w-3 h-3 rounded-sm bg-[var(--dt-status-danger)]" />
           <span>Rust</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-sm" style={{ background: "#f89820" }} />
+          <div className="w-3 h-3 rounded-sm bg-[var(--dt-status-warning)]" />
           <span>Java</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-4 h-0.5 bg-blue-500" />
+          <div className="w-4 h-0.5 bg-[var(--dt-status-info)]" />
           <span>Imports</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-4 h-0.5 border-t-2 border-green-500 border-dashed" />
+          <div className="w-4 h-0.5 border-t-2 border-[var(--dt-status-success)] border-dashed" />
           <span>Extends</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-4 h-0.5 border-t-2 border-orange-500 border-dashed" />
+          <div className="w-4 h-0.5 border-t-2 border-[var(--dt-status-warning)] border-dashed" />
           <span>Implements</span>
         </div>
       </div>

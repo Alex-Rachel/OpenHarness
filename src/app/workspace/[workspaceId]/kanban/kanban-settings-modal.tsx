@@ -494,20 +494,20 @@ export function KanbanSettingsModal({
           role="dialog"
           aria-modal="true"
           aria-label={t.kanban.saveBoardSettings}
-          className="relative flex h-[96vh] w-full max-w-[1500px] flex-col overflow-hidden rounded-[22px] border border-white/10 bg-white shadow-[0_30px_120px_rgba(15,23,42,0.32)] dark:bg-[#0d1118]"
+          className="relative flex h-[96vh] w-full max-w-[1500px] flex-col overflow-hidden rounded-[22px] border border-desktop-border bg-desktop-surface-elevated shadow-[var(--dt-shadow-lg)]"
         >
-          <div className="relative overflow-hidden border-b border-slate-200/80 bg-[radial-gradient(circle_at_top_left,_rgba(251,191,36,0.12),_transparent_28%),linear-gradient(135deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.96))] px-3.5 py-2.5 dark:border-slate-800 dark:bg-[radial-gradient(circle_at_top_left,_rgba(245,158,11,0.1),_transparent_24%),linear-gradient(135deg,_rgba(15,23,42,0.96),_rgba(13,17,24,0.98))] sm:px-4">
+          <div className="relative overflow-hidden border-b border-desktop-border bg-desktop-surface-muted px-3.5 py-2.5 sm:px-4">
             <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="inline-flex items-center rounded-full border border-amber-300/70 bg-amber-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+                  <div className="inline-flex items-center rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--dt-status-warning)]">
                     {t.kanban.boardSettingsLabel}
                   </div>
-                  <h2 className="truncate text-base font-semibold tracking-tight text-slate-900 dark:text-white sm:text-lg">
+                  <h2 className="truncate text-base font-semibold tracking-tight text-desktop-text-primary sm:text-lg">
                     {board.name}
                   </h2>
                 </div>
-                <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
+                <p className="mt-1 text-xs leading-5 text-desktop-text-secondary">
                   {t.kanban.boardSettingsHint}
                 </p>
               </div>
@@ -521,7 +521,7 @@ export function KanbanSettingsModal({
           </div>
 
           <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)]">
-            <aside className="min-h-0 overflow-y-auto overflow-x-hidden border-b border-slate-200/80 bg-slate-50/40 p-2 dark:border-slate-800 dark:bg-[#0a0f16] lg:border-b-0 lg:border-r lg:p-2.5">
+            <aside className="min-h-0 overflow-y-auto overflow-x-hidden border-b border-desktop-border bg-desktop-surface-muted p-2 lg:border-b-0 lg:border-r lg:p-2.5">
               <div className="space-y-2">
                 <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400">
                   {t.kanban.stageMap}
@@ -533,7 +533,7 @@ export function KanbanSettingsModal({
                   className={`w-full min-w-0 rounded-[10px] border px-2.5 py-2 text-left text-[13px] font-semibold transition ${
                     selectedViewId === BOARD_VIEW_ID
                       ? "border-slate-900 bg-slate-900 text-white shadow-lg shadow-slate-900/10 dark:border-amber-400/40 dark:bg-slate-900"
-                      : "border-slate-200 bg-white text-slate-900 hover:border-slate-300 dark:border-slate-800 dark:bg-[#111722] dark:text-slate-100 dark:hover:border-slate-700"
+                      : "border-desktop-border bg-desktop-surface text-desktop-text-primary hover:border-desktop-border-light hover:bg-desktop-surface-elevated"
                   }`}
                 >
                   {t.kanban.boardOverview}
@@ -552,7 +552,7 @@ export function KanbanSettingsModal({
                           className={`w-full min-w-0 rounded-[10px] border px-2.5 py-2 text-left transition ${
                             active
                               ? "border-slate-900 bg-slate-900 text-white shadow-lg shadow-slate-900/10 dark:border-amber-400/40 dark:bg-slate-900"
-                              : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-[#111722] dark:hover:border-slate-700"
+                              : "border-desktop-border bg-desktop-surface hover:border-desktop-border-light hover:bg-desktop-surface-elevated"
                           }`}
                         >
                           <div className="flex min-w-0 items-center justify-between gap-2">
@@ -579,14 +579,14 @@ export function KanbanSettingsModal({
                 <button
                   type="button"
                   onClick={handleAddStage}
-                  className="w-full rounded-md border border-slate-300 px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-700 transition hover:bg-white dark:border-slate-700 dark:text-slate-200 dark:hover:bg-[#111722]"
+                  className="w-full rounded-md border border-desktop-border px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-desktop-text-secondary transition hover:bg-desktop-surface-elevated hover:text-desktop-text-primary"
                 >
                   {t.kanban.addStage}
                 </button>
               </div>
             </aside>
 
-            <main className="min-h-0 overflow-y-auto bg-white p-2 dark:bg-[#0d1118] sm:p-2.5 xl:p-3">
+            <main className="min-h-0 overflow-y-auto bg-desktop-surface-elevated p-2 sm:p-2.5 xl:p-3">
               {selectedViewId === BOARD_VIEW_ID ? (
                 <div className="mx-auto max-w-4xl space-y-3">
                   <SectionCard eyebrow={t.kanban.runtime} title={t.kanban.runtimeSettings} description={t.kanban.runtimeSettingsHint}>
@@ -604,7 +604,7 @@ export function KanbanSettingsModal({
                               max={20}
                               value={sessionConcurrencyLimit}
                               onChange={(event) => setSessionConcurrencyLimit(Math.max(1, Number.parseInt(event.target.value || "1", 10) || 1))}
-                              className="h-9 w-18 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-amber-400 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-100"
+                              className="h-9 w-18 rounded-lg border border-desktop-border bg-desktop-surface-muted px-3 text-sm font-semibold text-desktop-text-primary outline-none transition focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/25"
                             />
                           </label>
                         </div>
@@ -794,7 +794,7 @@ export function KanbanSettingsModal({
                           placeholder={t.webhook.tokenPlaceholder}
                           autoComplete="off"
                           spellCheck={false}
-                          className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-amber-400 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-100"
+                          className="h-9 w-full rounded-lg border border-desktop-border bg-desktop-surface-muted px-3 text-sm text-desktop-text-primary outline-none transition focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/25"
                           aria-label="GitHub personal access token"
                         />
                       </label>
@@ -836,7 +836,7 @@ export function KanbanSettingsModal({
                           value={kanbanExportWorkspaceId}
                           onChange={(event) => handleKanbanExportWorkspaceChange(event.target.value)}
                           placeholder={board.workspaceId || "default"}
-                          className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-amber-400 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-100"
+                          className="h-9 w-full rounded-lg border border-desktop-border bg-desktop-surface-muted px-3 text-sm text-desktop-text-primary outline-none transition focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/25"
                           aria-label="Kanban YAML workspace ID"
                         />
                       </label>
@@ -867,7 +867,7 @@ export function KanbanSettingsModal({
                     <button
                       onClick={() => void handleClearAll()}
                       disabled={saving || clearingAll}
-                      className="rounded-xl border border-rose-200 px-4 py-1.5 text-sm font-medium text-rose-600 transition hover:bg-rose-50 disabled:opacity-50 dark:border-rose-500/30 dark:text-rose-300 dark:hover:bg-rose-500/10"
+                      className="rounded-xl border border-desktop-danger-border px-4 py-1.5 text-sm font-medium text-desktop-danger-text transition hover:bg-desktop-danger-subtle disabled:opacity-50"
                     >
                       {clearingAll ? t.kanban.clearingAll : t.kanban.clearAllCards}
                     </button>
@@ -946,7 +946,7 @@ export function KanbanSettingsModal({
                         aria-label={`Delete ${selectedColumn.name}`}
                         disabled={sortedColumns.length <= 1}
                         onClick={() => handleDeleteStage(selectedColumn.id)}
-                        className="rounded-md border border-rose-200 px-2 py-1 text-xs font-medium text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-rose-500/30 dark:text-rose-300 dark:hover:bg-rose-500/10"
+                        className="rounded-md border border-desktop-danger-border px-2 py-1 text-xs font-medium text-desktop-danger-text transition hover:bg-desktop-danger-subtle disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {t.kanban.remove}
                       </button>
@@ -978,7 +978,7 @@ export function KanbanSettingsModal({
             </main>
           </div>
 
-          <div className="border-t border-slate-200/80 bg-slate-50/80 px-4 py-2.5 dark:border-slate-800 dark:bg-[#0a0f16] sm:px-5">
+          <div className="border-t border-desktop-border bg-desktop-surface-muted px-4 py-2.5 sm:px-5">
             <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
               <p className="min-w-0 flex-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
                 {t.kanban.changesApplyHint}
@@ -987,14 +987,14 @@ export function KanbanSettingsModal({
                 <button
                   onClick={requestClose}
                   disabled={saving || clearingAll}
-                  className="rounded-xl border border-slate-200 px-4 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-white disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-[#111722]"
+                  className="rounded-xl border border-desktop-border px-4 py-1.5 text-sm font-medium text-desktop-text-secondary transition hover:bg-desktop-surface-elevated hover:text-desktop-text-primary disabled:opacity-50"
                 >
                   {t.kanban.cancel}
                 </button>
                 <button
                   onClick={() => void handleSave()}
                   disabled={saving || clearingAll}
-                  className="rounded-xl bg-slate-900 px-5 py-1.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50 dark:bg-amber-500 dark:text-slate-950 dark:hover:bg-amber-400"
+                  className="rounded-xl bg-desktop-accent px-5 py-1.5 text-sm font-semibold text-desktop-accent-text transition hover:bg-desktop-accent-strong disabled:opacity-50"
                 >
                   {saving ? t.workspace.saving : t.kanban.saveBoardSettings}
                 </button>
@@ -1004,7 +1004,7 @@ export function KanbanSettingsModal({
 
           {showUnsavedChangesPrompt ? (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/45 px-4">
-              <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-800 dark:bg-[#0d1118]">
+              <div className="w-full max-w-md rounded-2xl border border-desktop-border bg-desktop-surface-elevated p-5 shadow-[var(--dt-shadow-lg)]">
                 <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
                   {t.kanban.closeWithUnsavedTitle}
                 </h3>
@@ -1015,14 +1015,14 @@ export function KanbanSettingsModal({
                   <button
                     type="button"
                     onClick={() => setShowUnsavedChangesPrompt(false)}
-                    className="rounded-xl border border-slate-200 px-4 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-[#111722]"
+                    className="rounded-xl border border-desktop-border px-4 py-1.5 text-sm font-medium text-desktop-text-secondary transition hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
                   >
                     {t.kanban.keepEditing}
                   </button>
                   <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-xl border border-rose-200 px-4 py-1.5 text-sm font-medium text-rose-600 transition hover:bg-rose-50 dark:border-rose-500/30 dark:text-rose-300 dark:hover:bg-rose-500/10"
+                    className="rounded-xl border border-desktop-danger-border px-4 py-1.5 text-sm font-medium text-desktop-danger-text transition hover:bg-desktop-danger-subtle"
                   >
                     {t.kanban.discardChanges}
                   </button>
@@ -1030,7 +1030,7 @@ export function KanbanSettingsModal({
                     type="button"
                     onClick={() => void handleSave({ closeAfterSave: true })}
                     disabled={saving}
-                    className="rounded-xl bg-slate-900 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50 dark:bg-amber-500 dark:text-slate-950 dark:hover:bg-amber-400"
+                    className="rounded-xl bg-desktop-accent px-4 py-1.5 text-sm font-semibold text-desktop-accent-text transition hover:bg-desktop-accent-strong disabled:opacity-50"
                   >
                     {saving ? t.workspace.saving : t.common.saveAndClose}
                   </button>
@@ -1061,7 +1061,7 @@ function ActionButton({
       aria-label={ariaLabel}
       onClick={onClick}
       disabled={disabled}
-      className="rounded-md border border-slate-300 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-[#111722]"
+      className="rounded-md border border-desktop-border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-desktop-text-secondary transition hover:bg-desktop-surface-elevated hover:text-desktop-text-primary disabled:cursor-not-allowed disabled:opacity-40"
     >
       {children}
     </button>
@@ -1088,14 +1088,14 @@ function LabeledSelect({
   containerClassName?: string;
 }) {
   return (
-    <label className={`space-y-1 text-xs font-medium text-slate-600 dark:text-slate-300 ${containerClassName}`.trim()}>
+    <label className={`space-y-1 text-xs font-medium text-desktop-text-secondary ${containerClassName}`.trim()}>
       <span>{label}</span>
       <select
         aria-label={ariaLabel}
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
-        className={`h-9 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-amber-400 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-100 ${className}`.trim()}
+        className={`h-9 w-full rounded-lg border border-desktop-border bg-desktop-surface-muted px-3 text-sm text-desktop-text-primary outline-none transition focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/25 disabled:cursor-not-allowed ${className}`.trim()}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -1125,7 +1125,7 @@ function LabeledNumberInput({
   onChange: (value: number) => void;
 }) {
   return (
-    <label className="space-y-1 text-xs font-medium text-slate-600 dark:text-slate-300">
+    <label className="space-y-1 text-xs font-medium text-desktop-text-secondary">
       <span>{label}</span>
       <input
         aria-label={ariaLabel}
@@ -1135,7 +1135,7 @@ function LabeledNumberInput({
         disabled={disabled}
         value={value}
         onChange={(event) => onChange(Number.parseInt(event.target.value || String(min), 10) || min)}
-        className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-amber-400 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-100"
+        className="h-9 w-full rounded-lg border border-desktop-border bg-desktop-surface-muted px-3 text-sm text-desktop-text-primary outline-none transition focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/25 disabled:cursor-not-allowed"
       />
     </label>
   );
@@ -1154,13 +1154,13 @@ function LabeledTextInput({
 }) {
   return (
     <label className="w-[14rem] shrink-0 space-y-1 text-sm font-medium">
-      <span className="text-slate-700 dark:text-slate-300">{label}</span>
+      <span className="text-desktop-text-secondary">{label}</span>
       <input
         aria-label={ariaLabel}
         type="text"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-amber-400 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-100"
+        className="h-10 w-full rounded-md border border-desktop-border bg-desktop-surface-muted px-3 text-sm text-desktop-text-primary outline-none transition focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/25"
       />
     </label>
   );
@@ -1180,14 +1180,14 @@ function ToggleChip({
   disabled?: boolean;
 }) {
   return (
-    <label className="flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-300">
+    <label className="flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-desktop-border bg-desktop-surface px-3 text-sm font-medium text-desktop-text-secondary">
       <input
         type="checkbox"
         aria-label={ariaLabel}
         checked={checked}
         disabled={disabled}
         onChange={(event) => onChange(event.target.checked)}
-        className="h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-500"
+        className="h-4 w-4 rounded border-desktop-border text-desktop-accent focus:ring-[var(--dt-focus-ring)]"
       />
       <span>{children}</span>
     </label>
@@ -1196,7 +1196,7 @@ function ToggleChip({
 
 function StatusMessage({ children, tone }: { children: ReactNode; tone: "error" | "success" }) {
   const className = tone === "error"
-    ? "rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-300"
-    : "rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/40 dark:text-emerald-300";
+    ? "rounded-md border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2 text-xs text-desktop-danger-text"
+    : "rounded-md border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] px-3 py-2 text-xs text-[var(--dt-status-success)]";
   return <div className={className}>{children}</div>;
 }

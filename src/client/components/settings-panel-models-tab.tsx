@@ -9,11 +9,16 @@ import {
   getModelDefinitionByAlias,
   inputCls,
   labelCls,
+  linkActionCls,
   loadModelDefinitions,
+  mutedTextCls,
+  primaryActionCls,
   saveModelDefinitions,
   sectionHeadCls,
+  settingsCardCls,
   type ModelDefinition,
 } from "./settings-panel-shared";
+import { dangerGhostIconButtonClassName, dangerRequiredMarkClassName, dangerTextClassName } from "./color-system";
 import { useTranslation } from "@/i18n";
 import { ChevronRight, Plus, Trash2 } from "lucide-react";
 
@@ -68,18 +73,18 @@ export function ModelsTab() {
         {BASE_URL_SUGGESTIONS.map((url) => <option key={url} value={url} />)}
       </datalist>
 
-      <div className="rounded-xl border border-blue-200 dark:border-blue-800 bg-gradient-to-b from-blue-50/60 to-transparent dark:from-blue-900/10 dark:to-transparent p-3.5 space-y-3">
+      <div className={`${settingsCardCls} space-y-3`}>
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
-            <Plus className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}/>
+          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-desktop-accent text-desktop-accent-text">
+            <Plus className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}/>
           </div>
-          <span className="text-xs font-semibold text-blue-700 dark:text-blue-400">{t.models.addModel}</span>
-          <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-auto hidden sm:block">{t.models.pressEnterToAdd}</span>
+          <span className="text-xs font-semibold text-desktop-text-primary">{t.models.addModel}</span>
+          <span className={`ml-auto hidden text-[10px] sm:block ${mutedTextCls}`}>{t.models.pressEnterToAdd}</span>
         </div>
 
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">
-            <label className={labelCls}>{t.models.alias} <span className="text-blue-400">*</span></label>
+            <label className={labelCls}>{t.models.alias} <span className={dangerRequiredMarkClassName}>*</span></label>
             <input
               ref={aliasInputRef}
               autoFocus
@@ -91,12 +96,12 @@ export function ModelsTab() {
               }}
               onKeyDown={handleFormKey}
               placeholder={t.models.placeholderAlias}
-              className={`${inputCls} ${aliasError ? "border-red-400 dark:border-red-500 focus:ring-red-400" : ""}`}
+              className={`${inputCls} ${aliasError ? "border-[var(--danger-border-strong)] focus:ring-[var(--danger-ring)]" : ""}`}
             />
-            {aliasError && <p className="text-[10px] text-red-500">{aliasError}</p>}
+            {aliasError && <p className={`text-[10px] ${dangerTextClassName}`}>{aliasError}</p>}
           </div>
           <div className="space-y-1">
-            <label className={labelCls}>{t.models.modelName} <span className="text-blue-400">*</span></label>
+            <label className={labelCls}>{t.models.modelName} <span className={dangerRequiredMarkClassName}>*</span></label>
             <input
               type="text"
               value={form.modelName}
@@ -137,7 +142,7 @@ export function ModelsTab() {
         <button
           onClick={handleAddModel}
           disabled={!canAdd}
-          className="w-full py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-1.5"
+          className={`${primaryActionCls} w-full py-2`}
         >
           <Plus className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
           {t.models.addModel}
@@ -150,31 +155,31 @@ export function ModelsTab() {
           {defs.map((definition, idx) => {
             const isOpen = expandedIdx === idx;
             return (
-              <div key={idx} className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-[#1e2130]">
+              <div key={idx} className="overflow-hidden rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface">
+                <div className="flex items-center gap-2 bg-desktop-surface-muted px-3 py-2">
                   <button
                     onClick={() => setExpandedIdx(isOpen ? null : idx)}
                     className="flex-1 flex items-center gap-2 min-w-0 text-left"
                   >
-                    <ChevronRight className={`w-3 h-3 text-slate-400 shrink-0 transition-transform ${isOpen ? "rotate-90" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
-                    <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{definition.alias}</span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono truncate">→ {definition.modelName}</span>
+                    <ChevronRight className={`w-3 h-3 text-desktop-text-tertiary shrink-0 transition-transform ${isOpen ? "rotate-90" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+                    <span className="truncate text-xs font-semibold text-desktop-text-primary">{definition.alias}</span>
+                    <span className="truncate font-mono text-[10px] text-desktop-text-tertiary">→ {definition.modelName}</span>
                     {definition.baseUrl && (
-                      <span className="text-[10px] text-blue-500 dark:text-blue-400 font-mono truncate hidden sm:block">
+                      <span className={`hidden truncate font-mono text-[10px] sm:block ${linkActionCls}`}>
                         {definition.baseUrl.replace(/https?:\/\//, "").substring(0, 30)}
                       </span>
                     )}
                   </button>
                   <button
                     onClick={() => handleDelete(idx)}
-                    className="shrink-0 p-1 rounded text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                    className={`shrink-0 rounded p-1 ${dangerGhostIconButtonClassName}`}
                     title={t.common.delete}
                   >
                     <Trash2 className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
                   </button>
                 </div>
                 {isOpen && (
-                  <div className="p-3 space-y-2.5 border-t border-slate-200 dark:border-slate-700">
+                  <div className="space-y-2.5 border-t border-desktop-border p-3">
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
                         <label className={labelCls}>{t.models.alias}</label>
@@ -204,7 +209,7 @@ export function ModelsTab() {
               </div>
             );
           })}
-          <p className="text-[10px] text-slate-400 dark:text-slate-500 pt-1">
+          <p className={`pt-1 text-[10px] ${mutedTextCls}`}>
             {t.models.aliasDescription}
           </p>
         </div>

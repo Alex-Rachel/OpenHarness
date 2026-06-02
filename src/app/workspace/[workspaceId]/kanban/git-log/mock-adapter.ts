@@ -70,7 +70,7 @@ const MESSAGES: string[] = [
   "feat: implement file diff preview in commit detail panel",
   "fix: prevent duplicate provider registration on reconnect",
   "Merge branch 'feature/git-log-panel' into main",
-  "Merge pull request #376 from phodal/issue/dependency-upgrade",
+  "Merge pull request 376 from phodal/issue/dependency-upgrade",
   "feat: add search toolbar with text and hash filtering",
   "refactor: abstract git data layer behind adapter interface",
   "fix: correct i18n key for empty state message",

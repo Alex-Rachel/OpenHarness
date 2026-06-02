@@ -108,7 +108,9 @@ export type VcsType = "git" | "svn" | "none";
 
 /**
  * Detect the version control system used by the given folder.
- * Checks for `.git/` first, then `.svn/`, and falls back to `"none"`.
+ * Checks for `.git/` first, then `.svn/` (direct), then walks ancestor
+ * directories for SVN 1.7+ support (`.svn` only exists at working copy root),
+ * and falls back to `"none"`.
  */
 function detectVcsType(folderPath: string): VcsType {
   if (existsSync(path.join(folderPath, ".git"))) {
@@ -116,6 +118,16 @@ function detectVcsType(folderPath: string): VcsType {
   }
   if (existsSync(path.join(folderPath, ".svn"))) {
     return "svn";
+  }
+  // SVN 1.7+: .svn only at working copy root — walk up ancestor directories
+  let current = path.dirname(folderPath);
+  while (true) {
+    if (existsSync(path.join(current, ".svn"))) {
+      return "svn";
+    }
+    const parent = path.dirname(current);
+    if (parent === current) break; // reached filesystem root
+    current = parent;
   }
   return "none";
 }

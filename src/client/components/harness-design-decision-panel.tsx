@@ -21,17 +21,17 @@ type HarnessDesignDecisionPanelProps = {
 };
 
 const CONFIDENCE_STYLES: Record<DesignDecisionConfidence, { bg: string; text: string }> = {
-  high: { bg: "bg-emerald-100", text: "text-emerald-700" },
-  medium: { bg: "bg-amber-100", text: "text-amber-700" },
-  low: { bg: "bg-zinc-100", text: "text-zinc-500" },
+  high: { bg: "bg-[var(--dt-status-success-subtle)]", text: "text-[var(--dt-status-success)]" },
+  medium: { bg: "bg-[var(--dt-status-warning-subtle)]", text: "text-[var(--dt-status-warning)]" },
+  low: { bg: "bg-desktop-surface-muted", text: "text-desktop-text-secondary" },
 };
 
 const DECISION_STATUS_STYLES: Record<DesignDecisionStatus, { bg: string; text: string; label: string }> = {
-  canonical: { bg: "bg-sky-100", text: "text-sky-700", label: "Canonical" },
-  accepted: { bg: "bg-emerald-100", text: "text-emerald-700", label: "Accepted" },
-  superseded: { bg: "bg-amber-100", text: "text-amber-700", label: "Superseded" },
-  deprecated: { bg: "bg-zinc-200", text: "text-zinc-700", label: "Deprecated" },
-  unknown: { bg: "bg-zinc-100", text: "text-zinc-500", label: "Unknown" },
+  canonical: { bg: "bg-[var(--dt-status-info-subtle)]", text: "text-[var(--dt-status-info)]", label: "Canonical" },
+  accepted: { bg: "bg-[var(--dt-status-success-subtle)]", text: "text-[var(--dt-status-success)]", label: "Accepted" },
+  superseded: { bg: "bg-[var(--dt-status-warning-subtle)]", text: "text-[var(--dt-status-warning)]", label: "Superseded" },
+  deprecated: { bg: "bg-desktop-surface-muted", text: "text-desktop-text-secondary", label: "Deprecated" },
+  unknown: { bg: "bg-desktop-surface-muted", text: "text-desktop-text-secondary", label: "Unknown" },
 };
 
 function ConfidenceBadge({ confidence }: { confidence: DesignDecisionConfidence }) {

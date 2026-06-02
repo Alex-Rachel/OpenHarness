@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useTranslation } from "@/i18n";
 import { FileRow } from "../kanban-file-changes-panel";
 import type { KanbanFileChangeItem } from "../kanban-file-changes-types";
 
@@ -32,6 +33,7 @@ export function KanbanFileChangesSection({
   defaultExpanded = true,
   badge,
 }: KanbanFileChangesSectionProps) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(defaultExpanded);
   
   const selectedCount = files.filter(f => f.selected).length;
@@ -43,7 +45,7 @@ export function KanbanFileChangesSection({
   };
 
   return (
-    <section className={embedded ? "py-1" : "rounded-xl border border-slate-200/70 bg-slate-50/50 dark:border-[#202433] dark:bg-[#0d1018]/50"}>
+    <section className={embedded ? "py-1" : "rounded-xl border border-desktop-border bg-desktop-surface-muted"}>
       {/* Header */}
       <div className={`flex items-center justify-between gap-2 ${embedded ? "px-0 py-1.5" : "px-3 py-2"}`}>
         <button
@@ -85,7 +87,7 @@ export function KanbanFileChangesSection({
               }
             }}
             onChange={handleSelectAll}
-            className="h-3.5 w-3.5 rounded border-slate-300 text-amber-600 focus:ring-2 focus:ring-amber-500 dark:border-slate-600 dark:bg-slate-700"
+            className="h-3.5 w-3.5 rounded border-desktop-border text-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]"
             aria-label="Select all files"
             title="Select all files"
           />
@@ -94,10 +96,10 @@ export function KanbanFileChangesSection({
 
       {/* Content */}
       {expanded && (
-        <div className={`${embedded ? "border-t border-slate-200/70 px-0 py-2 dark:border-slate-800/80" : "border-t border-slate-200/70 px-3 py-2 dark:border-[#202433]"}`}>
+        <div className={`${embedded ? "border-t border-desktop-border px-0 py-2" : "border-t border-desktop-border px-3 py-2"}`}>
           {files.length === 0 ? (
-            <div className={`${embedded ? "px-1 py-2 text-left" : "rounded-lg border border-dashed border-slate-200 bg-white/50 px-3 py-3 dark:border-slate-700 dark:bg-[#12141c]/50"} text-[10px] text-slate-400 dark:text-slate-500`}>
-              No files in this section
+            <div className={`${embedded ? "px-1 py-2 text-left" : "rounded-lg border border-dashed border-desktop-border bg-desktop-surface-elevated px-3 py-3"} text-[10px] text-desktop-text-tertiary`}>
+              {t.kanban.noLocalChanges}
             </div>
           ) : (
             <>

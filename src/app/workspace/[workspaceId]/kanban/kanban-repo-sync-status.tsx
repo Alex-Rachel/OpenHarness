@@ -60,8 +60,8 @@ export function KanbanRepoSyncStatus({ repoSync }: KanbanRepoSyncStatusProps) {
   return (
     <div
       className={`min-w-0 max-w-full rounded-xl border px-2.5 py-2 ${repoSync.status === "error"
-        ? "border-rose-200 bg-rose-50 text-rose-900 dark:border-rose-900/40 dark:bg-rose-950/20 dark:text-rose-100"
-        : "border-sky-200 bg-sky-50 text-slate-900 dark:border-sky-900/40 dark:bg-sky-950/20 dark:text-slate-100"
+        ? "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text"
+        : "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-desktop-text-primary"
         }`}
       data-testid="kanban-repo-sync-progress"
       title={tooltip || undefined}
@@ -69,10 +69,10 @@ export function KanbanRepoSyncStatus({ repoSync }: KanbanRepoSyncStatusProps) {
       <div className="flex min-w-0 items-start gap-2">
         <span
           className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${repoSync.status === "error"
-            ? "bg-rose-500"
+            ? "bg-desktop-danger-solid"
             : repoSync.status === "done"
-              ? "bg-emerald-500"
-              : "animate-pulse bg-sky-500"
+              ? "bg-[var(--dt-status-success)]"
+              : "animate-pulse bg-[var(--dt-status-info)]"
             }`}
         />
         <div className="min-w-0 flex-1">
@@ -95,9 +95,9 @@ export function KanbanRepoSyncStatus({ repoSync }: KanbanRepoSyncStatusProps) {
         </div>
       </div>
       {repoSync.status !== "done" && (
-        <div className="mt-2 h-1 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
+        <div className="mt-2 h-1 overflow-hidden rounded-full bg-desktop-bg-active">
           <div
-            className={`h-full rounded-full transition-all duration-300 ${repoSync.status === "error" ? "bg-rose-500" : "bg-sky-500"
+            className={`h-full rounded-full transition-all duration-300 ${repoSync.status === "error" ? "bg-desktop-danger-solid" : "bg-[var(--dt-status-info)]"
               }`}
             style={{ width: `${Math.max(progressPercent, repoSync.status === "syncing" ? 6 : 0)}%` }}
           />

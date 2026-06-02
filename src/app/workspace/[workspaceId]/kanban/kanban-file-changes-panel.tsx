@@ -10,8 +10,6 @@ import {
   ChevronRight,
   Copy,
   FilePlus2,
-  FolderOpen,
-  GitBranch,
   Pencil,
   Plus,
   Trash2,
@@ -42,14 +40,14 @@ const DEFAULT_CHANGE_SUMMARY_COPY: ChangeSummaryCopy = {
 };
 
 export const STATUS_BADGE: Record<KanbanFileChangeStatus, { short: string; className: string; icon: LucideIcon }> = {
-  modified: { short: "M", className: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300", icon: Pencil },
-  added: { short: "A", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300", icon: Plus },
-  deleted: { short: "D", className: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300", icon: Trash2 },
-  renamed: { short: "R", className: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300", icon: ArrowRightLeft },
-  copied: { short: "C", className: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300", icon: Copy },
-  untracked: { short: "??", className: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300", icon: FilePlus2 },
-  typechange: { short: "T", className: "bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/30 dark:text-fuchsia-300", icon: Type },
-  conflicted: { short: "U", className: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300", icon: AlertTriangle },
+  modified: { short: "M", className: "border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]", icon: Pencil },
+  added: { short: "A", className: "border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]", icon: Plus },
+  deleted: { short: "D", className: "border border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text", icon: Trash2 },
+  renamed: { short: "R", className: "border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]", icon: ArrowRightLeft },
+  copied: { short: "C", className: "border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]", icon: Copy },
+  untracked: { short: "??", className: "border border-desktop-border bg-desktop-surface-muted text-desktop-text-secondary", icon: FilePlus2 },
+  typechange: { short: "T", className: "border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]", icon: Type },
+  conflicted: { short: "U", className: "border border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text", icon: AlertTriangle },
 };
 
 export function formatChangeSummary(
@@ -122,8 +120,8 @@ export function FileRow({
   const gridCols = showCheckbox ? "grid-cols-[20px_16px_minmax(0,1fr)_auto]" : "grid-cols-[16px_minmax(0,1fr)_auto]";
   const containerClassName = `grid w-full ${gridCols} items-start gap-x-2 gap-y-0 rounded-md px-1 py-1 text-left transition-colors ${
     selected
-      ? "bg-amber-50/80 dark:bg-amber-900/10"
-      : "hover:bg-slate-100/80 dark:hover:bg-[#171b27]"
+      ? "bg-[var(--dt-status-warning-subtle)]"
+      : "hover:bg-desktop-surface-muted"
   }`;
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +137,7 @@ export function FileRow({
           checked={file.selected ?? false}
           onChange={handleCheckboxChange}
           onClick={(e) => e.stopPropagation()}
-          className="mt-0.5 h-3.5 w-3.5 rounded border-slate-300 text-amber-600 focus:ring-2 focus:ring-amber-500 dark:border-slate-600 dark:bg-slate-700"
+          className="mt-0.5 h-3.5 w-3.5 rounded border-desktop-border text-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]"
           aria-label={`Select ${file.path}`}
         />
       )}
@@ -182,7 +180,7 @@ export function FileRow({
         {lineDelta ? (
           <>
             <span className="text-emerald-600 dark:text-emerald-300">+{lineDelta.additions}</span>
-            <span className="text-rose-600 dark:text-rose-300">-{lineDelta.deletions}</span>
+            <span className="text-desktop-danger-text">-{lineDelta.deletions}</span>
           </>
         ) : (
           <span className={`rounded-sm px-1 py-0 text-[7px] font-semibold tracking-wide ${badge.className}`}>
@@ -236,31 +234,31 @@ export function KanbanFileChangesPanel({
       {open && (
         <>
           <div
-            className="absolute inset-0 z-20 bg-slate-900/10 backdrop-blur-[1px] dark:bg-black/20"
+            className="absolute inset-0 z-20 bg-black/10 backdrop-blur-[1px] dark:bg-black/20"
             onClick={onClose}
             data-testid="kanban-file-changes-backdrop"
           />
           <aside
-            className="absolute inset-y-0 right-0 z-30 flex h-full w-[22rem] flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-2xl dark:border-[#1c1f2e] dark:bg-[#12141c]"
+            className="absolute inset-y-0 right-0 z-30 flex h-full w-[22rem] flex-col overflow-hidden rounded-2xl border border-desktop-border bg-desktop-surface-elevated shadow-[var(--dt-shadow-lg)]"
             data-testid="kanban-file-changes-panel"
           >
-            <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 dark:border-[#191c28]">
+            <div className="flex items-center justify-between gap-3 border-b border-desktop-border px-4 py-3">
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{panelTitle}</div>
-                <div className="text-[11px] text-slate-400 dark:text-slate-500">
+                <div className="text-sm font-semibold text-desktop-text-primary">{panelTitle}</div>
+                <div className="text-[11px] text-desktop-text-tertiary">
                   {t.kanban.reposChangedFiles.replace("{repos}", String(repos.length)).replace("{files}", String(summary.changedFiles))}
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 {summary.changedRepos > 0 && (
-                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                  <span className="rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-2 py-0.5 text-[10px] font-medium text-[var(--dt-status-warning)]">
                     {summary.changedRepos} {t.kanban.dirty}
                   </span>
                 )}
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-[#191c28]"
+                  className="rounded-md border border-desktop-border px-2 py-1 text-xs text-desktop-text-secondary transition hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
                 >
                   {t.kanban.hide}
                 </button>
@@ -273,7 +271,7 @@ export function KanbanFileChangesPanel({
                   {t.kanban.loadingRepoChanges}
                 </div>
               ) : repos.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-400 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-500">
+                <div className="rounded-2xl border border-dashed border-desktop-border bg-desktop-surface-muted px-4 py-8 text-center text-sm text-desktop-text-tertiary">
                   {t.kanban.noReposLinkedPanel}
                 </div>
               ) : (
@@ -286,7 +284,7 @@ export function KanbanFileChangesPanel({
                     return (
                       <section
                         key={repo.codebaseId}
-                        className="rounded-2xl border border-slate-200/70 bg-slate-50/70 dark:border-[#202433] dark:bg-[#0d1018]"
+                        className="rounded-2xl border border-desktop-border bg-desktop-surface-muted"
                       >
                         <button
                           type="button"
@@ -297,8 +295,8 @@ export function KanbanFileChangesPanel({
                             <div className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
                               {repo.label}
                             </div>
-                            <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
-                              <span className="rounded-full bg-slate-200 px-2 py-0.5 font-medium text-slate-600 dark:bg-[#191c28] dark:text-slate-300">
+                            <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] text-desktop-text-secondary">
+                              <span className="rounded-full border border-desktop-border bg-desktop-surface px-2 py-0.5 font-medium text-desktop-text-secondary">
                                 @{repo.branch}
                               </span>
                               {repo.status.ahead > 0 && <span>{t.kanban.aheadCount.replace("{count}", String(repo.status.ahead))}</span>}
@@ -310,13 +308,13 @@ export function KanbanFileChangesPanel({
                         </button>
 
                         {expanded && (
-                          <div className="border-t border-slate-200/70 px-3.5 py-3 dark:border-[#202433]">
+                          <div className="border-t border-desktop-border px-3.5 py-3">
                             {repo.error ? (
-                              <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[11px] text-rose-700 dark:border-rose-900/40 dark:bg-rose-900/10 dark:text-rose-300">
+                              <div className="rounded-xl border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2 text-[11px] text-desktop-danger-text">
                                 {repo.error}
                               </div>
                             ) : repo.files.length === 0 ? (
-                              <div className="rounded-xl border border-dashed border-slate-200 bg-white/70 px-3 py-4 text-center text-[11px] text-slate-400 dark:border-slate-700 dark:bg-[#12141c] dark:text-slate-500">
+                              <div className="rounded-xl border border-dashed border-desktop-border bg-desktop-surface-elevated px-3 py-4 text-center text-[11px] text-desktop-text-tertiary">
                                 {t.kanban.noLocalChanges}
                               </div>
                             ) : (
@@ -328,7 +326,7 @@ export function KanbanFileChangesPanel({
                                   <button
                                     type="button"
                                     onClick={() => setShowAllRepos((current) => ({ ...current, [repo.codebaseId]: !showAll }))}
-                                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[11px] font-medium text-slate-600 transition hover:bg-white dark:border-slate-700 dark:text-slate-300 dark:hover:bg-[#12141c]"
+                                    className="w-full rounded-xl border border-desktop-border px-3 py-2 text-[11px] font-medium text-desktop-text-secondary transition hover:bg-desktop-surface-elevated hover:text-desktop-text-primary"
                                   >
                                     {showAll ? t.kanban.showLess : t.kanban.showAllFiles.replace('{count}', String(repo.files.length))}
                                   </button>

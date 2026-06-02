@@ -112,39 +112,39 @@ export function WorkspaceSwitcher({
 
   const isDesktopTheme = desktop || compact;
   const triggerCls = isDesktopTheme
-    ? "flex items-center gap-1.5 rounded-md border border-desktop-border bg-desktop-bg-secondary px-2.5 py-1 text-[11px] text-desktop-text-primary transition-all hover:bg-desktop-bg-active/80"
-    : "inline-flex w-full max-w-[220px] items-center gap-2 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-left text-sm text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-[#1e2130] dark:text-slate-300 dark:hover:bg-slate-800";
+    ? "flex items-center gap-1.5 rounded-[var(--dt-radius-sm)] border border-desktop-border bg-desktop-surface px-2.5 py-1 text-[11px] text-desktop-text-primary shadow-[var(--dt-shadow-sm)] transition-all duration-[var(--dt-motion-fast)] hover:bg-desktop-surface-muted"
+    : "inline-flex w-full max-w-[220px] items-center gap-2 rounded-[var(--dt-radius-sm)] border border-desktop-border bg-desktop-surface px-2.5 py-1.5 text-left text-sm text-desktop-text-primary shadow-[var(--dt-shadow-sm)] transition-all duration-[var(--dt-motion-fast)] hover:bg-desktop-surface-muted";
   const triggerIconSize = isDesktopTheme ? "w-3 h-3" : "w-3.5 h-3.5";
   const chevronCls = isDesktopTheme
     ? `w-2.5 h-2.5 text-desktop-text-secondary transition-transform ${open ? "rotate-180" : ""}`
-    : `w-3 h-3 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`;
+    : `w-3 h-3 text-desktop-text-tertiary transition-transform ${open ? "rotate-180" : ""}`;
 
   const dropdownBg = isDesktopTheme
     ? "bg-desktop-bg-secondary border-desktop-border text-desktop-text-primary"
-    : "bg-white dark:bg-[#1e2130] border-slate-200 dark:border-slate-700";
-  const panelText = isDesktopTheme ? "text-desktop-text-primary" : "text-slate-700 dark:text-slate-300";
+    : "bg-desktop-surface border-desktop-border text-desktop-text-primary";
+  const panelText = isDesktopTheme ? "text-desktop-text-primary" : "text-desktop-text-primary";
   const activeItemCls = isDesktopTheme
     ? "bg-desktop-bg-active text-desktop-accent"
-    : "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300";
+    : "bg-desktop-bg-active text-desktop-accent";
   const listItemBase = isDesktopTheme
     ? "flex items-center gap-2 w-full px-2.5 py-1.5 text-[11px] rounded-md"
     : "flex items-center gap-2 text-left w-full px-2.5 py-2 text-xs";
-  const footerBorder = isDesktopTheme ? "border-desktop-border" : "border-slate-100 dark:border-slate-800";
-  const footerText = isDesktopTheme ? "text-desktop-text-secondary" : "text-slate-400";
+  const footerBorder = isDesktopTheme ? "border-desktop-border" : "border-desktop-border";
+  const footerText = isDesktopTheme ? "text-desktop-text-secondary" : "text-desktop-text-secondary";
   const rowIcon = isDesktopTheme ? "w-3 h-3" : "w-3.5 h-3.5";
-  const rowActiveIcon = isDesktopTheme ? "w-3 h-3 text-desktop-accent" : "w-3 h-3 text-blue-500";
+  const rowActiveIcon = "w-3 h-3 text-desktop-accent";
   const footerBtn = isDesktopTheme
     ? "rounded bg-desktop-bg-secondary px-2 py-1.5 text-[11px] text-desktop-accent hover:bg-desktop-bg-active/80"
-    : "rounded border border-blue-200/70 bg-blue-50 px-2 py-1.5 text-xs text-blue-700 hover:bg-blue-100 dark:border-blue-900/60 dark:bg-blue-900/20 dark:text-blue-300";
+    : "rounded-[var(--dt-radius-sm)] border border-desktop-border bg-desktop-surface-muted px-2 py-1.5 text-xs text-desktop-text-primary hover:bg-desktop-bg-active";
   const createInputCls = isDesktopTheme
     ? "h-7 border border-desktop-border bg-desktop-bg-primary px-2 text-[11px] text-desktop-text-primary placeholder:text-desktop-text-secondary focus:border-desktop-accent"
-    : "h-7 border border-slate-300 bg-white px-2 text-xs text-slate-900 placeholder:text-slate-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-500";
+    : "h-7 border border-desktop-border bg-desktop-surface px-2 text-xs text-desktop-text-primary placeholder:text-desktop-text-muted focus:border-desktop-accent";
   const createBtnCls = isDesktopTheme
     ? "rounded bg-desktop-accent px-2 py-1 text-[11px] font-medium text-desktop-accent-text hover:bg-desktop-accent-strong"
-    : "rounded bg-blue-600 px-2 py-1 text-xs text-white hover:bg-blue-700";
+    : "rounded-[var(--dt-radius-sm)] bg-desktop-accent px-2 py-1 text-xs font-medium text-desktop-accent-text hover:bg-desktop-accent-strong";
   const searchInputCls = isDesktopTheme
     ? "border-desktop-border text-[11px] bg-desktop-bg-primary text-desktop-text-primary placeholder:text-desktop-text-secondary focus:border-desktop-accent"
-    : "border-slate-300 bg-white text-xs text-slate-900 placeholder:text-slate-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100";
+    : "border-desktop-border bg-desktop-surface text-xs text-desktop-text-primary placeholder:text-desktop-text-muted focus:border-desktop-accent";
 
   return (
     <div className="relative" ref={dropdownRef} data-testid="desktop-workspace-switcher">

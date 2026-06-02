@@ -32,14 +32,14 @@ export function KanbanGitOperationButtons({
   if (!canPullUpdate && !canRebase) return null;
 
   return (
-    <div className="flex items-center gap-2 border-t border-slate-200/70 px-3 py-2 dark:border-[#202433]">
+    <div className="flex items-center gap-2 border-t border-desktop-border px-3 py-2">
       {/* Pull Button */}
       {canPullUpdate && behind > 0 && (
         <button
           type="button"
           onClick={onPull}
           disabled={loading}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-medium text-sky-700 transition hover:bg-sky-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-sky-900/40 dark:bg-sky-900/20 dark:text-sky-300 dark:hover:bg-sky-900/30"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--dt-status-info)] transition hover:border-desktop-accent disabled:cursor-not-allowed disabled:opacity-50"
         >
           <ArrowDown className="h-3.5 w-3.5" />
           Pull {behind} commit{behind === 1 ? "" : "s"} ↑
@@ -52,7 +52,7 @@ export function KanbanGitOperationButtons({
           type="button"
           onClick={onRebase}
           disabled={loading}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-purple-200 bg-purple-50 px-3 py-1.5 text-xs font-medium text-purple-700 transition hover:bg-purple-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-purple-900/40 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-desktop-border bg-desktop-surface px-3 py-1.5 text-xs font-medium text-desktop-text-secondary transition hover:border-desktop-accent hover:bg-desktop-surface-muted hover:text-desktop-text-primary disabled:cursor-not-allowed disabled:opacity-50"
         >
           <RotateCcw className="h-3.5 w-3.5" />
           Rebase onto {targetBranch} ↻

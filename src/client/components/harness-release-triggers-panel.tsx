@@ -44,43 +44,43 @@ const TONE_STYLES: Record<
   }
 > = {
   danger: {
-    pill: "border-rose-200 bg-rose-50 text-rose-700",
-    bar: "bg-rose-500/85",
+    pill: "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text",
+    bar: "bg-desktop-danger-solid/85",
     border: "border-desktop-border",
-    accent: "bg-rose-100/80",
-    tag: "border-rose-200 bg-rose-50/70 text-rose-700",
-    detailSurface: "border-rose-100/80 bg-desktop-bg-primary/85",
+    accent: "bg-desktop-danger-subtle",
+    tag: "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text",
+    detailSurface: "border-desktop-danger-border bg-desktop-bg-primary/85",
   },
   warning: {
-    pill: "border-amber-200 bg-amber-50 text-amber-800",
-    bar: "bg-amber-500/85",
+    pill: "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
+    bar: "bg-[var(--dt-status-warning)]/85",
     border: "border-desktop-border",
-    accent: "bg-amber-100/85",
-    tag: "border-amber-200 bg-amber-50/70 text-amber-800",
-    detailSurface: "border-amber-100/80 bg-desktop-bg-primary/85",
+    accent: "bg-[var(--dt-status-warning-subtle)]",
+    tag: "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
+    detailSurface: "border-[var(--dt-status-warning)]/25 bg-desktop-bg-primary/85",
   },
   info: {
-    pill: "border-sky-200 bg-sky-50 text-sky-700",
-    bar: "bg-sky-500/85",
+    pill: "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]",
+    bar: "bg-[var(--dt-status-info)]/85",
     border: "border-desktop-border",
-    accent: "bg-sky-100/85",
-    tag: "border-sky-200 bg-sky-50/70 text-sky-700",
-    detailSurface: "border-sky-100/80 bg-desktop-bg-primary/85",
+    accent: "bg-[var(--dt-status-info-subtle)]",
+    tag: "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]",
+    detailSurface: "border-[var(--dt-status-info)]/25 bg-desktop-bg-primary/85",
   },
   success: {
-    pill: "border-emerald-200 bg-emerald-50 text-emerald-700",
-    bar: "bg-emerald-500/85",
+    pill: "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]",
+    bar: "bg-[var(--dt-status-success)]/85",
     border: "border-desktop-border",
-    accent: "bg-emerald-100/85",
-    tag: "border-emerald-200 bg-emerald-50/70 text-emerald-700",
-    detailSurface: "border-emerald-100/80 bg-desktop-bg-primary/85",
+    accent: "bg-[var(--dt-status-success-subtle)]",
+    tag: "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]",
+    detailSurface: "border-[var(--dt-status-success)]/25 bg-desktop-bg-primary/85",
   },
 };
 
 const ACTION_STYLES: Record<string, string> = {
-  block_release: "border-rose-200 bg-rose-50 text-rose-700",
-  require_human_review: "border-amber-200 bg-amber-50 text-amber-800",
-  warn: "border-sky-200 bg-sky-50 text-sky-700",
+  block_release: "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text",
+  require_human_review: "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
+  warn: "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]",
 };
 
 function clamp(value: number, min = 0, max = 1): number {
@@ -447,7 +447,7 @@ export function HarnessReleaseTriggersPanel({
       ) : null}
 
       {unsupportedMessage ? (
-        <HarnessUnsupportedState className="rounded-sm border border-amber-200 bg-amber-50 px-4 py-5 text-[11px] text-amber-800" />
+        <HarnessUnsupportedState className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-4 py-5 text-[11px] text-[var(--dt-status-warning)]" />
       ) : null}
 
       {error && !unsupportedMessage ? (

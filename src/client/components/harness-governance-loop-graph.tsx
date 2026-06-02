@@ -89,11 +89,11 @@ type LoopNodeData = {
 };
 
 const LOOP_EDGE_COLORS = {
-  neutral: "#64748b",
-  internal: "#0ea5e9",
-  commit: "#8b5cf6",
-  external: "#f59e0b",
-  feedback: "#059669",
+  neutral: "var(--dt-border)",
+  internal: "var(--dt-status-info)",
+  commit: "var(--dt-accent)",
+  external: "var(--dt-status-warning)",
+  feedback: "var(--dt-status-success)",
 } as const;
 
 const PHASE_LABELS: Record<HookPhase, string> = {
@@ -107,34 +107,34 @@ function getNodeToneClasses(tone: LoopTone) {
   switch (tone) {
     case "sky":
       return {
-        border: "border-sky-300",
-        badge: "border-sky-400 bg-sky-100 text-sky-800",
-        fill: "bg-sky-100",
-        fillActive: "bg-sky-200",
+        border: "border-[var(--dt-status-info)]/25",
+        badge: "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]",
+        fill: "bg-[var(--dt-status-info-subtle)]",
+        fillActive: "bg-desktop-surface",
         shadow: "",
       };
     case "emerald":
       return {
-        border: "border-emerald-300",
-        badge: "border-emerald-400 bg-emerald-100 text-emerald-800",
-        fill: "bg-emerald-100",
-        fillActive: "bg-emerald-200",
+        border: "border-[var(--dt-status-success)]/25",
+        badge: "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]",
+        fill: "bg-[var(--dt-status-success-subtle)]",
+        fillActive: "bg-desktop-surface",
         shadow: "",
       };
     case "amber":
       return {
-        border: "border-amber-300",
-        badge: "border-amber-400 bg-amber-100 text-amber-800",
-        fill: "bg-amber-100",
-        fillActive: "bg-amber-200",
+        border: "border-[var(--dt-status-warning)]/25",
+        badge: "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]",
+        fill: "bg-[var(--dt-status-warning-subtle)]",
+        fillActive: "bg-desktop-surface",
         shadow: "",
       };
     case "violet":
       return {
-        border: "border-violet-300",
-        badge: "border-violet-400 bg-violet-100 text-violet-800",
-        fill: "bg-violet-100",
-        fillActive: "bg-violet-200",
+        border: "border-desktop-border",
+        badge: "border-desktop-border bg-desktop-surface-muted text-desktop-text-primary",
+        fill: "bg-desktop-surface-muted",
+        fillActive: "bg-desktop-surface",
         shadow: "",
       };
     default:
@@ -168,7 +168,7 @@ function LoopNodeView({ data }: NodeProps<Node<LoopNodeData>>) {
   const unavailable = !interactive && Boolean(data.unavailableReason);
   const unavailableReasonId = data.unavailableReason ? `governance-unavailable-reason-${data.nodeId}` : undefined;
   const selectedClasses = data.selected
-    ? "ring-2 ring-desktop-accent/70 ring-offset-2 ring-offset-white"
+    ? "ring-2 ring-desktop-accent/70 ring-offset-2 ring-offset-desktop-bg-primary"
     : "";
 
   return (
@@ -214,7 +214,7 @@ function LoopNodeView({ data }: NodeProps<Node<LoopNodeData>>) {
           data.onNavigate?.(direction);
         }}
         className={`flex h-[132px] w-[168px] flex-col justify-between rounded-sm border px-4 py-3 text-left transition ${
-          interactive ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desktop-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-white" : "cursor-not-allowed"
+          interactive ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desktop-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-desktop-bg-primary" : "cursor-not-allowed"
         } ${
           data.active ? `${tone.fillActive} ${tone.border} ${tone.shadow}` : `${tone.fill} ${tone.border}`
         } ${selectedClasses}`}
@@ -223,19 +223,19 @@ function LoopNodeView({ data }: NodeProps<Node<LoopNodeData>>) {
           <div className="min-w-0">
             <div className="text-[10px] font-semibold tracking-[0.08em] text-desktop-text-secondary">{layerLabel[data.layer]}</div>
             <div
-              className={`mt-1 max-w-[122px] truncate text-[13px] font-semibold ${data.active ? "text-desktop-text-primary" : "text-slate-500"}`}
+              className={`mt-1 max-w-[122px] truncate text-[13px] font-semibold ${data.active ? "text-desktop-text-primary" : "text-desktop-text-tertiary"}`}
               title={data.title}
             >
               {data.title}
             </div>
           </div>
-          <span className={`shrink-0 whitespace-nowrap rounded-full border px-1.5 py-[1px] text-[9px] font-medium leading-none ${data.active ? tone.badge : "border-slate-200 bg-slate-50 text-slate-400"}`}>
+          <span className={`shrink-0 whitespace-nowrap rounded-full border px-1.5 py-[1px] text-[9px] font-medium leading-none ${data.active ? tone.badge : "border-desktop-border bg-desktop-surface-muted text-desktop-text-tertiary"}`}>
             {unavailable ? t.harness.governanceLoop.graph.statusLabels.unavailable : t.harness.governanceLoop.graph.statusLabels.phase}
           </span>
         </div>
         {data.note ? (
           <div
-            className={`mt-2 min-h-[16px] max-w-[168px] truncate text-[10px] leading-4 ${data.active ? "text-desktop-text-secondary" : "text-slate-400"}`}
+            className={`mt-2 min-h-[16px] max-w-[168px] truncate text-[10px] leading-4 ${data.active ? "text-desktop-text-secondary" : "text-desktop-text-tertiary"}`}
             title={data.note}
           >
             {data.note}
@@ -244,7 +244,7 @@ function LoopNodeView({ data }: NodeProps<Node<LoopNodeData>>) {
         {data.unavailableReason ? (
         <div
           id={unavailableReasonId}
-          className="mt-2 min-h-[16px] max-w-[168px] rounded-sm border border-dashed border-slate-200 bg-white/70 px-2.5 py-2 text-[10px] leading-4 text-slate-500 truncate"
+          className="mt-2 min-h-[16px] max-w-[168px] rounded-sm border border-dashed border-desktop-border bg-desktop-surface px-2.5 py-2 text-[10px] leading-4 text-desktop-text-secondary truncate"
           title={data.unavailableReason}
         >
           {data.unavailableReason}
@@ -305,15 +305,15 @@ function buildEdge(
     },
     labelStyle: {
       fontSize: 10,
-      fill: "#475569",
+      fill: "var(--dt-text-secondary)",
       fontWeight: 500,
     },
     labelBgPadding: [8, 4],
     labelBgBorderRadius: 10,
     labelBgStyle: {
-      fill: "rgba(255, 255, 255, 1)",
+      fill: "var(--dt-surface)",
       fillOpacity: 1,
-      stroke: "rgba(203, 213, 225, 1)",
+      stroke: "var(--dt-border)",
     },
   };
 }
@@ -618,15 +618,15 @@ function buildGraph(args: {
           },
           labelStyle: {
             fontSize: 10,
-            fill: "#475569",
+            fill: "var(--dt-text-secondary)",
             fontWeight: 500,
           },
           labelBgPadding: [6, 3],
           labelBgBorderRadius: 8,
           labelBgStyle: {
-            fill: "rgba(248, 250, 252, 0.92)",
+            fill: "var(--dt-surface)",
             fillOpacity: 1,
-            stroke: "rgba(203, 213, 225, 0.9)",
+            stroke: "var(--dt-border)",
           },
         } satisfies Edge,
       ]
@@ -842,7 +842,7 @@ export function HarnessGovernanceLoopGraph({
       {hasContext && !unsupportedMessage && graphIssues.length > 0 ? (
         <div className="mt-4 space-y-2">
           {graphIssues.map((issue) => (
-            <div key={issue} className="rounded-sm border border-amber-200 bg-amber-50 px-3 py-3 text-[11px] text-amber-800">
+            <div key={issue} className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-3 py-3 text-[11px] text-[var(--dt-status-warning)]">
               {issue}
             </div>
           ))}
@@ -871,7 +871,7 @@ export function HarnessGovernanceLoopGraph({
                   }}
                   proOptions={{ hideAttribution: true }}
                 >
-                  <Background color="#d7dee7" gap={20} size={1} />
+                  <Background color="var(--dt-border-light)" gap={20} size={1} />
                 </ReactFlow>
               </div>
             </div>

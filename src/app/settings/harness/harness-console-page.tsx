@@ -127,9 +127,9 @@ function extractMarkdownCodeBlocks(source: string) {
 function sectionStatusClass(tone: SectionStatusTone = "neutral") {
   switch (tone) {
     case "success":
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
+      return "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
     case "warning":
-      return "border-amber-200 bg-amber-50 text-amber-800";
+      return "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
     default:
       return "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary";
   }
@@ -545,8 +545,8 @@ export default function HarnessConsolePage() {
             </div>
             <div className="space-y-1.5">
               {specsState.loading ? <div className="text-[10px] text-desktop-text-secondary">Loading fitness files...</div> : null}
-              {unsupportedRepoMessage ? <HarnessUnsupportedState className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-[10px] text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300" /> : null}
-              {specsState.error && !unsupportedRepoMessage ? <div className="text-[10px] text-red-600 dark:text-red-400">{specsState.error}</div> : null}
+              {unsupportedRepoMessage ? <HarnessUnsupportedState className="rounded-md border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-3 py-2 text-[10px] text-[var(--dt-status-warning)]" /> : null}
+              {specsState.error && !unsupportedRepoMessage ? <div className="text-[10px] text-[var(--dt-status-danger)]">{specsState.error}</div> : null}
               {!specsState.loading && !specsState.error && !unsupportedRepoMessage && specFiles.length === 0 ? <div className="text-[10px] text-desktop-text-secondary">No fitness files found.</div> : null}
               {!unsupportedRepoMessage ? primaryFiles.map((file) => (
                 <button
@@ -677,7 +677,7 @@ export default function HarnessConsolePage() {
                         <div className="flex flex-wrap content-start justify-end gap-1 text-[9px]">
                           <span className="rounded-full border border-desktop-border bg-desktop-bg-secondary px-2 py-0.5 text-desktop-text-secondary">{metric.runner}</span>
                           <span className="rounded-full border border-desktop-border bg-desktop-bg-secondary px-2 py-0.5 text-desktop-text-secondary">{metric.tier}</span>
-                          <span className={`rounded-full border px-2 py-0.5 ${metric.hardGate ? "border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400" : "border-desktop-border bg-desktop-bg-secondary text-desktop-text-secondary"}`}>
+                          <span className={`rounded-full border px-2 py-0.5 ${metric.hardGate ? "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text" : "border-desktop-border bg-desktop-bg-secondary text-desktop-text-secondary"}`}>
                             {metric.gate}
                           </span>
                         </div>

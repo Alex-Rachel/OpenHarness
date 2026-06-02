@@ -109,7 +109,7 @@ export function HarnessAgentHookPanel({
     }
 
     if (unsupportedMessage) {
-      return <HarnessUnsupportedState className="rounded-sm border border-amber-200 bg-amber-50 px-4 py-4 text-[11px] text-amber-800" />;
+      return <HarnessUnsupportedState className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-4 py-4 text-[11px] text-[var(--dt-status-warning)]" />;
     }
 
     if (resolvedState.error) {

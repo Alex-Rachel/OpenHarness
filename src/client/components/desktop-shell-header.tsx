@@ -28,23 +28,23 @@ export function DesktopShellHeader({
 
   return (
     <header
-      className="relative z-30 flex h-10 shrink-0 items-center overflow-visible border-b border-desktop-border bg-desktop-bg-tertiary backdrop-blur-md select-none"
+      className="relative z-30 flex h-11 shrink-0 items-center overflow-visible border-b border-desktop-border bg-desktop-surface/95 backdrop-blur-md select-none"
       data-testid="desktop-shell-header"
     >
-      <div className="w-20 h-full app-drag-region" />
+      <div className="w-2 h-full app-drag-region" />
 
       <div className="ml-3">
         {workspaceSwitcher ?? (
           workspaceHref ? (
           <Link
             href={workspaceHref}
-            className="flex items-center gap-1.5 rounded-xl border border-desktop-border bg-desktop-bg-secondary px-2.5 py-1.5 text-[11px] text-desktop-text-primary transition-colors hover:bg-desktop-bg-active"
+            className="flex items-center gap-1.5 rounded-[var(--dt-radius-sm)] border border-desktop-border bg-desktop-surface-muted px-2.5 py-1.5 text-[11px] text-desktop-text-primary transition-colors hover:bg-desktop-bg-active"
           >
             <Folder className="w-3 h-3 text-desktop-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
             <span className="max-w-30 truncate">{workspaceLabel}</span>
           </Link>
           ) : (
-            <div className="flex items-center gap-1.5 rounded-xl border border-desktop-border bg-desktop-bg-secondary px-2.5 py-1.5 text-[11px] text-desktop-text-secondary">
+            <div className="flex items-center gap-1.5 rounded-[var(--dt-radius-sm)] border border-desktop-border bg-desktop-surface-muted px-2.5 py-1.5 text-[11px] text-desktop-text-secondary">
               <Folder className="w-3 h-3 text-desktop-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
               <span className="max-w-30 truncate">{workspaceLabel}</span>
             </div>

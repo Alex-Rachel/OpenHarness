@@ -78,6 +78,10 @@ const ROLE_OPTIONS = ["CRAFTER", "ROUTA", "GATE", "DEVELOPER"];
 type KanbanDetailTabId = "overview" | "readiness" | "execution" | "jitContext" | "changes" | "evidence" | "runs";
 
 const persistedKanbanDetailTabs = new Map<string, KanbanDetailTabId>();
+const DETAIL_ACTION_BUTTON_CLASS = "inline-flex items-center rounded-full border border-desktop-border bg-desktop-bg-secondary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-desktop-text-secondary transition-colors hover:border-desktop-accent hover:bg-desktop-bg-active hover:text-desktop-text-primary";
+const DETAIL_ICON_BUTTON_CLASS = "inline-flex h-6 w-6 items-center justify-center border border-desktop-border text-desktop-text-secondary transition-colors hover:border-desktop-accent hover:text-desktop-text-primary";
+const DETAIL_SECONDARY_BUTTON_CLASS = "rounded border border-desktop-border px-3 py-2 text-sm font-medium text-desktop-text-secondary transition-colors hover:border-desktop-accent hover:text-desktop-text-primary";
+const DETAIL_SELECT_CLASS = "min-w-0 flex-1 desktop-input bg-transparent px-2 py-1.5 text-xs";
 
 function getProviderName(providerId: string | undefined, availableProviders: AcpProviderInfo[]): string {
   if (!providerId) return "Workspace default";
@@ -341,9 +345,9 @@ export function KanbanCardDetail({
   return (
     <div className="h-full w-full overflow-y-auto">
       <div className={`mx-auto flex min-h-full max-w-6xl flex-col ${compactMode ? "gap-2 p-3" : "gap-3 p-4"}`}>
-        <section className={`border-b border-slate-200/80 pb-2 dark:border-[#232736] ${compactMode ? "pt-0" : "pt-0.5"}`}>
+        <section className={`border-b border-desktop-border pb-2 ${compactMode ? "pt-0" : "pt-0.5"}`}>
           <div className={`flex items-center justify-between gap-3 ${compactMode ? "mb-1" : "mb-1.5"}`}>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-desktop-text-tertiary">
               {t.kanbanDetail.cardDetail}
             </div>
             <div className="flex items-center gap-1.5">
@@ -351,7 +355,7 @@ export function KanbanCardDetail({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300 dark:hover:border-amber-700 dark:hover:bg-amber-900/20 dark:hover:text-amber-200"
+                  className={`${DETAIL_ACTION_BUTTON_CLASS} gap-1`}
                   aria-label={t.kanbanDetail.closeCardDetail}
                   title={t.kanbanDetail.closeCardDetail}
                 >
@@ -363,7 +367,7 @@ export function KanbanCardDetail({
                 <button
                   type="button"
                   onClick={onShowSessionPane}
-                  className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300 dark:hover:border-amber-700 dark:hover:bg-amber-900/20 dark:hover:text-amber-200"
+                  className={DETAIL_ACTION_BUTTON_CLASS}
                 >
                   {sessionCopy.showSessionPane}
                 </button>
@@ -372,7 +376,7 @@ export function KanbanCardDetail({
                 <button
                   type="button"
                   onClick={() => onToggleFullscreen(!isFullscreen)}
-                  className="inline-flex h-6 w-6 items-center justify-center border border-slate-300/80 text-slate-500 transition-colors hover:border-amber-400 hover:text-amber-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-amber-700 dark:hover:text-amber-200"
+                  className={DETAIL_ICON_BUTTON_CLASS}
                   aria-label={isFullscreen ? t.kanbanDetail.exitFullscreen : t.kanbanDetail.enterFullscreen}
                   title={isFullscreen ? t.kanbanDetail.exitFullscreen : t.kanbanDetail.enterFullscreen}
                 >
@@ -382,7 +386,7 @@ export function KanbanCardDetail({
               <button
                 type="button"
                 onClick={onRefresh}
-                className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300 dark:hover:border-amber-700 dark:hover:bg-amber-900/20 dark:hover:text-amber-200"
+                className={DETAIL_ACTION_BUTTON_CLASS}
               >
                 {t.common.refresh}
               </button>
@@ -418,7 +422,7 @@ export function KanbanCardDetail({
               }
             }}
             rows={isTitleEditing ? 2 : 1}
-            className={`w-full resize-none border-0 bg-transparent px-0 py-0 font-semibold leading-tight text-slate-950 outline-none focus:border-transparent focus:ring-0 dark:text-slate-50 ${compactMode ? "text-lg" : "text-xl"} ${isTitleEditing ? "" : "cursor-text"}`}
+            className={`w-full resize-none border-0 bg-transparent px-0 py-0 font-semibold leading-tight text-desktop-text-primary outline-none focus:border-transparent focus:ring-0 ${compactMode ? "text-lg" : "text-xl"} ${isTitleEditing ? "" : "cursor-text"}`}
           />
           {isTitleEditing && (
             <div className="mt-1 flex flex-wrap items-center gap-2">
@@ -431,7 +435,7 @@ export function KanbanCardDetail({
                   }
                   setIsTitleEditing(false);
                 }}
-                className="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-medium text-white transition-colors hover:bg-amber-600"
+                className="desktop-btn desktop-btn-primary text-[11px]"
               >
                 {t.common.save}
               </button>
@@ -441,7 +445,7 @@ export function KanbanCardDetail({
                   setEditTitle(task.title);
                   setIsTitleEditing(false);
                 }}
-                className="rounded-md border border-slate-200 px-2 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                className="desktop-btn desktop-btn-secondary text-[11px]"
               >
                 {t.common.cancel}
               </button>
@@ -487,7 +491,7 @@ export function KanbanCardDetail({
             {(task.labels ?? []).map((label) => (
               <span
                 key={label}
-                className={`inline-flex items-center rounded-full border border-amber-200 bg-amber-50 font-medium text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-200 ${compactMode ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-[11px]"}`}
+                className={`inline-flex items-center rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] font-medium text-[var(--dt-status-warning)] ${compactMode ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-[11px]"}`}
               >
                 {label}
               </span>
@@ -495,7 +499,7 @@ export function KanbanCardDetail({
           </div>
         </section>
 
-        <div className="border-b border-slate-200/80 dark:border-[#232736]">
+        <div className="border-b border-desktop-border">
           <div
             className="flex min-w-0 gap-1 overflow-x-auto"
             role="tablist"
@@ -521,8 +525,8 @@ export function KanbanCardDetail({
                   tabIndex={active ? 0 : -1}
                   className={`shrink-0 border-b-2 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors ${
                     active
-                      ? "border-b-amber-600 text-slate-900 dark:border-b-amber-400 dark:text-slate-100"
-                      : "border-b-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                      ? "border-b-desktop-accent text-desktop-text-primary"
+                      : "border-b-transparent text-desktop-text-secondary hover:text-desktop-text-primary"
                   }`}
                   aria-pressed={active}
                   data-testid={`kanban-detail-tab-${tab.id}`}
@@ -543,7 +547,7 @@ export function KanbanCardDetail({
         >
           {activeTab === "overview" && (
             <>
-              <section className={compactMode ? "space-y-1.5 border-b border-slate-200/80 py-1.5 dark:border-[#232736]" : "space-y-2 border-b border-slate-200/70 py-2 dark:border-[#232736]"}>
+              <section className={compactMode ? "space-y-1.5 border-b border-desktop-border py-1.5" : "space-y-2 border-b border-desktop-border py-2"}>
                 <KanbanDescriptionEditor
                   value={displayedObjective}
                   compact={compactMode}
@@ -576,8 +580,8 @@ export function KanbanCardDetail({
                 description={compactMode ? undefined : t.kanbanDetail.progressNotesHint}
                 compact={compactMode}
               >
-                <div className={`border-b border-slate-200/70 py-2 dark:border-slate-700 ${compactMode ? "px-3" : "px-4"}`}>
-                  <div className="text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                <div className={`border-b border-desktop-border py-2 ${compactMode ? "px-3" : "px-4"}`}>
+                  <div className="text-[11px] font-medium uppercase tracking-wide text-desktop-text-tertiary">
                     {t.kanbanDetail.appendedComments}
                   </div>
                   {progressNotes.length > 0 ? (
@@ -587,17 +591,17 @@ export function KanbanCardDetail({
                         const sourceLabel = formatCommentSource(entry.source, t);
                         const actorLabel = formatCommentActor(entry);
                         return (
-                          <div key={entry.id} className="rounded-xl border border-slate-200/70 bg-slate-50/80 px-3 py-2.5 dark:border-slate-700/70 dark:bg-slate-900/30">
-                            <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                          <div key={entry.id} className="rounded-sm border border-desktop-border bg-desktop-bg-secondary px-3 py-2.5">
+                            <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-desktop-text-secondary">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span>{`Note ${index + 1}`}</span>
                                 {sourceLabel ? (
-                                  <span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-slate-800/80 dark:text-slate-300">
+                                  <span className="rounded-full bg-desktop-bg-primary px-2 py-0.5 text-[10px] font-medium text-desktop-text-secondary">
                                     {sourceLabel}
                                   </span>
                                 ) : null}
                                 {actorLabel ? (
-                                  <span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-slate-800/80 dark:text-slate-300">
+                                  <span className="rounded-full bg-desktop-bg-primary px-2 py-0.5 text-[10px] font-medium text-desktop-text-secondary">
                                     {actorLabel}
                                   </span>
                                 ) : null}
@@ -607,7 +611,7 @@ export function KanbanCardDetail({
                             <div className="mt-2">
                               <MarkdownViewer
                                 content={entry.body}
-                                className="prose prose-sm max-w-none text-slate-800 dark:prose-invert dark:text-slate-200"
+                                className="prose prose-sm max-w-none text-desktop-text-primary dark:prose-invert"
                               />
                             </div>
                           </div>
@@ -615,7 +619,7 @@ export function KanbanCardDetail({
                       })}
                     </div>
                   ) : (
-                    <div className={`text-sm text-slate-500 dark:text-slate-400 ${compactMode ? "mt-2 px-3 py-2.5" : "mt-2 px-4 py-2.5"}`}>
+                    <div className={`text-sm text-desktop-text-secondary ${compactMode ? "mt-2 px-3 py-2.5" : "mt-2 px-4 py-2.5"}`}>
                       {t.kanbanDetail.noProgressNotesYet}
                     </div>
                   )}
@@ -643,7 +647,7 @@ export function KanbanCardDetail({
                             }
                             setIsTestCasesEditing(false);
                           }}
-                          className="rounded-md bg-amber-500 px-2 py-1 text-[11px] font-medium text-white transition-colors hover:bg-amber-600"
+                          className="desktop-btn desktop-btn-primary text-[11px]"
                         >
                           {t.common.save}
                         </button>
@@ -653,7 +657,7 @@ export function KanbanCardDetail({
                             setEditTestCases((task.testCases ?? []).join("\n"));
                             setIsTestCasesEditing(false);
                           }}
-                          className="rounded-md border border-slate-200 px-2 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                          className="desktop-btn desktop-btn-secondary text-[11px]"
                         >
                           {t.common.cancel}
                         </button>
@@ -665,7 +669,7 @@ export function KanbanCardDetail({
                           setEditTestCases((task.testCases ?? []).join("\n"));
                           setIsTestCasesEditing(true);
                         }}
-                        className="rounded-md border border-slate-200 px-2 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                        className="desktop-btn desktop-btn-secondary text-[11px]"
                       >
                         {t.common.edit}
                       </button>
@@ -678,10 +682,10 @@ export function KanbanCardDetail({
                       onChange={(event) => setEditTestCases(event.target.value)}
                       rows={compactMode ? 4 : 5}
                       placeholder={t.kanbanDetail.testCasesPlaceholder}
-                      className="focus:ring-offset-0 w-full border border-slate-200/80 bg-transparent px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-transparent dark:text-slate-100"
+                      className="focus:ring-offset-0 w-full border border-desktop-border bg-transparent px-3 py-2 text-sm text-desktop-text-primary outline-none transition focus:border-desktop-accent"
                     />
                   ) : displayedTestCases.trim() ? (
-                    <div className="border-b border-slate-200/70 px-3 py-2.5 text-sm text-slate-700 dark:border-slate-700/70 dark:text-slate-200">
+                    <div className="border-b border-desktop-border px-3 py-2.5 text-sm text-desktop-text-primary">
                       {displayedTestCases.split("\n").filter(Boolean).map((item) => (
                         <div key={item} className="leading-6">
                           - {item}
@@ -689,7 +693,7 @@ export function KanbanCardDetail({
                       ))}
                     </div>
                   ) : (
-                    <div className="border-b border-slate-200/70 px-3 py-2.5 text-sm text-slate-500 dark:border-slate-700/70 dark:text-slate-400">
+                    <div className="border-b border-desktop-border px-3 py-2.5 text-sm text-desktop-text-secondary">
                       {t.kanbanDetail.testCasesPlaceholder}
                     </div>
                   )}
@@ -810,10 +814,10 @@ export function KanbanCardDetail({
           )}
         </div>
 
-        <div className={`mt-auto border-t border-slate-200 dark:border-slate-700 ${compactMode ? "pt-2" : "pt-3"}`}>
+        <div className={`mt-auto border-t border-desktop-border ${compactMode ? "pt-2" : "pt-3"}`}>
           <button
             onClick={onDelete}
-            className="w-full rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-900/10 dark:text-red-400 dark:hover:bg-red-900/20"
+            className="w-full rounded-sm border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2 text-sm font-medium text-desktop-danger-text transition-colors hover:brightness-95"
           >
             {t.kanbanModals.deleteTaskTitle}
           </button>
@@ -835,11 +839,11 @@ function DetailSection({
   compact?: boolean;
 }) {
   return (
-    <section className={compact ? "space-y-1.5 border-b border-slate-200/80 py-1.5 dark:border-[#232736]" : "space-y-2 border-b border-slate-200/70 py-2 dark:border-[#232736]"}>
+    <section className={compact ? "space-y-1.5 border-b border-desktop-border py-1.5" : "space-y-2 border-b border-desktop-border py-2"}>
       <div className={compact ? "mb-1.5" : "mb-2"}>
-        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">{title}</div>
+        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-desktop-text-tertiary">{title}</div>
         {description && (
-          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{description}</div>
+          <div className="mt-1 text-xs text-desktop-text-secondary">{description}</div>
         )}
       </div>
       {children}
@@ -849,8 +853,8 @@ function DetailSection({
 
 function MetaBadge({ label, value, compact = false }: { label: string; value: string; compact?: boolean }) {
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 font-medium text-slate-700 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300 ${compact ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-[11px]"}`}>
-      <span className="uppercase tracking-wide text-slate-400 dark:text-slate-500">{label}</span>
+    <span className={`inline-flex items-center gap-1 rounded-full border border-desktop-border bg-desktop-bg-secondary font-medium text-desktop-text-secondary ${compact ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-[11px]"}`}>
+      <span className="uppercase tracking-wide text-desktop-text-tertiary">{label}</span>
       <span>{value}</span>
     </span>
   );
@@ -870,14 +874,14 @@ function MetaSelect({
   compact?: boolean;
 }) {
   return (
-    <label className={`inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 font-medium text-slate-700 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300 ${compact ? "px-1.5 py-0.5 text-[10px]" : "px-2 py-0.5 text-[11px]"}`}>
-      <span className="uppercase tracking-wide text-slate-400 dark:text-slate-500">{label}</span>
+    <label className={`inline-flex items-center gap-1 rounded-full border border-desktop-border bg-desktop-bg-secondary font-medium text-desktop-text-secondary ${compact ? "px-1.5 py-0.5 text-[10px]" : "px-2 py-0.5 text-[11px]"}`}>
+      <span className="uppercase tracking-wide text-desktop-text-tertiary">{label}</span>
       <Select
         value={value}
         onChange={(event) => {
           void onChange(event.target.value);
         }}
-        className={`rounded-full bg-transparent font-medium text-slate-700 outline-none dark:text-slate-300 ${compact ? "pr-3 text-[10px]" : "pr-4 text-[11px]"}`}
+        className={`rounded-full bg-transparent font-medium text-desktop-text-secondary outline-none ${compact ? "pr-3 text-[10px]" : "pr-4 text-[11px]"}`}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>{option.label}</option>
@@ -889,11 +893,11 @@ function MetaSelect({
 
 function InlineSummary({ label, value, compact = false }: { label: string; value: string; compact?: boolean }) {
   return (
-    <div className={`flex items-start justify-between gap-3 border-b border-slate-200/70 px-1 ${compact ? "py-2" : "py-2.5"} dark:border-slate-700/60`}>
-      <div className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">
+    <div className={`flex items-start justify-between gap-3 border-b border-desktop-border px-1 ${compact ? "py-2" : "py-2.5"}`}>
+      <div className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-desktop-text-tertiary">
         {label}
       </div>
-      <div className={`min-w-0 text-right font-medium text-slate-800 dark:text-slate-100 ${compact ? "text-[12px] leading-[1.1rem]" : "text-sm"}`}>
+      <div className={`min-w-0 text-right font-medium text-desktop-text-primary ${compact ? "text-[12px] leading-[1.1rem]" : "text-sm"}`}>
         {value}
       </div>
     </div>
@@ -1026,12 +1030,12 @@ function ExecutionSection({
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{laneName}</div>
-          <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+          <div className="text-sm font-semibold text-desktop-text-primary">{laneName}</div>
+          <div className="mt-0.5 text-xs text-desktop-text-secondary">
             {lane ? t.kanbanDetail.inheritedFromLane : t.kanbanDetail.laneMetadataUnavailable}
           </div>
         </div>
-        <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ${lane?.automation?.enabled ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" : "bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400"}`}>
+        <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ${lane?.automation?.enabled ? "bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]" : "bg-desktop-bg-secondary text-desktop-text-secondary"}`}>
           {lane?.automation?.enabled ? t.kanbanDetail.automationOn : t.kanbanDetail.manual}
         </span>
       </div>
@@ -1050,7 +1054,7 @@ function ExecutionSection({
         )}
       </div>
       {canRunTask && !hasRecordedRuns && (
-        <div className={`mt-2 border-l-2 border-sky-300/70 px-3 py-2 text-xs text-sky-800 dark:border-sky-700/70 dark:text-sky-200 ${compact ? "leading-[1.125rem]" : "leading-5"}`}>
+        <div className={`mt-2 border-l-2 border-[var(--dt-status-info)]/35 px-3 py-2 text-xs text-[var(--dt-status-info)] ${compact ? "leading-[1.125rem]" : "leading-5"}`}>
           {sessionCopy.emptyPaneDescription}
           {" "}
           {sessionCopy.emptyPaneHint}
@@ -1083,23 +1087,23 @@ function ExecutionSection({
       <details
         key={overrideKey}
         open={hasCardOverride || undefined}
-        className={`mt-2.5 border border-slate-200/70 dark:border-slate-700/70 ${compact ? "px-2.5 py-2.5" : "px-3 py-2.5"}`}
+        className={`mt-2.5 border border-desktop-border ${compact ? "px-2.5 py-2.5" : "px-3 py-2.5"}`}
       >
         <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-2 [&::-webkit-details-marker]:hidden">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+            <div className="text-xs font-semibold uppercase tracking-[0.14em] text-desktop-text-secondary">
               {t.kanbanDetail.cardSessionOverride}
             </div>
-            <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+            <div className="mt-0.5 text-xs text-desktop-text-secondary">
               {t.kanbanDetail.keepCardSessionOverride}
             </div>
           </div>
-          <span className="rounded border border-slate-300 px-3 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:border-amber-300 hover:text-amber-700 dark:border-slate-600 dark:text-slate-300 dark:hover:border-amber-600 dark:hover:text-amber-200">
+          <span className="rounded border border-desktop-border px-3 py-1 text-[11px] font-medium text-desktop-text-secondary transition-colors hover:border-desktop-accent hover:text-desktop-text-primary">
             {hasCardOverride ? t.kanbanDetail.editOverride : t.kanbanDetail.overrideCard}
           </span>
         </summary>
         {hasCardOverride && (
-          <div className={`mt-2 border-l-2 border-amber-300/80 px-2.5 py-2 text-xs text-amber-800 dark:border-amber-700/70 dark:text-amber-300 ${compact ? "leading-[1.125rem]" : "leading-5"}`}>
+          <div className={`mt-2 border-l-2 border-[var(--dt-status-warning)]/35 px-2.5 py-2 text-xs text-[var(--dt-status-warning)] ${compact ? "leading-[1.125rem]" : "leading-5"}`}>
             {overrideProviderValue
               ? `${t.kanbanDetail.cardHasExplicitOverride} ${getProviderName(task.assignedProvider, availableProviders)} · ${task.assignedRole ?? "DEVELOPER"} · ${cardSpecialist}`
               : t.kanbanDetail.noCardOverride}
@@ -1122,7 +1126,7 @@ function ExecutionSection({
                 onChange={async (event) => {
                   await onPatchTask(task.id, { assignedRole: event.target.value });
                 }}
-                className={`w-full border border-slate-200/80 bg-transparent text-sm text-slate-700 outline-none focus:border-amber-400 dark:border-slate-700 dark:bg-transparent dark:text-slate-300 ${compact ? "px-2.5 py-2" : "px-3 py-2"}`}
+                className={`w-full desktop-input bg-transparent text-sm ${compact ? "px-2.5 py-2" : "px-3 py-2"}`}
               >
                 {ROLE_OPTIONS.map((role) => <option key={role} value={role}>{role}</option>)}
               </Select>
@@ -1136,7 +1140,7 @@ function ExecutionSection({
                     assignedRole: specialist?.role ?? (hasCardOverride ? task.assignedRole : undefined),
                   });
                 }}
-                className={`w-full border border-slate-200/80 bg-transparent text-sm text-slate-700 outline-none focus:border-amber-400 dark:border-slate-700 dark:bg-transparent dark:text-slate-300 ${compact ? "px-2.5 py-2" : "px-3 py-2"}`}
+                className={`w-full desktop-input bg-transparent text-sm ${compact ? "px-2.5 py-2" : "px-3 py-2"}`}
               >
                 <option value="">{KANBAN_SPECIALIST_LANGUAGE_LABELS[specialistLanguage].noSpecialist}</option>
                 {specialists.map((specialist) => <option key={specialist.id} value={specialist.id}>{getSpecialistDisplayName(specialist)}</option>)}
@@ -1156,14 +1160,14 @@ function ExecutionSection({
         />
       )}
       {canRunTask && (usesSelectedProvider || manualRunTarget !== lanePipeline || hasCardOverride) && (
-        <div className={`mt-2 border-l-2 border-sky-300/80 px-3 py-2 text-xs text-sky-800 dark:border-sky-700/70 dark:text-sky-200 ${compact ? "leading-[1.125rem]" : "leading-[1.2rem]"}`}>
+        <div className={`mt-2 border-l-2 border-[var(--dt-status-info)]/35 px-3 py-2 text-xs text-[var(--dt-status-info)] ${compact ? "leading-[1.125rem]" : "leading-[1.2rem]"}`}>
           Manual {hasRecordedRuns ? "reruns" : "runs"} use {manualRunSourceLabel}:
           {" "}
           {manualRunTarget}
         </div>
       )}
       {failureMessage && (
-        <div className={`mt-2 border-l-2 border-rose-300/80 px-3 py-2 text-xs text-rose-800 dark:border-rose-700/70 dark:text-rose-200 ${compact ? "leading-[1.125rem]" : "leading-[1.2rem]"}`}>
+        <div className={`mt-2 border-l-2 border-desktop-danger-border px-3 py-2 text-xs text-desktop-danger-text ${compact ? "leading-[1.125rem]" : "leading-[1.2rem]"}`}>
           Current run failed on {failedRunLabel}: {failureMessage}
           {" "}
           {effectiveAutomation.transport === "a2a"
@@ -1174,7 +1178,7 @@ function ExecutionSection({
         </div>
       )}
       {transitionArtifacts.nextRequiredArtifacts.length > 0 && (
-        <div className={`mt-2 border-l-2 border-amber-300/80 px-3 py-2 text-xs text-amber-800 dark:border-amber-700/70 dark:text-amber-300 ${compact ? "leading-[1.125rem]" : "leading-5"}`}>
+        <div className={`mt-2 border-l-2 border-[var(--dt-status-warning)]/35 px-3 py-2 text-xs text-[var(--dt-status-warning)] ${compact ? "leading-[1.125rem]" : "leading-5"}`}>
           Moving this card to {transitionArtifacts.nextColumn?.name ?? "the next stage"} requires {formatArtifactSummary(transitionArtifacts.nextRequiredArtifacts)}.
           {" "}This gate is injected into the ACP prompt, but the agent still needs to create those artifacts before calling <code>move_card</code>.
         </div>
@@ -1192,7 +1196,7 @@ function ExecutionSection({
               });
               onProviderChange?.(null);
             }}
-            className="rounded border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-amber-300 hover:text-amber-700 dark:border-slate-600 dark:text-slate-300 dark:hover:border-amber-600 dark:hover:text-amber-200"
+            className={DETAIL_SECONDARY_BUTTON_CLASS}
           >
             {t.kanbanDetail.resetOverride}
           </button>
@@ -1203,7 +1207,7 @@ function ExecutionSection({
               await onRetryTrigger(task.id);
             }}
             data-testid="kanban-detail-run"
-            className={`rounded border border-emerald-500 bg-emerald-500/10 px-4 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-500/20 ${hasCardOverride ? "ml-auto" : ""} ${compact ? "py-2" : "py-2.5"}`}
+            className={`rounded border border-[var(--dt-status-success)]/35 bg-[var(--dt-status-success-subtle)] px-4 text-sm font-medium text-[var(--dt-status-success)] transition-colors hover:brightness-95 ${hasCardOverride ? "ml-auto" : ""} ${compact ? "py-2" : "py-2.5"}`}
           >
             {runActionLabel}
           </button>
@@ -1255,39 +1259,39 @@ function FallbackAgentChainEditor({
   };
 
   return (
-    <details className={`mt-2 border border-slate-200/70 dark:border-slate-700/70 ${compact ? "px-2.5 py-2.5" : "px-3 py-2.5"}`}>
+    <details className={`mt-2 border border-desktop-border ${compact ? "px-2.5 py-2.5" : "px-3 py-2.5"}`}>
       <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-2 [&::-webkit-details-marker]:hidden">
         <div>
-          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-desktop-text-secondary">
             {t.kanbanDetail.fallbackAgentChain}
           </div>
-          <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+          <div className="mt-0.5 text-xs text-desktop-text-secondary">
             {t.kanbanDetail.fallbackAgentChainHint}
           </div>
         </div>
-        <span className="rounded border border-slate-300 px-3 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:border-amber-300 hover:text-amber-700 dark:border-slate-600 dark:text-slate-300 dark:hover:border-amber-600 dark:hover:text-amber-200">
+        <span className="rounded border border-desktop-border px-3 py-1 text-[11px] font-medium text-desktop-text-secondary transition-colors hover:border-desktop-accent hover:text-desktop-text-primary">
           {chain.length > 0 ? `${chain.length} ${t.kanbanDetail.fallbackAgentsConfigured}` : t.kanbanDetail.addFallbackAgent}
         </span>
       </summary>
       <div className="mt-2.5 space-y-2">
-        <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
+        <label className="flex items-center gap-2 text-xs text-desktop-text-secondary">
           <input
             type="checkbox"
             checked={enableFallback}
             onChange={toggleFallback}
-            className="rounded border-slate-300 dark:border-slate-600"
+            className="rounded border-desktop-border"
           />
           {t.kanbanDetail.enableAutomaticFallback}
         </label>
         {chain.map((agent, index) => (
-          <div key={index} className="flex items-center gap-2 rounded border border-slate-200/60 p-2 dark:border-slate-700/60">
-            <span className="shrink-0 text-[10px] font-semibold text-slate-400 dark:text-slate-500">#{index + 1}</span>
+          <div key={index} className="flex items-center gap-2 rounded border border-desktop-border p-2">
+            <span className="shrink-0 text-[10px] font-semibold text-desktop-text-tertiary">#{index + 1}</span>
             <Select
               value={agent.providerId ?? ""}
               onChange={async (event) => {
                 await updateFallbackAgent(index, { providerId: event.target.value || undefined });
               }}
-              className="min-w-0 flex-1 border border-slate-200/80 bg-transparent text-xs text-slate-700 outline-none focus:border-amber-400 dark:border-slate-700 dark:bg-transparent dark:text-slate-300 px-2 py-1.5"
+              className={DETAIL_SELECT_CLASS}
             >
               <option value="">{t.kanbanDetail.fallbackProviderDefault}</option>
               {availableProviders.map((provider) => (
@@ -1299,7 +1303,7 @@ function FallbackAgentChainEditor({
               onChange={async (event) => {
                 await updateFallbackAgent(index, { role: event.target.value });
               }}
-              className="min-w-0 flex-1 border border-slate-200/80 bg-transparent text-xs text-slate-700 outline-none focus:border-amber-400 dark:border-slate-700 dark:bg-transparent dark:text-slate-300 px-2 py-1.5"
+              className={DETAIL_SELECT_CLASS}
             >
               {ROLE_OPTIONS.map((role) => <option key={role} value={role}>{role}</option>)}
             </Select>
@@ -1312,7 +1316,7 @@ function FallbackAgentChainEditor({
                   specialistName: specialist?.name,
                 });
               }}
-              className="min-w-0 flex-1 border border-slate-200/80 bg-transparent text-xs text-slate-700 outline-none focus:border-amber-400 dark:border-slate-700 dark:bg-transparent dark:text-slate-300 px-2 py-1.5"
+              className={DETAIL_SELECT_CLASS}
             >
               <option value="">{KANBAN_SPECIALIST_LANGUAGE_LABELS[specialistLanguage].noSpecialist}</option>
               {specialists.map((specialist) => (
@@ -1322,7 +1326,7 @@ function FallbackAgentChainEditor({
             <button
               type="button"
               onClick={() => removeFallbackAgent(index)}
-              className="shrink-0 rounded px-1.5 py-1 text-xs text-rose-500 transition-colors hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-900/30"
+              className="shrink-0 rounded px-1.5 py-1 text-xs text-desktop-danger-text transition-colors hover:bg-desktop-danger-subtle"
             >
               <X size={14} />
             </button>
@@ -1331,7 +1335,7 @@ function FallbackAgentChainEditor({
         <button
           type="button"
           onClick={addFallbackAgent}
-          className="rounded border border-dashed border-slate-300 px-3 py-1.5 text-xs text-slate-500 transition-colors hover:border-amber-300 hover:text-amber-700 dark:border-slate-600 dark:text-slate-400 dark:hover:border-amber-600 dark:hover:text-amber-200"
+          className="rounded border border-dashed border-desktop-border px-3 py-1.5 text-xs text-desktop-text-secondary transition-colors hover:border-desktop-accent hover:text-desktop-text-primary"
         >
           + {t.kanbanDetail.addFallbackAgent}
         </button>
@@ -1393,41 +1397,41 @@ function RepositoriesWorktreeRow({
     >
       <details className="group">
         <summary className={`flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden ${compact ? "text-[13px]" : "text-sm"}`}>
-          <div className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">{t.kanbanDetail.repo}</div>
+          <div className="text-xs font-medium uppercase tracking-wide text-desktop-text-secondary">{t.kanbanDetail.repo}</div>
           {primaryCodebase ? (
             <div className="flex min-w-0 flex-1 items-center gap-1.5">
-              <span className={`h-2 w-2 shrink-0 rounded-full ${primaryCodebase.sourceType === "github" ? "bg-blue-500" : "bg-emerald-500"}`} />
-              <span className="truncate text-slate-700 dark:text-slate-300">
+              <span className={`h-2 w-2 shrink-0 rounded-full ${primaryCodebase.sourceType === "github" ? "bg-[var(--dt-status-info)]" : "bg-[var(--dt-status-success)]"}`} />
+              <span className="truncate text-desktop-text-secondary">
                 {repoSummary}
               </span>
             </div>
           ) : (
-            <span className="min-w-0 flex-1 truncate text-xs text-slate-400 dark:text-slate-500">{repoSummary}</span>
+            <span className="min-w-0 flex-1 truncate text-xs text-desktop-text-tertiary">{repoSummary}</span>
           )}
           {worktree && (
             <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
               worktree.status === "active"
-                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300"
+                ? "bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
                 : worktree.status === "creating"
-                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300"
-                  : "bg-rose-100 text-rose-700 dark:bg-rose-900/20 dark:text-rose-300"
+                  ? "bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]"
+                  : "bg-desktop-danger-subtle text-desktop-danger-text"
             }`}>{effectiveBranch ?? worktree.branch}</span>
           )}
-          <span className="ml-auto text-xs text-slate-400 transition-colors group-hover:text-slate-600 dark:group-hover:text-slate-300">
+          <span className="ml-auto text-xs text-desktop-text-tertiary transition-colors group-hover:text-desktop-text-primary">
             Edit
           </span>
         </summary>
-        <div className={`space-y-3 border-l-2 border-slate-200 dark:border-slate-700 ${compact ? "mt-2.5 pl-2.5" : "mt-3 pl-3"}`}>
+        <div className={`space-y-3 border-l-2 border-desktop-border ${compact ? "mt-2.5 pl-2.5" : "mt-3 pl-3"}`}>
           {sessionInfo && (
             <div className={`border-l-2 px-3 py-2 ${sessionCwdMismatch
-              ? "border-l-amber-400/80 dark:border-l-amber-600/70"
-              : "border-l-emerald-400/80 dark:border-l-emerald-600/70"}`}>
+              ? "border-l-[var(--dt-status-warning)]"
+              : "border-l-[var(--dt-status-success)]"}`}>
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-desktop-text-secondary">
                     Repo Health
                   </div>
-                  <div className={`mt-1 text-xs ${sessionCwdMismatch ? "text-amber-700 dark:text-amber-300" : "text-emerald-700 dark:text-emerald-300"}`}>
+                  <div className={`mt-1 text-xs ${sessionCwdMismatch ? "text-[var(--dt-status-warning)]" : "text-[var(--dt-status-success)]"}`}>
                     {sessionCwdMismatch
                       ? "Active session is running in a different directory than this card."
                       : "Active session matches this card repo."}
@@ -1435,13 +1439,13 @@ function RepositoriesWorktreeRow({
                 </div>
                 <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
                   sessionCwdMismatch
-                    ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
-                    : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300"
+                    ? "bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]"
+                    : "bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
                 }`}>
                   {sessionCwdMismatch ? "Session mismatch" : "Aligned"}
                 </span>
               </div>
-              <div className="mt-2 space-y-1 text-[11px] text-slate-600 dark:text-slate-400">
+              <div className="mt-2 space-y-1 text-[11px] text-desktop-text-secondary">
                 {expectedPath && (
                   <div>
                     Expected: <span className="font-mono">{expectedPath}</span>
@@ -1454,7 +1458,7 @@ function RepositoriesWorktreeRow({
                   <div>
                     Active branch: <span className="font-mono">{effectiveBranch}</span>
                     {worktree?.branch && sessionInfo?.branch && worktree.branch !== sessionInfo.branch && (
-                      <span className="ml-2 text-amber-600 dark:text-amber-300">
+                      <span className="ml-2 text-[var(--dt-status-warning)]">
                         worktree stored: {worktree.branch}
                       </span>
                     )}
@@ -1467,7 +1471,7 @@ function RepositoriesWorktreeRow({
                     <button
                       type="button"
                       onClick={() => onSelectSession((sessionInfo?.sessionId ?? task.triggerSessionId)!)}
-                      className="rounded border border-amber-300 px-3 py-1.5 text-xs font-medium text-amber-700 transition-colors hover:border-amber-400 hover:text-amber-800"
+                      className="rounded border border-[var(--dt-status-warning)]/35 px-3 py-1.5 text-xs font-medium text-[var(--dt-status-warning)] transition-colors hover:bg-[var(--dt-status-warning-subtle)]"
                     >
                       Open active session
                     </button>
@@ -1489,7 +1493,7 @@ function RepositoriesWorktreeRow({
                           setUpdateError(error instanceof Error ? error.message : "Failed to switch to the active session repo");
                         }
                       }}
-                      className="rounded border border-amber-300 px-3 py-1.5 text-xs font-medium text-amber-700 transition-colors hover:border-amber-400 hover:text-amber-800"
+                      className="rounded border border-[var(--dt-status-warning)]/35 px-3 py-1.5 text-xs font-medium text-[var(--dt-status-warning)] transition-colors hover:bg-[var(--dt-status-warning-subtle)]"
                     >
                       Use session repo
                     </button>
@@ -1500,7 +1504,7 @@ function RepositoriesWorktreeRow({
           )}
           {codebases.length > 0 && (
             <div>
-              <div className="mb-2 text-[11px] font-medium text-slate-500 dark:text-slate-400">Edit linked repositories</div>
+              <div className="mb-2 text-[11px] font-medium text-desktop-text-secondary">Edit linked repositories</div>
               <div className="flex flex-wrap gap-1.5">
                 {codebases.map((codebase) => {
                   const selected = currentCodebaseIds.includes(codebase.id);
@@ -1523,27 +1527,27 @@ function RepositoriesWorktreeRow({
                       }}
                         className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[11px] transition-colors ${
                           selected
-                            ? "border-blue-400 bg-blue-50 text-blue-700 dark:border-blue-600 dark:bg-blue-900/20 dark:text-blue-300"
-                            : "border-slate-300 text-slate-600 hover:border-blue-300 dark:border-slate-600 dark:text-slate-400"
+                            ? "border-[var(--dt-status-info)]/35 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]"
+                            : "border-desktop-border text-desktop-text-secondary hover:border-desktop-accent"
                         }`}
                       data-testid="detail-repo-toggle"
                     >
-                      <span className={`h-1.5 w-1.5 rounded-full ${codebase.sourceType === "github" ? "bg-blue-500" : "bg-emerald-500"}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${codebase.sourceType === "github" ? "bg-[var(--dt-status-info)]" : "bg-[var(--dt-status-success)]"}`} />
                       {codebase.label ?? codebase.repoPath.split("/").pop() ?? codebase.repoPath}
                     </button>
                   );
                 })}
               </div>
               {updateError && (
-                <div className="mt-1 text-xs text-rose-600 dark:text-rose-400">{updateError}</div>
+                <div className="mt-1 text-xs text-desktop-danger-text">{updateError}</div>
               )}
             </div>
           )}
           {worktree && (
-            <div data-testid="worktree-detail" className="truncate font-mono text-xs text-slate-500 dark:text-slate-500" title={worktree.worktreePath}>
+            <div data-testid="worktree-detail" className="truncate font-mono text-xs text-desktop-text-tertiary" title={worktree.worktreePath}>
               {worktree.worktreePath}
               {worktree.errorMessage && (
-                <div className="mt-0.5 text-red-600 dark:text-red-400">{worktree.errorMessage}</div>
+                <div className="mt-0.5 text-desktop-danger-text">{worktree.errorMessage}</div>
               )}
             </div>
           )}

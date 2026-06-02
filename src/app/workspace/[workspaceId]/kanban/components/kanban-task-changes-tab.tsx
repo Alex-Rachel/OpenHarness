@@ -204,10 +204,10 @@ export function KanbanTaskChangesTab({
     <div className="space-y-3">
       {!taskChangesLoading && taskChanges && !taskChanges.error ? (
         <div className="flex flex-wrap items-center gap-2 border-b border-slate-200/70 pb-2 text-[11px] dark:border-slate-800/80">
-          <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 font-medium text-slate-700 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300">
+          <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5 font-medium text-desktop-text-primary">
             {taskChanges.label}
           </span>
-          <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-slate-500 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-400">
+          <span className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5 text-desktop-text-secondary">
             {sourceLabel}
           </span>
           {scopePath ? (
@@ -217,7 +217,7 @@ export function KanbanTaskChangesTab({
           ) : null}
           <span
             data-testid="kanban-task-change-branch"
-            className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 font-medium text-slate-600 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-300"
+            className="rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5 font-medium text-desktop-text-secondary"
           >
             @{taskChanges.branch}
           </span>
@@ -332,7 +332,7 @@ export function KanbanTaskChangesTab({
             </button>
           </div>
           {prSessionError ? (
-            <div className="border-l-2 border-rose-300/80 px-3 py-2 text-xs text-rose-800 dark:border-rose-700/70 dark:text-rose-200">
+            <div className="border-l-2 border-desktop-danger-border px-3 py-2 text-xs text-desktop-danger-text">
               {prSessionError}
             </div>
           ) : null}

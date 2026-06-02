@@ -69,10 +69,10 @@ export function HarnessQuickStartCard({
   ];
 
   const colorClasses = {
-    emerald: "text-emerald-600 dark:text-emerald-400",
-    amber: "text-amber-600 dark:text-amber-400",
-    blue: "text-blue-600 dark:text-blue-400",
-    violet: "text-violet-600 dark:text-violet-400",
+    emerald: "text-[var(--dt-status-success)]",
+    amber: "text-[var(--dt-status-warning)]",
+    blue: "text-[var(--dt-status-info)]",
+    violet: "text-desktop-accent",
   };
 
   const StatItem = ({ stat }: { stat: typeof stats[0] }) => (

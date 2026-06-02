@@ -78,8 +78,8 @@ function deltaTone(value: number, mode: "risk" | "recovery" = "risk") {
   const positiveIsBad = mode === "risk";
   const isBad = positiveIsBad ? value > 0 : value < 0;
   return isBad
-    ? "border-rose-200 bg-rose-50 text-rose-700"
-    : "border-emerald-200 bg-emerald-50 text-emerald-700";
+    ? "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text"
+    : "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
 }
 
 function formatSuiteLabel(
@@ -204,12 +204,12 @@ function buildCycleHotspotClusters(rules: ArchitectureRuleResult[]): Architectur
 
 function statusTone(status: "pass" | "fail" | "skipped") {
   if (status === "fail") {
-    return "border-rose-200 bg-rose-50 text-rose-700";
+    return "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text";
   }
   if (status === "skipped") {
-    return "border-amber-200 bg-amber-50 text-amber-800";
+    return "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
   }
-  return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  return "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
 }
 
 function summarizeRule(rule: ArchitectureRuleResult): string {
@@ -384,7 +384,7 @@ export function HarnessArchitectureQualityPanel({
       ) : null}
 
       {unsupportedMessage ? (
-        <HarnessUnsupportedState className="rounded-sm border border-amber-200 bg-amber-50 px-4 py-4 text-[11px] text-amber-800" />
+        <HarnessUnsupportedState className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-4 py-4 text-[11px] text-[var(--dt-status-warning)]" />
       ) : null}
 
       {error && !unsupportedMessage ? (
@@ -579,10 +579,10 @@ export function HarnessArchitectureQualityPanel({
                       >
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-[11px] font-semibold text-desktop-text-primary">{rule.title}</span>
-                          <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] text-amber-800">
+                          <span className="rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-2 py-0.5 text-[10px] text-[var(--dt-status-warning)]">
                             {formatSuiteLabel(rule.suite, copy)}
                           </span>
-                          <span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] text-rose-700">
+                          <span className="rounded-full border border-desktop-danger-border bg-desktop-danger-subtle px-2 py-0.5 text-[10px] text-desktop-danger-text">
                             {rule.violationCount}
                           </span>
                         </div>
@@ -621,7 +621,7 @@ export function HarnessArchitectureQualityPanel({
                       >
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-[11px] font-semibold text-desktop-text-primary">{cluster.label}</span>
-                          <span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] text-rose-700">
+                          <span className="rounded-full border border-desktop-danger-border bg-desktop-danger-subtle px-2 py-0.5 text-[10px] text-desktop-danger-text">
                             {cluster.count}
                           </span>
                         </div>
@@ -656,7 +656,7 @@ export function HarnessArchitectureQualityPanel({
                       >
                         <div className="flex items-center gap-2">
                           <span className="text-[11px] font-semibold text-desktop-text-primary">{rule.title}</span>
-                          <span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] text-rose-700">
+                          <span className="rounded-full border border-desktop-danger-border bg-desktop-danger-subtle px-2 py-0.5 text-[10px] text-desktop-danger-text">
                             {rule.violationCount}
                           </span>
                         </div>
@@ -695,7 +695,7 @@ export function HarnessArchitectureQualityPanel({
                       >
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-[11px] font-semibold text-desktop-text-primary">{cluster.label}</span>
-                          <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] text-amber-800">
+                          <span className="rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-2 py-0.5 text-[10px] text-[var(--dt-status-warning)]">
                             {cluster.count}
                           </span>
                         </div>
@@ -730,7 +730,7 @@ export function HarnessArchitectureQualityPanel({
                       >
                         <div className="flex items-center gap-2">
                           <span className="text-[11px] font-semibold text-desktop-text-primary">{rule.title}</span>
-                          <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] text-amber-800">
+                          <span className="rounded-full border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-2 py-0.5 text-[10px] text-[var(--dt-status-warning)]">
                             {rule.violationCount}
                           </span>
                         </div>

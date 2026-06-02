@@ -76,7 +76,7 @@ export function DesktopNavRail({
 
   return (
     <aside
-      className="desktop-theme h-full w-12 shrink-0 flex flex-col border-r border-desktop-border bg-desktop-bg-secondary"
+      className="desktop-theme h-full w-12 shrink-0 flex flex-col border-r border-desktop-border bg-desktop-surface"
       data-testid="desktop-nav-rail"
     >
       <nav className="flex-1 flex flex-col items-center py-2 gap-0.5">
@@ -89,14 +89,14 @@ export function DesktopNavRail({
               className={`
                 relative w-10 h-10 flex items-center justify-center rounded-md transition-colors
               ${active
-                  ? "bg-desktop-bg-active text-desktop-accent"
-                  : "text-desktop-text-secondary hover:bg-desktop-bg-active/70 hover:text-desktop-text-primary"
+                  ? "bg-desktop-accent text-desktop-accent-text shadow-[var(--dt-shadow-sm)]"
+                  : "text-desktop-text-secondary hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
                 }
               `}
               title={item.label}
             >
               {active && (
-                <div className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-desktop-accent" />
+                <div className="absolute left-1 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-desktop-accent-text/70" />
               )}
               {item.icon}
             </Link>

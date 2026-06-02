@@ -112,8 +112,12 @@ pub fn has_vcs_capability(vcs_type: Option<VcsType>, capability: VcsCapability) 
 
 /// Detect the VCS type of a directory by checking for metadata subdirectories.
 ///
-/// Detection order: .git/ → .svn/ → "none"
+/// Detection order: .git/ → .svn/ (direct) → .svn/ (ancestor walk for SVN 1.7+) → "none"
 /// Git takes priority when both directories are present.
+///
+/// SVN 1.7+ stores `.svn` only at the working copy root. Subdirectories of the
+/// working copy do not have their own `.svn` folder, so we must walk up ancestor
+/// directories to find it.
 ///
 /// Returns `None` if the path does not exist or is not a directory.
 pub fn detect_vcs_type(dir: &Path) -> Option<VcsType> {
@@ -126,9 +130,18 @@ pub fn detect_vcs_type(dir: &Path) -> Option<VcsType> {
         return Some(VcsType::Git);
     }
 
-    // SVN working copy
+    // SVN working copy — check directly first
     if dir.join(".svn").exists() {
         return Some(VcsType::Svn);
+    }
+
+    // SVN 1.7+: .svn only at working copy root — walk up ancestor directories
+    let mut current = dir;
+    while let Some(parent) = current.parent() {
+        if parent.join(".svn").exists() {
+            return Some(VcsType::Svn);
+        }
+        current = parent;
     }
 
     // Valid directory without VCS metadata
@@ -178,6 +191,18 @@ mod tests {
         std::fs::create_dir(temp.path().join(".git")).unwrap();
         std::fs::create_dir(temp.path().join(".svn")).unwrap();
         assert_eq!(detect_vcs_type(temp.path()), Some(VcsType::Git));
+    }
+
+    #[test]
+    fn detect_svn_via_ancestor_directory() {
+        // SVN 1.7+ only stores .svn at the working copy root.
+        // A subdirectory should still be detected as SVN.
+        let temp = tempfile::tempdir().unwrap();
+        let svn_root = temp.path().join("client");
+        let sub_dir = svn_root.join("GameUnity").join("GameProject");
+        std::fs::create_dir_all(&sub_dir).unwrap();
+        std::fs::create_dir(svn_root.join(".svn")).unwrap();
+        assert_eq!(detect_vcs_type(&sub_dir), Some(VcsType::Svn));
     }
 
     #[test]

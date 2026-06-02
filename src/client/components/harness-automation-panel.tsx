@@ -23,13 +23,13 @@ type HarnessAutomationPanelProps = {
 function statusBadgeClass(status: HarnessAutomationRuntimeStatus) {
   switch (status) {
     case "active":
-      return "border-emerald-300 bg-emerald-50 text-emerald-800";
+      return "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]";
     case "paused":
-      return "border-amber-300 bg-amber-50 text-amber-900";
+      return "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
     case "pending":
-      return "border-sky-300 bg-sky-50 text-sky-800";
+      return "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]";
     case "definition-only":
-      return "border-fuchsia-300 bg-fuchsia-50 text-fuchsia-800";
+      return "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]";
     case "idle":
       return "border-desktop-border bg-desktop-bg-secondary text-desktop-text-secondary";
     case "clear":
@@ -40,11 +40,11 @@ function statusBadgeClass(status: HarnessAutomationRuntimeStatus) {
 function severityBadgeClass(severity: HarnessAutomationPendingSignal["severity"]) {
   switch (severity) {
     case "high":
-      return "border-red-300 bg-red-50 text-red-800";
+      return "border-desktop-danger-border bg-desktop-danger-subtle text-desktop-danger-text";
     case "medium":
-      return "border-amber-300 bg-amber-50 text-amber-900";
+      return "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)]";
     case "low":
-      return "border-sky-300 bg-sky-50 text-sky-800";
+      return "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]";
   }
 }
 
@@ -115,7 +115,7 @@ function DefinitionTable({ definitions }: { definitions: HarnessAutomationDefini
       {definitions.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse text-left">
-            <thead className="bg-white/60">
+            <thead className="bg-desktop-surface-muted">
               <tr className="text-[10px] uppercase tracking-[0.12em] text-desktop-text-secondary">
                 <th className="px-4 py-2.5 font-semibold">Mechanism</th>
                 <th className="px-4 py-2.5 font-semibold">Trigger</th>
@@ -186,7 +186,7 @@ function PendingSignalsTable({ pendingSignals }: { pendingSignals: HarnessAutoma
       {pendingSignals.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse text-left">
-            <thead className="bg-white/60">
+            <thead className="bg-desktop-surface-muted">
               <tr className="text-[10px] uppercase tracking-[0.12em] text-desktop-text-secondary">
                 <th className="px-4 py-2.5 font-semibold">Signal</th>
                 <th className="px-4 py-2.5 font-semibold">Configured Mechanism</th>
@@ -237,7 +237,7 @@ function RecentRunsTable({ recentRuns }: { recentRuns: HarnessAutomationRecentRu
       {recentRuns.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse text-left">
-            <thead className="bg-white/60">
+            <thead className="bg-desktop-surface-muted">
               <tr className="text-[10px] uppercase tracking-[0.12em] text-desktop-text-secondary">
                 <th className="px-4 py-2.5 font-semibold">Configured Mechanism</th>
                 <th className="px-4 py-2.5 font-semibold">Status</th>

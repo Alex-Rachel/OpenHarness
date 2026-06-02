@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { ProductEmptyState, ProductHeader, ProductPill, ProductSurface } from "./product-shell-primitives";
 
 function DesktopPrimitiveGallery({ interactive = false }: { interactive?: boolean }) {
   return (
@@ -110,4 +111,42 @@ export const DarkMode: Story = {
   globals: {
     colorMode: "dark",
   },
+};
+
+export const ProductConsole: Story = {
+  render: () => (
+    <div className="desktop-theme min-h-screen bg-desktop-bg-primary p-8 text-desktop-text-primary">
+      <ProductHeader
+        eyebrow="Routa Console"
+        title="Coordinate agents with less chrome."
+        description="Shared tokens, quiet surfaces, and named semantic states keep the product UI cohesive across shell, workspace, and diagnostics views."
+        actions={(
+          <>
+            <ProductPill tone="success">Runtime ready</ProductPill>
+            <ProductPill tone="warning">Codebase pending</ProductPill>
+          </>
+        )}
+      />
+      <div className="mt-6 grid gap-4 md:grid-cols-3">
+        <ProductSurface className="p-4">
+          <div className="text-sm font-semibold">Surface</div>
+          <p className="mt-2 text-sm leading-6 text-desktop-text-secondary">
+            Default card chrome uses product shell tokens.
+          </p>
+        </ProductSurface>
+        <ProductSurface className="p-4">
+          <div className="text-sm font-semibold">Semantic</div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <ProductPill tone="neutral">Neutral</ProductPill>
+            <ProductPill tone="info">Info</ProductPill>
+            <ProductPill tone="danger">Danger</ProductPill>
+          </div>
+        </ProductSurface>
+        <ProductEmptyState
+          title="No active runs"
+          description="Empty states stay calm and readable without page-local palettes."
+        />
+      </div>
+    </div>
+  ),
 };

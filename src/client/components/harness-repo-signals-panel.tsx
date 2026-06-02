@@ -31,12 +31,12 @@ type QueryState = {
 function categoryTone(mode: HarnessSignalsMode) {
   return mode === "build"
     ? {
-      badge: "border-sky-200 bg-sky-50 text-sky-800",
-      title: "text-sky-800",
+      badge: "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] text-[var(--dt-status-info)]",
+      title: "text-[var(--dt-status-info)]",
     }
     : {
-      badge: "border-emerald-200 bg-emerald-50 text-emerald-800",
-      title: "text-emerald-800",
+      badge: "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]",
+      title: "text-[var(--dt-status-success)]",
     };
 }
 
@@ -216,7 +216,7 @@ export function HarnessRepoSignalsPanel({
             {scriptGroups.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="min-w-full border-collapse text-left">
-                  <thead className="bg-white/60">
+                  <thead className="bg-desktop-surface-muted">
                     <tr className="text-[10px] uppercase tracking-[0.12em] text-desktop-text-secondary">
                       <th className="px-4 py-2.5 font-semibold">Group</th>
                       <th className="px-4 py-2.5 font-semibold">Primary</th>
@@ -271,7 +271,7 @@ export function HarnessRepoSignalsPanel({
           {warnings.length > 0 ? (
             <div className={`space-y-2 ${mode === "test" ? "md:col-span-2" : ""}`}>
               {warnings.map((warning) => (
-                <div key={warning} className="rounded-sm border border-amber-200 bg-amber-50 px-3 py-3 text-[11px] text-amber-800">
+                <div key={warning} className="rounded-sm border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] px-3 py-3 text-[11px] text-[var(--dt-status-warning)]">
                   {warning}
                 </div>
               ))}

@@ -38,7 +38,7 @@ export function KanbanStagedSection({
   const hasFiles = files.length > 0;
 
   const badge = (
-    <span className="text-[9px] font-medium uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+    <span className="text-[9px] font-medium uppercase tracking-wide text-[var(--dt-status-success)]">
       APPROVED
     </span>
   );
@@ -49,7 +49,7 @@ export function KanbanStagedSection({
         type="button"
         onClick={onUnstageSelected}
         disabled={!hasSelection || loading}
-        className="flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-[10px] font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-[#12141c] dark:text-slate-300 dark:hover:bg-[#191c28]"
+        className="flex items-center gap-1 rounded-md border border-desktop-border bg-desktop-surface px-2 py-1 text-[10px] font-medium text-desktop-text-secondary transition hover:bg-desktop-surface-muted hover:text-desktop-text-primary disabled:cursor-not-allowed disabled:opacity-50"
       >
         Unstage {hasSelection ? `(${selectedCount})` : "Selected"}
       </button>
@@ -58,7 +58,7 @@ export function KanbanStagedSection({
         type="button"
         onClick={onCommit}
         disabled={!hasFiles || loading}
-        className="flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] font-medium text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-50 disabled:cursor-not-allowed dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-300 dark:hover:bg-emerald-900/30"
+        className="flex items-center gap-1 rounded-md border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] px-2 py-1 text-[10px] font-medium text-[var(--dt-status-success)] transition hover:border-desktop-accent disabled:cursor-not-allowed disabled:opacity-50"
       >
         <GitCommitHorizontal className="h-3 w-3" />
         <ChevronDown className="h-3 w-3" />
@@ -69,7 +69,7 @@ export function KanbanStagedSection({
         type="button"
         onClick={onExport}
         disabled={!hasFiles || loading}
-        className="flex items-center gap-1 rounded-md border border-sky-200 bg-sky-50 px-2 py-1 text-[10px] font-medium text-sky-700 transition hover:bg-sky-100 disabled:opacity-50 disabled:cursor-not-allowed dark:border-sky-900/40 dark:bg-sky-900/20 dark:text-sky-300 dark:hover:bg-sky-900/30"
+        className="flex items-center gap-1 rounded-md border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-2 py-1 text-[10px] font-medium text-[var(--dt-status-info)] transition hover:border-desktop-accent disabled:cursor-not-allowed disabled:opacity-50"
       >
         <Download className="h-3 w-3" />
         Export

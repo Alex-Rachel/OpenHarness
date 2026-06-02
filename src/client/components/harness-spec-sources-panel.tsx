@@ -51,22 +51,22 @@ type FilePreviewContext = {
 };
 
 const CONFIDENCE_STYLES: Record<SpecConfidence, { bg: string; text: string }> = {
-  high: { bg: "bg-emerald-100", text: "text-emerald-700" },
-  medium: { bg: "bg-amber-100", text: "text-amber-700" },
-  low: { bg: "bg-zinc-100", text: "text-zinc-500" },
+  high: { bg: "bg-[var(--dt-status-success-subtle)]", text: "text-[var(--dt-status-success)]" },
+  medium: { bg: "bg-[var(--dt-status-warning-subtle)]", text: "text-[var(--dt-status-warning)]" },
+  low: { bg: "bg-desktop-surface-muted", text: "text-desktop-text-secondary" },
 };
 
 const STATUS_STYLES: Record<SpecStatus, { bg: string; text: string; border: string }> = {
-  "artifacts-present": { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
-  "installed-only": { bg: "bg-sky-50", text: "text-sky-700", border: "border-sky-200" },
-  archived: { bg: "bg-zinc-50", text: "text-zinc-500", border: "border-zinc-200" },
-  legacy: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
+  "artifacts-present": { bg: "bg-[var(--dt-status-success-subtle)]", text: "text-[var(--dt-status-success)]", border: "border-[var(--dt-status-success)]/25" },
+  "installed-only": { bg: "bg-[var(--dt-status-info-subtle)]", text: "text-[var(--dt-status-info)]", border: "border-[var(--dt-status-info)]/25" },
+  archived: { bg: "bg-desktop-surface-muted", text: "text-desktop-text-secondary", border: "border-desktop-border" },
+  legacy: { bg: "bg-[var(--dt-status-warning-subtle)]", text: "text-[var(--dt-status-warning)]", border: "border-[var(--dt-status-warning)]/25" },
 };
 
 const KIND_STYLES: Record<SpecSourceKind, { bg: string; text: string }> = {
-  "native-tool": { bg: "bg-violet-100", text: "text-violet-700" },
-  framework: { bg: "bg-sky-100", text: "text-sky-700" },
-  "tool-integration": { bg: "bg-zinc-100", text: "text-zinc-600" },
+  "native-tool": { bg: "bg-desktop-surface-muted", text: "text-desktop-text-primary" },
+  framework: { bg: "bg-[var(--dt-status-info-subtle)]", text: "text-[var(--dt-status-info)]" },
+  "tool-integration": { bg: "bg-desktop-surface-muted", text: "text-desktop-text-secondary" },
 };
 
 const SYSTEM_ICONS: Record<string, string> = {
@@ -212,7 +212,7 @@ function SpecFilePreviewButton({
       )}
 
       {preview.status === "error" && (
-        <div className="mt-1 rounded border border-red-200 bg-red-50/50 px-2 py-1 text-[9px] text-red-600">
+        <div className="mt-1 rounded border border-desktop-danger-border bg-desktop-danger-subtle px-2 py-1 text-[9px] text-desktop-danger-text">
           {preview.message}
         </div>
       )}
@@ -334,7 +334,7 @@ function SpecSourceCard({ source, expanded, onToggle, labels, context }: { sourc
           ) : source.children.length > 0 ? (
             <FlatSpecList specs={source.children} labels={labels} context={context} />
           ) : source.status === "installed-only" ? (
-            <div className="rounded-sm border border-sky-200 bg-sky-50/50 px-2.5 py-2 text-[10px] text-sky-700">
+            <div className="rounded-sm border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-2.5 py-2 text-[10px] text-[var(--dt-status-info)]">
               {source.system === "qoder"
                 ? labels.qoderIntegration
                 : labels.integrationDetected(source.system)}

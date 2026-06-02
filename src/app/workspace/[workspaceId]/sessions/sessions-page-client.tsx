@@ -96,36 +96,39 @@ export function SessionsPageClient() {
     );
   }
 
+  const statPillClass =
+    "inline-flex items-center gap-2 rounded-full border border-desktop-border bg-desktop-surface px-4 py-2 text-sm text-desktop-text-secondary shadow-[var(--dt-shadow-sm)]";
+
   return (
-    <div className="flex h-full min-h-0 bg-[#f6f4ef] dark:bg-[#0c1118]">
+    <div className="flex h-full min-h-0 bg-desktop-bg-primary">
       <main className="flex min-w-0 flex-1 flex-col">
         <div className="min-h-0 flex-1 overflow-y-auto">
           <div className="mx-auto flex h-full w-full max-w-5xl flex-col px-6 py-8 lg:px-10 lg:py-10">
             <section className="flex flex-1 flex-col justify-center">
               <div className="mx-auto w-full max-w-3xl text-center">
-                <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                <div className="text-sm font-medium text-desktop-text-secondary">
                   {workspace?.title ?? t.common.workspace}
                 </div>
-                <h1 className="mt-4 font-['Avenir_Next_Condensed','Avenir_Next','Segoe_UI','Helvetica_Neue',sans-serif] text-5xl font-semibold tracking-[-0.05em] text-slate-900 dark:text-slate-100 sm:text-6xl">
+                <h1 className="mt-4 text-5xl font-semibold tracking-[-0.05em] text-desktop-text-primary sm:text-6xl">
                   {t.nav.sessions}
                 </h1>
-                <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-600 dark:text-slate-300">
+                <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-desktop-text-secondary">
                   {t.workspace.recoverSession}
                 </p>
               </div>
 
-              <div className="mx-auto mt-8 flex w-full max-w-3xl flex-wrap items-center justify-center gap-3 text-sm text-slate-500 dark:text-slate-400">
-                <div className="inline-flex items-center gap-2 rounded-full border border-black/8 bg-white/75 px-4 py-2 dark:border-white/10 dark:bg-white/5">
+              <div className="mx-auto mt-8 flex w-full max-w-3xl flex-wrap items-center justify-center gap-3">
+                <div className={statPillClass}>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">{t.workspace.sessions}</span>
-                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{visibleSessions.length}</span>
+                  <span className="text-sm font-semibold text-desktop-text-primary">{visibleSessions.length}</span>
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-black/8 bg-white/75 px-4 py-2 dark:border-white/10 dark:bg-white/5">
+                <div className={statPillClass}>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">{t.workspace.active}</span>
-                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{liveSessions}</span>
+                  <span className="text-sm font-semibold text-desktop-text-primary">{liveSessions}</span>
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-black/8 bg-white/75 px-4 py-2 dark:border-white/10 dark:bg-white/5">
+                <div className={statPillClass}>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">{t.workspace.latestRecoveryPoint}</span>
-                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  <span className="text-sm font-semibold text-desktop-text-primary">
                     {latestSession ? formatRelativeTime(latestSession.createdAt) : t.workspace.noRecentSession}
                   </span>
                 </div>
@@ -134,14 +137,14 @@ export function SessionsPageClient() {
           </div>
         </div>
 
-        <div className="border-t border-black/6 bg-[#f3f1eb]/92 px-4 py-4 dark:border-white/8 dark:bg-[#0f141c]/92">
+        <div className="border-t border-desktop-border bg-desktop-surface/95 px-4 py-4 shadow-[var(--dt-shadow-sm)]">
           <div className="mx-auto w-full max-w-4xl">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
-                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-500">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-desktop-text-tertiary">
                   {t.home.modeSessionTitle}
                 </div>
-                <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                <div className="mt-1 text-sm text-desktop-text-secondary">
                   {t.home.modeSessionDescription}
                 </div>
               </div>
@@ -149,7 +152,7 @@ export function SessionsPageClient() {
                 <button
                   type="button"
                   onClick={() => router.push(`/workspace/${workspaceId}/sessions/${latestSession.sessionId}`)}
-                  className="rounded-full border border-black/8 bg-white/90 px-3 py-1.5 text-[11px] font-medium text-slate-600 transition-colors hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
+                  className="rounded-full border border-desktop-border bg-desktop-surface-muted px-3 py-1.5 text-[11px] font-medium text-desktop-text-secondary transition-colors hover:bg-desktop-bg-active hover:text-desktop-text-primary"
                 >
                   {getSessionLabel(latestSession)}
                 </button>
@@ -179,7 +182,7 @@ export function SessionsPageClient() {
         </div>
       </main>
 
-      <aside className="hidden w-90 shrink-0 border-l border-black/6 bg-[#efede6] px-4 py-4 dark:border-white/8 dark:bg-[#11161f] xl:flex xl:flex-col">
+      <aside className="hidden w-90 shrink-0 border-l border-desktop-border bg-desktop-surface-muted px-4 py-4 xl:flex xl:flex-col">
         <SessionsOverview
           sessions={visibleSessions}
           workspaceId={workspaceId}

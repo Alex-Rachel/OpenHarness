@@ -46,7 +46,7 @@ export function KanbanCommitModal({ open, onClose, onCommit, fileCount }: Kanban
       />
       
       {/* Modal */}
-      <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-[#12141c]">
+      <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-desktop-border bg-desktop-surface-elevated p-6 shadow-[var(--dt-shadow-lg)]">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">

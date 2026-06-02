@@ -15,6 +15,7 @@
 import React, { useCallback, useSyncExternalStore } from "react";
 import { DesktopShellHeader } from "./desktop-shell-header";
 import { DesktopSidebar } from "./desktop-sidebar";
+import { DesktopWindowTitlebar } from "./desktop-window-titlebar";
 
 const DESKTOP_SIDEBAR_COLLAPSED_KEY = "routa.desktop.sidebar-collapsed";
 const DESKTOP_SIDEBAR_CHANGE_EVENT = "routa:desktop-sidebar-collapsed";
@@ -104,6 +105,8 @@ export function DesktopAppShell({
       className="desktop-theme h-screen flex flex-col overflow-hidden bg-desktop-bg-primary"
       data-testid="desktop-shell-root"
     >
+      <DesktopWindowTitlebar workspaceId={workspaceId} />
+
       <DesktopShellHeader
         workspaceId={workspaceId}
         workspaceTitle={workspaceTitle}

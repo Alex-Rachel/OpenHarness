@@ -124,7 +124,7 @@ export function RepoSlideSessionPanel({
       )}
 
       {error && (
-        <div className="mt-3 rounded-lg border border-rose-300/40 bg-rose-50 px-3 py-2 text-xs text-rose-700 dark:border-rose-500/20 dark:bg-rose-950/20 dark:text-rose-300">
+        <div className="mt-3 rounded-[var(--dt-radius-md)] border border-[var(--dt-status-danger)]/25 bg-[var(--dt-status-danger-subtle)] px-3 py-2 text-xs text-[var(--dt-status-danger)]">
           {t.repoSlide.loadFailed} {error}
         </div>
       )}

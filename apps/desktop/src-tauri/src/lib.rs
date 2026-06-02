@@ -880,7 +880,7 @@ pub fn run() {
             let install_agents = MenuItem::with_id(
                 app_handle,
                 "install_agents",
-                "Install Agents...",
+                "安装 Agents...",
                 true,
                 Some("CmdOrCtrl+Shift+I"),
             )?;
@@ -888,7 +888,7 @@ pub fn run() {
             let mcp_tools = MenuItem::with_id(
                 app_handle,
                 "mcp_tools",
-                "MCP Tools",
+                "MCP 工具",
                 true,
                 Some("CmdOrCtrl+Shift+M"),
             )?;
@@ -896,7 +896,7 @@ pub fn run() {
             let reload = MenuItem::with_id(
                 app_handle,
                 "reload",
-                "Reload",
+                "重新加载",
                 true,
                 Some("CmdOrCtrl+R"),
             )?;
@@ -904,16 +904,65 @@ pub fn run() {
             let quit = MenuItem::with_id(
                 app_handle,
                 "quit",
-                "Quit",
+                "退出",
                 true,
                 Some("CmdOrCtrl+Q"),
+            )?;
+
+            // Edit menu items
+            let edit_undo = MenuItem::with_id(
+                app_handle,
+                "edit_undo",
+                "撤销",
+                true,
+                Some("CmdOrCtrl+Z"),
+            )?;
+
+            let edit_redo = MenuItem::with_id(
+                app_handle,
+                "edit_redo",
+                "重做",
+                true,
+                Some("CmdOrCtrl+Shift+Z"),
+            )?;
+
+            let edit_cut = MenuItem::with_id(
+                app_handle,
+                "edit_cut",
+                "剪切",
+                true,
+                Some("CmdOrCtrl+X"),
+            )?;
+
+            let edit_copy = MenuItem::with_id(
+                app_handle,
+                "edit_copy",
+                "复制",
+                true,
+                Some("CmdOrCtrl+C"),
+            )?;
+
+            let edit_paste = MenuItem::with_id(
+                app_handle,
+                "edit_paste",
+                "粘贴",
+                true,
+                Some("CmdOrCtrl+V"),
+            )?;
+
+            let edit_select_all = MenuItem::with_id(
+                app_handle,
+                "edit_select_all",
+                "全选",
+                true,
+                Some("CmdOrCtrl+A"),
             )?;
 
             // View menu items
             let toggle_devtools = MenuItem::with_id(
                 app_handle,
                 "toggle_devtools",
-                "Toggle Developer Tools",
+                "开发者工具",
                 true,
                 Some("CmdOrCtrl+Option+I"),
             )?;
@@ -921,16 +970,16 @@ pub fn run() {
             let toggle_tool_mode = MenuItem::with_id(
                 app_handle,
                 "toggle_tool_mode",
-                "Toggle Tool Mode (Essential/Full)",
+                "切换工具模式（基础/完整）",
                 true,
                 Some("CmdOrCtrl+Shift+T"),
             )?;
 
-            // Navigation menu items
+            // Window menu items
             let nav_dashboard = MenuItem::with_id(
                 app_handle,
                 "nav_dashboard",
-                "Dashboard",
+                "主页",
                 true,
                 Some("CmdOrCtrl+1"),
             )?;
@@ -938,7 +987,7 @@ pub fn run() {
             let nav_kanban = MenuItem::with_id(
                 app_handle,
                 "nav_kanban",
-                "Kanban Board",
+                "看板",
                 true,
                 Some("CmdOrCtrl+2"),
             )?;
@@ -946,7 +995,7 @@ pub fn run() {
             let nav_traces = MenuItem::with_id(
                 app_handle,
                 "nav_traces",
-                "Agent Traces",
+                "运行轨迹",
                 true,
                 Some("CmdOrCtrl+3"),
             )?;
@@ -954,50 +1003,74 @@ pub fn run() {
             let nav_settings = MenuItem::with_id(
                 app_handle,
                 "nav_settings",
-                "Settings",
+                "设置",
                 true,
                 Some("CmdOrCtrl+,"),
-            )?;
-
-            // Build Tools submenu
-            let tools_submenu = Submenu::with_items(
-                app_handle,
-                "Tools",
-                true,
-                &[&install_agents, &mcp_tools],
             )?;
 
             // Build File submenu
             let file_submenu = Submenu::with_items(
                 app_handle,
-                "File",
+                "文件",
                 true,
                 &[&reload, &quit],
+            )?;
+
+            // Build Edit submenu
+            let edit_submenu = Submenu::with_items(
+                app_handle,
+                "编辑",
+                true,
+                &[
+                    &edit_undo,
+                    &edit_redo,
+                    &edit_cut,
+                    &edit_copy,
+                    &edit_paste,
+                    &edit_select_all,
+                ],
             )?;
 
             // Build View submenu
             let view_submenu = Submenu::with_items(
                 app_handle,
-                "View",
+                "查看",
                 true,
                 &[&toggle_devtools, &toggle_tool_mode],
             )?;
 
-            // Build Navigate submenu
-            let navigate_submenu = Submenu::with_items(
+            // Build Window submenu
+            let window_submenu = Submenu::with_items(
                 app_handle,
-                "Navigate",
+                "窗口",
                 true,
                 &[&nav_dashboard, &nav_kanban, &nav_traces, &nav_settings],
             )?;
 
-            // Build main menu
-            let menu = Menu::with_items(app_handle, &[&file_submenu, &view_submenu, &navigate_submenu, &tools_submenu])?;
+            // Build Help submenu
+            let help_submenu = Submenu::with_items(
+                app_handle,
+                "帮助",
+                true,
+                &[&install_agents, &mcp_tools],
+            )?;
 
-            // Set the menu on the main window
-            if let Some(window) = app.get_webview_window("main") {
-                window.set_menu(menu)?;
-            }
+            // Build main menu
+            let menu = Menu::with_items(
+                app_handle,
+                &[
+                    &file_submenu,
+                    &edit_submenu,
+                    &view_submenu,
+                    &window_submenu,
+                    &help_submenu,
+                ],
+            )?;
+
+            // Keep the native menu detached: the frameless desktop shell renders
+            // a tokenized React titlebar so the top-left chrome no longer uses
+            // OS-controlled menu height, font, borders, or raised styling.
+            let _ = menu;
 
             // ─── Handle Menu Events ─────────────────────────────────────────
             app.on_menu_event(move |app_handle, event| {
@@ -1016,6 +1089,36 @@ pub fn run() {
                             let js = "window.location.href = `${window.location.origin}/mcp-tools`;";
                             let _ = window.eval(js);
                             println!("[menu] Navigating to MCP Tools");
+                        }
+                    }
+                    "edit_undo" => {
+                        if let Some(window) = app_handle.get_webview_window("main") {
+                            let _ = window.eval("document.execCommand('undo');");
+                        }
+                    }
+                    "edit_redo" => {
+                        if let Some(window) = app_handle.get_webview_window("main") {
+                            let _ = window.eval("document.execCommand('redo');");
+                        }
+                    }
+                    "edit_cut" => {
+                        if let Some(window) = app_handle.get_webview_window("main") {
+                            let _ = window.eval("document.execCommand('cut');");
+                        }
+                    }
+                    "edit_copy" => {
+                        if let Some(window) = app_handle.get_webview_window("main") {
+                            let _ = window.eval("document.execCommand('copy');");
+                        }
+                    }
+                    "edit_paste" => {
+                        if let Some(window) = app_handle.get_webview_window("main") {
+                            let _ = window.eval("document.execCommand('paste');");
+                        }
+                    }
+                    "edit_select_all" => {
+                        if let Some(window) = app_handle.get_webview_window("main") {
+                            let _ = window.eval("document.execCommand('selectAll');");
                         }
                     }
                     "reload" => {

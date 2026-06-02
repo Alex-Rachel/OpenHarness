@@ -39,8 +39,8 @@ describe("DesktopSidebar", () => {
 
     render(<DesktopSidebar workspaceId="default" />);
 
-    expect(screen.getByRole("link", { name: "Harness" }).className).toContain("text-desktop-accent");
-    expect(screen.getByRole("link", { name: "Settings" }).className).not.toContain("text-desktop-accent");
+    expect(screen.getByRole("link", { name: "Harness" }).className.split(" ")).toContain("bg-desktop-surface-muted");
+    expect(screen.getByRole("link", { name: "Settings" }).className.split(" ")).not.toContain("bg-desktop-surface-muted");
   });
 
   it("shows a collapse icon when expanded and an expand icon when collapsed", () => {

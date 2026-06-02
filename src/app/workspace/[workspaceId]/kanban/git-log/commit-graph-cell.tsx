@@ -14,14 +14,14 @@ const NODE_RADIUS = 3;
 const CELL_HEIGHT = 24;
 
 const LANE_COLORS = [
-  "#f59e0b", // amber
-  "#3b82f6", // blue
-  "#10b981", // emerald
-  "#8b5cf6", // violet
-  "#ef4444", // red
-  "#06b6d4", // cyan
-  "#f97316", // orange
-  "#ec4899", // pink
+  "var(--dt-status-warning)",
+  "var(--dt-status-info)",
+  "var(--dt-status-success)",
+  "var(--dt-accent)",
+  "var(--dt-status-danger)",
+  "var(--dt-status-info)",
+  "var(--dt-status-warning)",
+  "var(--dt-accent-strong)",
 ];
 
 function laneColor(lane: number): string {
@@ -97,7 +97,7 @@ export function CommitGraphCell({ commit, totalLanes }: CommitGraphCellProps) {
         cy={cy}
         r={NODE_RADIUS}
         fill={laneColor(lane)}
-        stroke="white"
+        stroke="var(--dt-bg-primary)"
         strokeWidth={1.5}
       />
 

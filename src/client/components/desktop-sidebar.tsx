@@ -11,7 +11,6 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "@/i18n";
 import { ChevronLeft, ClipboardList, Columns2, FileCode2, House, MonitorUp, ScrollText, Settings, Share2 } from "lucide-react";
@@ -145,8 +144,8 @@ export function DesktopSidebar({
     const active = isActive(item.href, item.exactMatch);
     const className = `relative flex items-center rounded-xl transition-colors ${
       active
-        ? "bg-desktop-bg-active text-desktop-accent"
-        : "text-desktop-text-secondary hover:bg-desktop-bg-active/70 hover:text-desktop-text-primary"
+        ? "bg-desktop-surface-muted text-desktop-text-primary"
+        : "text-desktop-text-secondary hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
     } ${collapsed ? "h-10 w-10 justify-center" : "h-11 w-full gap-3 px-3 text-sm font-medium"}`;
 
     return (
@@ -156,7 +155,7 @@ export function DesktopSidebar({
         className={className}
         title={item.label}
       >
-        {active && <div className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-desktop-accent" />}
+        {active && <div className="absolute left-1 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-desktop-text-primary" />}
         {item.icon}
         {!collapsed && <span className="truncate">{item.label}</span>}
       </Link>
@@ -165,27 +164,19 @@ export function DesktopSidebar({
 
   return (
     <aside
-      className={`h-full shrink-0 flex flex-col border-r border-desktop-border bg-desktop-bg-secondary transition-[width] duration-200 ${
+      className={`h-full shrink-0 flex flex-col border-r border-desktop-border bg-desktop-surface transition-[width] duration-200 ${
         collapsed ? "w-14" : "w-48"
       }`}
       data-testid="desktop-shell-sidebar"
     >
-      <div className={`border-b border-desktop-border px-2 py-2 ${collapsed ? "flex items-center justify-center" : "flex items-center justify-between gap-2"}`}>
-        {!collapsed ? (
-          <div
-            className="flex items-center gap-1.5 rounded-xl px-2 py-1 text-sm font-semibold text-desktop-text-primary"
-            title="Routa"
-          >
-            <Image src="/logo.svg" alt="Routa" width={18} height={18} className="rounded-md" />
-            <span>Routa</span>
-          </div>
-        ) : null}
+      <div className={`px-2 pt-2 ${collapsed ? "flex items-center justify-center" : "flex items-center justify-end"}`}>
         <button
           type="button"
           onClick={onToggleCollapse}
-          className={`flex items-center rounded-xl text-desktop-text-secondary transition-colors hover:bg-desktop-bg-active hover:text-desktop-text-primary ${
-            collapsed ? "h-10 w-10 justify-center" : "h-10 w-10 justify-center"
-          }`}
+          className={`flex items-center rounded-lg text-desktop-text-muted transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary ${
+            collapsed ? "h-9 w-9 justify-center" : "h-8 w-8 justify-center"
+          }`
+        }
           title={collapsed ? t.nav.openSidebar : t.nav.closeSidebar}
           aria-label={collapsed ? t.nav.openSidebar : t.nav.closeSidebar}
         >
@@ -199,12 +190,12 @@ export function DesktopSidebar({
         </button>
       </div>
 
-      <nav className={`flex-1 py-3 ${collapsed ? "flex flex-col items-center gap-1" : "px-2 space-y-1"}`}>
+      <nav className={`flex-1 pb-3 pt-2 ${collapsed ? "flex flex-col items-center gap-1" : "px-2 space-y-1"}`}>
         {topAction ? (
           <>
             <Link
               href={topAction.href}
-              className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl text-desktop-text-secondary transition-colors hover:bg-desktop-bg-active hover:text-desktop-text-primary"
+              className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl text-desktop-text-secondary transition-colors hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
               title={topAction.label}
               aria-label={topAction.label}
             >

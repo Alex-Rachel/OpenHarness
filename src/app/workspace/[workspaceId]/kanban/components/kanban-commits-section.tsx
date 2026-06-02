@@ -30,8 +30,9 @@ export function KanbanCommitsSection({
   codebase,
 }: KanbanCommitsSectionProps) {
   const canViewCommitHistory = useHasVcsCapability(codebase, "commitHistory");
-  if (!canViewCommitHistory) return null;
   const [expandedCommits, setExpandedCommits] = useState<Set<string>>(new Set());
+
+  if (!canViewCommitHistory) return null;
 
   const toggleCommit = (sha: string) => {
     setExpandedCommits((prev) => {
@@ -46,7 +47,7 @@ export function KanbanCommitsSection({
   };
 
   return (
-    <section className="rounded-2xl border border-slate-200/70 bg-slate-50/70 dark:border-[#202433] dark:bg-[#0d1018]">
+    <section className="rounded-2xl border border-desktop-border bg-desktop-surface-muted">
       {/* Header */}
       <button
         type="button"
@@ -71,13 +72,13 @@ export function KanbanCommitsSection({
 
       {/* Content */}
       {expanded && (
-      <div className="border-t border-slate-200/70 px-3.5 py-3 dark:border-[#202433]">
+      <div className="border-t border-desktop-border px-3.5 py-3">
         {loading ? (
           <div className="flex items-center justify-center py-6 text-xs text-slate-400 dark:text-slate-500">
             Loading commits...
           </div>
         ) : commits.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200 bg-white/70 px-3 py-4 text-center text-[11px] text-slate-400 dark:border-slate-700 dark:bg-[#12141c] dark:text-slate-500">
+          <div className="rounded-xl border border-dashed border-desktop-border bg-desktop-surface-elevated px-3 py-4 text-center text-[11px] text-desktop-text-tertiary">
             No commits yet
           </div>
         ) : (
@@ -89,7 +90,7 @@ export function KanbanCommitsSection({
               return (
                 <div
                   key={commit.sha}
-                  className="rounded-lg border border-slate-200/70 bg-white/70 dark:border-slate-700 dark:bg-[#12141c]"
+                  className="rounded-lg border border-desktop-border bg-desktop-surface-elevated"
                 >
                   {/* Commit Header */}
                   <div className="flex items-start gap-2 p-2">
@@ -109,7 +110,7 @@ export function KanbanCommitsSection({
                     
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start gap-2">
-                        <GitCommit className="mt-0.5 h-3.5 w-3.5 shrink-0 text-sky-600 dark:text-sky-400" />
+                        <GitCommit className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--dt-status-info)]" />
                         <div className="min-w-0 flex-1">
                           <div className="text-[11px] font-medium text-slate-900 dark:text-slate-100">
                             {commit.summary}
@@ -128,7 +129,7 @@ export function KanbanCommitsSection({
                             )}
                             {commit.deletions > 0 && (
                               <>
-                                <span className="text-rose-600 dark:text-rose-400">
+                                <span className="text-desktop-danger-text">
                                   -{commit.deletions}
                                 </span>
                               </>
@@ -154,7 +155,7 @@ export function KanbanCommitsSection({
                         <button
                           type="button"
                           onClick={() => onRevertCommit(commit)}
-                          className="rounded p-1 text-slate-400 transition hover:bg-slate-100 hover:text-rose-600 dark:hover:bg-slate-800 dark:hover:text-rose-400"
+                          className="rounded p-1 text-slate-400 transition hover:bg-slate-100 hover:text-desktop-danger-text dark:hover:bg-slate-800"
                           title="Revert commit"
                         >
                           <RotateCcw className="h-3 w-3" />
@@ -165,7 +166,7 @@ export function KanbanCommitsSection({
 
                   {/* Expanded Files */}
                   {isExpanded && hasFiles && (
-                    <div className="border-t border-slate-200/70 bg-slate-50/50 px-2 py-2 dark:border-slate-700 dark:bg-[#0d1018]/50">
+                    <div className="border-t border-desktop-border bg-desktop-surface-muted px-2 py-2">
                       <div className="space-y-1">
                         {commit.files!.map((file) => (
                           <FileRow

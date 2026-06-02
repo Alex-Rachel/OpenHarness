@@ -1,7 +1,18 @@
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { I18nProvider } from "@/i18n";
 import { ThemeInitializer } from "@/client/components/theme-initializer";
+
+const routaSans = Geist({
+  variable: "--font-routa-sans",
+  subsets: ["latin"],
+});
+
+const routaMono = Geist_Mono({
+  variable: "--font-routa-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Routa - Multi-Agent Coordinator",
@@ -37,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${routaSans.variable} ${routaMono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>

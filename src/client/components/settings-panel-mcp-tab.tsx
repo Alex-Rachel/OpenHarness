@@ -7,9 +7,18 @@ import { useTranslation } from "@/i18n";
 import { desktopAwareFetch } from "../utils/diagnostics";
 import {
   SETTINGS_PANEL_BODY_MAX_HEIGHT,
+  iconActionCls,
+  infoChipCls,
   inputCls,
   labelCls,
+  linkActionCls,
+  mutedTextCls,
+  primaryActionCls,
+  secondaryActionCls,
   sectionHeadCls,
+  successChipCls,
+  successSurfaceCls,
+  warningChipCls,
 } from "./settings-panel-shared";
 import { dangerGhostIconButtonClassName, dangerSurfaceClassName } from "./color-system";
 import { Plus, SquarePen, Trash2, ChevronLeft } from "lucide-react";
@@ -62,9 +71,9 @@ const TYPE_LABEL: Record<McpServerType, string> = {
 };
 
 const TYPE_CHIP: Record<McpServerType, string> = {
-  stdio: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300",
-  http: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300",
-  sse: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300",
+  stdio: infoChipCls,
+  http: successChipCls,
+  sse: warningChipCls,
 };
 
 async function getResponseErrorMessage(response: Response, fallback: string) {
@@ -214,7 +223,7 @@ export function McpServersTab() {
       <div className="px-4 py-4 space-y-3 overflow-y-auto" style={{ maxHeight: SETTINGS_PANEL_BODY_MAX_HEIGHT }}>
         <div className="flex items-center gap-2 mb-1">
           <button onClick={() => { setShowForm(false); setEditingId(null); setForm(EMPTY_MCP_FORM); }}
-            className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 transition-colors">
+            className={iconActionCls}>
             <ChevronLeft className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
           </button>
           <p className={sectionHeadCls}>{editingId ? t.mcp.editServer : t.mcp.newServer}</p>
@@ -300,11 +309,11 @@ export function McpServersTab() {
 
           <div className="flex gap-2 pt-2">
             <button onClick={handleSave} disabled={!canSave || loading}
-              className="flex-1 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+              className={`${primaryActionCls} flex-1 py-2`}>
               {editingId ? t.common.update : t.common.create}
             </button>
             <button onClick={() => { setShowForm(false); setEditingId(null); setForm(EMPTY_MCP_FORM); }}
-              className="px-4 py-2 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+              className={`${secondaryActionCls} px-4 py-2`}>
               {t.common.cancel}
             </button>
           </div>
@@ -318,49 +327,49 @@ export function McpServersTab() {
       <div className="flex items-center justify-between">
         <div>
           <p className={sectionHeadCls}>{tab.serverCount.replace('{count}', String(servers.length))}</p>
-          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{t.mcp.description}</p>
+          <p className={`mt-0.5 text-[10px] ${mutedTextCls}`}>{t.mcp.description}</p>
         </div>
         <button onClick={() => { setForm(EMPTY_MCP_FORM); setEditingId(null); setShowForm(true); }}
-          className="px-2.5 py-1.5 text-xs font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-1">
+          className={primaryActionCls}>
           <Plus className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}/>
           {tab.newButton}
         </button>
       </div>
       {error && <div className={`rounded p-2 text-xs ${dangerSurfaceClassName}`}>{error}</div>}
 
-      <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/10 p-3">
+      <div className={`rounded-[var(--dt-radius-md)] p-3 ${successSurfaceCls}`}>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-          <span className="text-xs font-medium text-slate-800 dark:text-slate-200 flex-1">routa-coordination</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-medium">{tab.builtInHttp}</span>
-          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">{tab.builtInLabel}</span>
+          <div className="h-2 w-2 shrink-0 rounded-full bg-[var(--dt-status-success)]" />
+          <span className="flex-1 text-xs font-medium text-desktop-text-primary">routa-coordination</span>
+          <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium ${successChipCls}`}>{tab.builtInHttp}</span>
+          <span className="text-[10px] font-medium text-[var(--dt-status-success)]">{tab.builtInLabel}</span>
         </div>
-        <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 ml-4">{tab.builtInDesc}</p>
+        <p className="ml-4 mt-1 text-[10px] text-desktop-text-secondary">{tab.builtInDesc}</p>
       </div>
 
-      {loading && servers.length === 0 && <p className="text-center text-xs text-slate-400 py-6">{tab.loadingLabel}</p>}
+      {loading && servers.length === 0 && <p className={`py-6 text-center text-xs ${mutedTextCls}`}>{tab.loadingLabel}</p>}
 
       <div className="space-y-2">
         {servers.map((server) => (
           <div key={server.id} className={`rounded-lg border p-3 transition-colors ${
             server.enabled
-              ? "border-slate-200 dark:border-slate-700"
-              : "border-slate-200 dark:border-slate-700 opacity-60"
+              ? "border-desktop-border bg-desktop-surface"
+              : "border-desktop-border bg-desktop-surface-muted opacity-60"
           }`}>
             <div className="flex items-center gap-2">
               <button onClick={() => handleToggle(server)}
                 className={`w-7 h-4 rounded-full transition-colors relative shrink-0 ${
-                  server.enabled ? "bg-blue-500" : "bg-slate-300 dark:bg-slate-600"
+                  server.enabled ? "bg-desktop-accent" : "bg-desktop-surface-muted ring-1 ring-inset ring-desktop-border"
                 }`}>
-                <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform ${
+                <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-desktop-surface-elevated shadow transition-transform ${
                   server.enabled ? "left-3.5" : "left-0.5"
                 }`} />
               </button>
 
-              <span className="text-xs font-medium text-slate-800 dark:text-slate-200 flex-1 truncate">{server.name}</span>
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${TYPE_CHIP[server.type]}`}>{TYPE_LABEL[server.type]}</span>
+              <span className="flex-1 truncate text-xs font-medium text-desktop-text-primary">{server.name}</span>
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium ${TYPE_CHIP[server.type]}`}>{TYPE_LABEL[server.type]}</span>
               <button onClick={() => handleEdit(server)}
-                className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" title={tab.editTitle}>
+                className={iconActionCls} title={tab.editTitle}>
                 <SquarePen className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
               </button>
               <button onClick={() => handleDelete(server.id, server.name)}
@@ -369,9 +378,9 @@ export function McpServersTab() {
               </button>
             </div>
             {server.description && (
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 ml-9">{server.description}</p>
+              <p className="ml-9 mt-1 text-[10px] text-desktop-text-secondary">{server.description}</p>
             )}
-            <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 ml-9 font-mono truncate">
+            <div className={`ml-9 mt-1 truncate font-mono text-[10px] ${mutedTextCls}`}>
               {server.type === "stdio" ? `${server.command} ${(server.args ?? []).join(" ")}` : server.url}
             </div>
           </div>
@@ -380,9 +389,9 @@ export function McpServersTab() {
 
       {servers.length === 0 && !loading && !error && (
         <div className="text-center py-8">
-          <p className="text-xs text-slate-400 dark:text-slate-500 mb-2">{t.mcp.noServers}</p>
+          <p className={`mb-2 text-xs ${mutedTextCls}`}>{t.mcp.noServers}</p>
           <button onClick={() => { setForm(EMPTY_MCP_FORM); setEditingId(null); setShowForm(true); }}
-            className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+            className={linkActionCls}>
             {t.mcp.addFirst}
           </button>
         </div>

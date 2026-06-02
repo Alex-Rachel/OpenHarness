@@ -801,6 +801,53 @@ export function SessionPageClient() {
     }
   }, [workspace, workspacesHook.loading, router, isDefaultWorkspace, isResolved, workspaceId]);
 
+  const agentSelector = (
+    <div className="relative">
+      <Select
+        value={selectedSpecialistId ? `specialist:${selectedSpecialistId}` : selectedAgent}
+        onChange={(e) => handleAgentChange(e.target.value)}
+        className="appearance-none rounded-xl border border-desktop-border bg-desktop-bg-secondary py-1.5 pl-2.5 pr-7 text-[11px] font-medium text-desktop-text-primary cursor-pointer focus:ring-1 focus:ring-desktop-accent"
+      >
+        {BUILTIN_ROLES.map((r) => (
+          <option key={r.value} value={r.value}>{r.label}</option>
+        ))}
+        {specialists.length > 0 && (
+          <optgroup label={t.common.customSpecialists}>
+            {specialists.map((s) => (
+              <option key={s.id} value={`specialist:${s.id}`}>
+                {s.name}{s.model ? ` (${s.model})` : ""}
+              </option>
+            ))}
+          </optgroup>
+        )}
+      </Select>
+      <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-desktop-text-secondary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+    </div>
+  );
+  const sessionTitleBarRight = (
+    <>
+      {agentSelector}
+      {activeSessionRecord?.resumeCapabilities?.supported && activeSessionRecord?.cwd && (
+        <button
+          type="button"
+          onClick={() => void handleResumeCurrentSession()}
+          disabled={isResumingSession || acp.loading}
+          className="inline-flex rounded-xl border border-desktop-border bg-desktop-bg-secondary px-2.5 py-1.5 text-[11px] font-medium text-desktop-text-primary transition-colors hover:bg-desktop-bg-active disabled:cursor-not-allowed disabled:opacity-60"
+          title={t.sessions.resumeHint}
+        >
+          {isResumingSession || acp.loading ? t.sessions.resuming : t.sessions.resume}
+        </button>
+      )}
+    </>
+  );
+
+  useEffect(() => {
+    if (isEmbedMode) return;
+    setTitleBarRight(sessionTitleBarRight);
+    return () => clearTitleBarRight();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEmbedMode, activeSessionRecord?.resumeCapabilities?.supported, activeSessionRecord?.cwd, isResumingSession, acp.loading, setTitleBarRight, clearTitleBarRight]);
+
   // Show loading state while URL params are being resolved (static export mode)
   // or while workspaces are loading
   if (!isResolved || (workspacesHook.loading && !isDefaultWorkspace)) {
@@ -868,64 +915,18 @@ export function SessionPageClient() {
     sessionCanvas.activeCanvas || sessionCanvas.isMaterializing || sessionCanvas.error,
   );
   const showRightSidebar = !isEmbedMode && (hasSessionCanvasPanel || crafterAgents.length > 0);
-  const agentSelector = (
-    <div className="relative">
-      <Select
-        value={selectedSpecialistId ? `specialist:${selectedSpecialistId}` : selectedAgent}
-        onChange={(e) => handleAgentChange(e.target.value)}
-        className="appearance-none rounded-xl border border-desktop-border bg-desktop-bg-secondary py-1.5 pl-2.5 pr-7 text-[11px] font-medium text-desktop-text-primary cursor-pointer focus:ring-1 focus:ring-desktop-accent"
-      >
-        {BUILTIN_ROLES.map((r) => (
-          <option key={r.value} value={r.value}>{r.label}</option>
-        ))}
-        {specialists.length > 0 && (
-          <optgroup label={t.common.customSpecialists}>
-            {specialists.map((s) => (
-              <option key={s.id} value={`specialist:${s.id}`}>
-                {s.name}{s.model ? ` (${s.model})` : ""}
-              </option>
-            ))}
-          </optgroup>
-        )}
-      </Select>
-      <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-desktop-text-secondary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
-    </div>
-  );
-  const sessionTitleBarRight = (
-    <>
-      {agentSelector}
-      {activeSessionRecord?.resumeCapabilities?.supported && activeSessionRecord?.cwd && (
-        <button
-          type="button"
-          onClick={() => void handleResumeCurrentSession()}
-          disabled={isResumingSession || acp.loading}
-          className="inline-flex rounded-xl border border-desktop-border bg-desktop-bg-secondary px-2.5 py-1.5 text-[11px] font-medium text-desktop-text-primary transition-colors hover:bg-desktop-bg-active disabled:cursor-not-allowed disabled:opacity-60"
-          title={t.sessions.resumeHint}
-        >
-          {isResumingSession || acp.loading ? t.sessions.resuming : t.sessions.resume}
-        </button>
-      )}
-    </>
-  );
-
-  useEffect(() => {
-    if (isEmbedMode) return;
-    setTitleBarRight(sessionTitleBarRight);
-    return () => clearTitleBarRight();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEmbedMode, activeSessionRecord?.resumeCapabilities?.supported, activeSessionRecord?.cwd, isResumingSession, acp.loading, setTitleBarRight, clearTitleBarRight]);
 
   const sessionPageContent = (
     <div className={`desktop-theme flex min-w-0 flex-col bg-[var(--dt-bg-primary)] ${isEmbedMode ? "h-screen embed-mode" : "h-full"}`}>
 
       {isPlanningSession && !isEmbedMode ? (
-        <div className="border-b border-black/6 bg-[#f7f3ea] px-5 py-4 dark:border-white/8 dark:bg-[#10161d]">
+        <div className="border-b border-desktop-border bg-desktop-surface px-5 py-4 shadow-[var(--dt-shadow-sm)]">
           <div className="mx-auto flex w-full max-w-6xl items-center justify-end">
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => router.push(`/workspace/${workspaceId}/sessions`)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-black/8 bg-white px-3 py-1.5 text-[11px] font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
+                className="inline-flex items-center gap-1.5 rounded-full border border-desktop-border bg-desktop-surface-muted px-3 py-1.5 text-[11px] font-medium text-desktop-text-secondary transition-colors hover:bg-desktop-bg-active hover:text-desktop-text-primary"
               >
                 <ScrollText className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7} />
                 {t.nav.sessions}
@@ -933,7 +934,7 @@ export function SessionPageClient() {
               <button
                 type="button"
                 onClick={() => router.push(`/workspace/${workspaceId}/kanban`)}
-                className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 text-[11px] font-medium text-white transition-colors hover:bg-slate-800 dark:bg-amber-500 dark:text-slate-950 dark:hover:bg-amber-400"
+                className="inline-flex items-center gap-1.5 rounded-full bg-desktop-accent px-3 py-1.5 text-[11px] font-medium text-desktop-accent-text transition-colors hover:bg-desktop-accent-strong"
               >
                 <Columns2 className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7} />
                 {t.workspace.goToBoard}

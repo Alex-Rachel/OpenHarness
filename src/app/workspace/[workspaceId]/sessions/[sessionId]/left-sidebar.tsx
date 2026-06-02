@@ -126,7 +126,7 @@ function TaskSnapshotSummary({
   if (taskCount === 0 && !hasSpec) return null;
 
   return (
-    <div className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-[#171a23] shrink-0" data-testid="session-quick-access">
+    <div className="shrink-0 border-t border-desktop-border bg-desktop-surface-muted" data-testid="session-quick-access">
       <div className="px-3 py-2 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500">
@@ -164,7 +164,7 @@ function TaskSnapshotSummary({
           type="button"
           onClick={onOpenSpec}
           data-testid="session-spec-preview"
-          className="mx-3 mb-3 flex w-[calc(100%-1.5rem)] flex-col gap-1 rounded-lg border border-blue-100 bg-white/80 px-3 py-2 text-left transition-colors hover:border-blue-200 hover:bg-white dark:border-blue-900/40 dark:bg-[#121722] dark:hover:border-blue-800"
+          className="mx-3 mb-3 flex w-[calc(100%-1.5rem)] flex-col gap-1 rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface px-3 py-2 text-left transition-colors hover:bg-desktop-surface-muted"
         >
           <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-blue-500 dark:text-blue-300">
             Spec Preview
@@ -299,7 +299,7 @@ function SessionsSplitPane({
       {(hasTasks || hasSpec) && (
         <>
           <div
-            className="hidden md:flex h-2 shrink-0 cursor-row-resize items-center justify-center border-y border-slate-100 bg-slate-50/90 transition-colors hover:bg-blue-50 dark:border-slate-800 dark:bg-[#13151d] dark:hover:bg-blue-950/20"
+            className="hidden h-2 shrink-0 cursor-row-resize items-center justify-center border-y border-desktop-border bg-desktop-surface-muted transition-colors hover:bg-desktop-bg-active md:flex"
             onMouseDown={() => setIsDraggingSplit(true)}
             data-testid="session-sidebar-split-handle"
           >
@@ -318,7 +318,7 @@ function SessionsSplitPane({
             onOpenSpec={onSwitchToSpec}
           />
           {hasTasks && (
-            <div className="flex-1 min-h-0 overflow-y-auto border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#13151d]">
+            <div className="min-h-0 flex-1 overflow-y-auto border-t border-desktop-border bg-desktop-surface">
               <MiniTaskList
                 hasCollabNotes={hasCollabNotes}
                 sessionNotes={sessionNotes}
@@ -426,7 +426,7 @@ function MiniTaskList({
           <div
             key={item.id}
             data-testid="session-task-snapshot-item"
-            className="w-full flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#171a23] px-2.5 py-2"
+            className="flex w-full items-center gap-2 rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface px-2.5 py-2"
           >
             <span className={`mt-1 w-1.5 h-1.5 rounded-full shrink-0 ${STATUS_COLORS[item.status] ?? "bg-slate-300"}`} />
             <div className="min-w-0 flex-1">
@@ -559,7 +559,7 @@ export function LeftSidebar({
   return (
     <>
       <aside
-        className={`shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#13151d] flex flex-col relative transition-[width] duration-200
+        className={`relative flex shrink-0 flex-col border-r border-desktop-border bg-desktop-surface transition-[width] duration-200
           ${showMobileSidebar ? "fixed inset-y-13 left-0 z-40 shadow-2xl overflow-hidden rounded-r-2xl" : "hidden md:flex overflow-hidden"}
         `}
         style={{ width: isDesktopCollapsed ? "44px" : showMobileSidebar ? "min(360px, calc(100vw - 16px))" : `${width}px` }}

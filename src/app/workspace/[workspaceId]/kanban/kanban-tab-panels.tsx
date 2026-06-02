@@ -289,11 +289,11 @@ function KanbanDropColumn({
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-full min-h-26.25 shrink-0 flex-col border bg-white p-3 transition dark:bg-[#12141c] ${widthClass} ${isOver
-        ? "border-amber-300 ring-2 ring-amber-300/50 dark:border-amber-700 dark:ring-amber-700/40"
+      className={`flex h-full min-h-26.25 shrink-0 flex-col rounded-[var(--dt-radius-lg)] border bg-desktop-surface p-3 shadow-[var(--dt-shadow-sm)] transition ${widthClass} ${isOver
+        ? "border-desktop-accent ring-2 ring-[var(--dt-focus-ring)]/35"
         : hasActiveDrag
-          ? "border-slate-300/80 dark:border-[#2a2f43]"
-          : "border-slate-200/70 dark:border-[#1c1f2e]"
+          ? "border-desktop-border-light"
+          : "border-desktop-border"
         }`}
       data-testid="kanban-column"
     >
@@ -465,13 +465,13 @@ export function KanbanBoardSurface({
   return (
     <>
       {moveError && (
-        <div className="shrink-0 border border-rose-200/80 bg-rose-50/70 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/40 dark:bg-rose-900/10 dark:text-rose-300">
+        <div className="shrink-0 border border-desktop-danger-border bg-desktop-danger-subtle px-4 py-3 text-sm text-desktop-danger-text">
           <div className="flex items-start justify-between gap-3">
             <div className="leading-6">{moveError}</div>
             <button
               type="button"
               onClick={onDismissMoveError}
-              className="shrink-0 rounded-lg border border-rose-200 px-2 py-1 text-xs font-medium text-rose-700 transition hover:bg-rose-100 dark:border-rose-900/50 dark:text-rose-300 dark:hover:bg-rose-900/20"
+              className="shrink-0 rounded-lg border border-desktop-danger-border px-2 py-1 text-xs font-medium text-desktop-danger-text transition hover:bg-desktop-danger-subtle focus:outline-none focus:ring-2 focus:ring-[var(--danger-ring)]"
             >
               {t.common.dismiss}
             </button>
@@ -489,7 +489,7 @@ export function KanbanBoardSurface({
             onRefresh={onRefresh}
           />
           {gitLogOpenValue && (
-            <div className="absolute bottom-0 left-0 right-0 z-10 border-t border-slate-200 dark:border-[#1c1f2e] shadow-xl" style={{ height: "340px" }}>
+            <div className="absolute bottom-0 left-0 right-0 z-10 border-t border-desktop-border bg-desktop-surface shadow-[var(--dt-shadow-md)]" style={{ height: "340px" }}>
               <GitLogPanel
                 adapter={gitAdapter}
                 repoPath={activeGitLogRepoPath ?? "/mock/repo"}
@@ -499,7 +499,7 @@ export function KanbanBoardSurface({
               />
             </div>
           )}
-          <div className="flex-1 min-h-0 overflow-auto pb-2" data-testid="kanban-board-content">
+          <div className="flex-1 min-h-0 overflow-auto pb-2 desktop-scrollbar-thin" data-testid="kanban-board-content">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCorners}
@@ -528,13 +528,13 @@ export function KanbanBoardSurface({
                       >
                         <div className="mb-3 space-y-1.5">
                           <div className="flex items-baseline justify-between gap-3">
-                            <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">{column.name}</div>
-                            <div className="shrink-0 text-[10px] text-slate-400 dark:text-slate-500">
+                            <div className="text-sm font-semibold text-desktop-text-primary">{column.name}</div>
+                            <div className="shrink-0 rounded-full border border-desktop-border bg-desktop-surface-muted px-2 py-0.5 text-[10px] text-desktop-text-secondary">
                               {columnTasks.length} {t.kanbanBoard.cards}
                             </div>
                           </div>
                           <div
-                            className="truncate text-[10px] leading-4 text-slate-500 dark:text-slate-400"
+                            className="truncate text-[10px] leading-4 text-desktop-text-secondary"
                             data-testid={`kanban-column-automation-${column.id}`}
                             title={laneAutomation?.enabled ? formatLaneAutomationSummary(laneAutomation, providers, specialists, {
                               autoProviderId: boardAutoProviderId,
@@ -552,7 +552,7 @@ export function KanbanBoardSurface({
                           </div>
                         </div>
 
-                        <div className="flex-1 min-h-0 space-y-2 overflow-y-auto pr-1">
+                        <div className="flex-1 min-h-0 space-y-2 overflow-y-auto pr-1 desktop-scrollbar-thin">
                           {columnTasks.map((task) => (
                             <KanbanCard
                               key={task.id}
@@ -612,14 +612,14 @@ export function KanbanBoardSurface({
 
         {agentPanelOpen && agentSessionId && acp && (
           <aside
-            className="flex h-full w-lg min-w-md flex-col overflow-hidden border border-slate-200/70 bg-white dark:border-[#1c1f2e] dark:bg-[#12141c]"
+            className="flex h-full w-lg min-w-md flex-col overflow-hidden rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-surface shadow-[var(--dt-shadow-md)]"
             data-testid="kanban-agent-panel"
           >
-            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-[#191c28]">
+            <div className="flex items-center justify-between border-b border-desktop-border px-4 py-3">
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{kanbanTaskAgentCopy.panelTitle}</div>
+                <div className="text-sm font-semibold text-desktop-text-primary">{kanbanTaskAgentCopy.panelTitle}</div>
                 <div
-                  className="overflow-x-auto whitespace-nowrap text-[11px] text-slate-400 dark:text-slate-500"
+                  className="overflow-x-auto whitespace-nowrap text-[11px] text-desktop-text-tertiary desktop-scrollbar-thin"
                   title={agentSessionId}
                 >
                   {agentSession?.provider ?? boardAutoProviderId ?? acp.selectedProvider} · {agentSessionId}
@@ -630,13 +630,13 @@ export function KanbanBoardSurface({
                   href={`/workspace/${workspaceId}/sessions/${agentSessionId}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-[#191c28]"
+                  className="rounded-md border border-desktop-border px-2 py-1 text-xs text-desktop-text-secondary transition hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
                 >
                   {kanbanTaskAgentCopy.open}
                 </a>
                 <button
                   onClick={onCloseAgentPanel}
-                  className="rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-[#191c28]"
+                  className="rounded-md border border-desktop-border px-2 py-1 text-xs text-desktop-text-secondary transition hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
                 >
                   {kanbanTaskAgentCopy.close}
                 </button>
@@ -733,7 +733,7 @@ function A2ASessionPane({
 
   return (
     <div className="flex h-full min-w-0 flex-1 flex-col overflow-hidden">
-      <div className="shrink-0 border-b border-slate-200/80 bg-slate-50/80 p-2 dark:border-[#202433] dark:bg-[#10131a]">
+      <div className="shrink-0 border-b border-desktop-border bg-desktop-surface-muted p-2">
         <KanbanCardActivityBar
           task={task}
           sessions={sessions}
@@ -743,26 +743,26 @@ function A2ASessionPane({
           onCloseSession={onCloseSession}
         />
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto bg-gradient-to-br from-white via-sky-50/40 to-amber-50/30 p-5 dark:from-[#12141c] dark:via-[#101824] dark:to-[#17131c]">
+      <div className="min-h-0 flex-1 overflow-y-auto bg-desktop-bg-primary p-5 desktop-scrollbar-thin">
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]">
-      <section className="border border-slate-200/80 p-5 dark:border-[#232736]">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-600 dark:text-sky-300">A2A Run</div>
-            <div className="mt-2 text-xl font-semibold text-slate-950 dark:text-slate-50">
+      <section className="rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-surface p-5 shadow-[var(--dt-shadow-sm)]">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--dt-status-info)]">A2A Run</div>
+            <div className="mt-2 text-xl font-semibold text-desktop-text-primary">
               {laneSession?.externalTaskId ?? laneSession?.contextId ?? currentSessionId ?? "A2A task"}
             </div>
-            <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
+            <p className="mt-3 text-sm leading-6 text-desktop-text-secondary">
               This lane run completed through A2A transport. ACP chat and trace are not available for synthetic A2A sessions, so this pane shows the recorded task metadata instead.
             </p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {metadata.map((entry) => (
                 <div
                   key={entry.label}
-                  className="border-b border-slate-200 px-3 py-2.5 dark:border-slate-700"
+                  className="border-b border-desktop-border px-3 py-2.5"
                 >
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-desktop-text-tertiary">
                     {entry.label}
                   </div>
-                  <div className="mt-1 text-sm font-medium text-slate-800 dark:text-slate-100">
+                  <div className="mt-1 text-sm font-medium text-desktop-text-primary">
                     {entry.value}
                   </div>
                 </div>
@@ -931,12 +931,12 @@ export function KanbanTaskDetailOverlay({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex bg-black/50 animate-in fade-in duration-150 ${
+      className={`fixed inset-0 z-50 flex bg-desktop-bg-primary/70 backdrop-blur-[2px] animate-in fade-in duration-150 ${
         isTaskDetailFullscreen ? "items-stretch justify-stretch px-0 py-0" : "items-center justify-center px-4 py-6"
       }`}
     >
       <div
-        className={`relative w-full overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-[#1c1f2e] dark:bg-[#12141c] animate-in zoom-in-95 duration-150 ${
+        className={`relative w-full overflow-hidden border border-desktop-border bg-desktop-surface shadow-[var(--dt-shadow-md)] animate-in zoom-in-95 duration-150 ${
           isTaskDetailFullscreen ? "h-screen max-w-none border-0" : "h-[88vh] max-w-7xl"
         }`}
       >
@@ -947,7 +947,7 @@ export function KanbanTaskDetailOverlay({
             const sessionInfo = activeSessionId ? sessionMap.get(activeSessionId) ?? null : null;
             return (
               <div
-                className={`${hasSessionPane ? "shrink-0" : "flex-1"} h-full min-w-0 border-r border-slate-200/80 dark:border-[#202433]`}
+                className={`${hasSessionPane ? "shrink-0" : "flex-1"} h-full min-w-0 border-r border-desktop-border`}
                 style={hasSessionPane ? { width: `${detailSplitRatio * 100}%` } : undefined}
               >
                 <KanbanCardDetail
@@ -1043,11 +1043,11 @@ export function KanbanTaskDetailOverlay({
           })()}
           {activeTaskId && hasSessionPane && (
             <div
-              className="hidden h-full w-3 shrink-0 cursor-col-resize items-center justify-center bg-transparent hover:bg-amber-50/80 dark:hover:bg-amber-900/10 md:flex"
+              className="hidden h-full w-3 shrink-0 cursor-col-resize items-center justify-center bg-transparent hover:bg-desktop-surface-muted md:flex"
               onMouseDown={() => setIsDraggingDetailSplit(true)}
               data-testid="kanban-detail-split-handle"
             >
-              <div className="h-12 w-1 rounded-full bg-slate-300 transition-colors hover:bg-amber-400 dark:bg-slate-700 dark:hover:bg-amber-500" />
+              <div className="h-12 w-1 rounded-full bg-desktop-border transition-colors hover:bg-desktop-accent" />
             </div>
           )}
           {hasSessionPane ? (() => {
@@ -1099,7 +1099,7 @@ export function KanbanTaskDetailOverlay({
                 style={activeTaskId ? { width: `${(1 - detailSplitRatio) * 100}%` } : undefined}
               >
                 {activeTask && !isA2ASessionPane && (
-                  <div className="shrink-0 border-b border-slate-200/80 p-2 dark:border-[#202433]">
+                  <div className="shrink-0 border-b border-desktop-border p-2">
                     <KanbanCardActivityBar
                       task={activeTask}
                       sessions={combinedSessions}

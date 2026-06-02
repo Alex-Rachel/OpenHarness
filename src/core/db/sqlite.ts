@@ -46,6 +46,18 @@ function applyWorktreesTableDdl(execute: (statement: string) => void): void {
   }
 }
 
+/**
+ * Add missing columns to existing tables.
+ * Uses try/catch so it is safe to call on every DB access:
+ * SQLite rejects duplicate column additions instantly, making this effectively free
+ * once columns already exist.
+ */
+function addMissingColumns(sqlite: BetterSqlite3.Database): void {
+  try { sqlite.exec("ALTER TABLE codebases ADD COLUMN source_type TEXT"); } catch { /* exists */ }
+  try { sqlite.exec("ALTER TABLE codebases ADD COLUMN source_url TEXT"); } catch { /* exists */ }
+  try { sqlite.exec("ALTER TABLE codebases ADD COLUMN vcs_type TEXT DEFAULT 'git'"); } catch { /* exists */ }
+}
+
 function hasSqliteTable(sqlite: BetterSqlite3.Database, tableName: string): boolean {
   return Boolean(
     sqlite.prepare(
@@ -102,6 +114,11 @@ export function getSqliteDatabase(dbPath?: string): SqliteDatabase {
     g[GLOBAL_KEY] = db;
     g[GLOBAL_RAW_KEY] = sqlite;
   }
+
+  // Run on every call — adds any columns that were missing from an older DB.
+  // ALTER TABLE fails instantly when the column already exists, so this is cheap.
+  addMissingColumns(g[GLOBAL_RAW_KEY] as BetterSqlite3.Database);
+
   return g[GLOBAL_KEY] as SqliteDatabase;
 }
 

@@ -285,6 +285,12 @@ function HomePageContent() {
   // Individual step completion (provider, codebase, mode) is rendered
   // inside OnboardingCard — no need to auto-hide based on step status.
   const needsInlineOnboarding = hasWorkspace && !onboardingCompleted;
+  const consoleCardClass =
+    "flex h-full flex-col rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-surface p-5 text-left shadow-[var(--dt-shadow-sm)] transition-colors hover:bg-desktop-surface-muted";
+  const consolePanelClass =
+    "rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-surface px-5 py-4 shadow-[var(--dt-shadow-sm)]";
+  const consoleMetaClass =
+    "text-[11px] font-medium uppercase tracking-[0.18em] text-desktop-text-tertiary";
 
   useEffect(() => {
     if (!activeWorkspaceId || !requestedSurfaceId) return;
@@ -323,7 +329,7 @@ function HomePageContent() {
         />
       )}
     >
-        <div className="flex h-full min-h-0 bg-[#f6f4ef] dark:bg-[#0c1118]">
+        <div className="flex h-full min-h-0 bg-desktop-bg-primary">
           <main className="flex min-w-0 flex-1 flex-col">
             {!hasWorkspace ? (
               <div className="flex min-h-0 flex-1 items-center justify-center p-6">
@@ -344,20 +350,20 @@ function HomePageContent() {
               <div className="min-h-0 flex-1 overflow-y-auto">
                 <div className="mx-auto flex h-full w-full max-w-6xl flex-col px-6 py-8 lg:px-10 lg:py-10">
                   {workspacesHook.loading ? (
-                    <div className="flex flex-1 items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+                    <div className="flex flex-1 items-center justify-center text-sm text-desktop-text-secondary">
                       {t.home.loadingWorkspaces}
                     </div>
                   ) : (
                     <section className="flex flex-1 flex-col justify-center gap-6">
                       {/* Hero */}
                       <div className="text-center">
-                        <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                        <div className="text-sm font-medium text-desktop-text-secondary">
                           {activeWorkspace?.title ?? t.common.workspace}
                         </div>
-                        <h1 className="mt-3 font-['Avenir_Next_Condensed','Avenir_Next','Segoe_UI','Helvetica_Neue',sans-serif] text-4xl font-semibold tracking-[-0.04em] text-slate-900 dark:text-slate-100 sm:text-5xl">
+                        <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-desktop-text-primary sm:text-5xl">
                           {t.home.whatToAdvance}
                         </h1>
-                        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-500 dark:text-slate-400">
+                        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-desktop-text-secondary">
                           {t.home.homePrimaryHint}
                         </p>
                       </div>
@@ -383,66 +389,66 @@ function HomePageContent() {
                         <div className="grid gap-4 sm:grid-cols-3">
                           <Link
                             href={`/workspace/${activeWorkspaceId}/sessions`}
-                            className="flex h-full flex-col rounded-3xl border border-black/6 bg-white/80 p-5 text-left transition-colors hover:bg-white dark:border-white/8 dark:bg-white/5 dark:hover:bg-white/10"
+                            className={consoleCardClass}
                           >
-                            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-500">
+                            <div className={consoleMetaClass}>
                               {t.home.surfaceLabel}
                             </div>
-                            <div className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                            <div className="mt-2 text-lg font-semibold text-desktop-text-primary">
                               {t.home.sessionsSurfaceTitle}
                             </div>
-                            <div className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                            <div className="mt-2 text-sm leading-6 text-desktop-text-secondary">
                               {t.home.modeSessionDescription}
                             </div>
-                            <div className="mt-4 border-t border-black/6 pt-3 dark:border-white/8">
-                              <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
+                            <div className="mt-4 border-t border-desktop-border pt-3">
+                              <div className="text-[10px] font-medium uppercase tracking-[0.16em] text-desktop-text-tertiary">
                                 {t.home.modeTechnicalLabel}
                               </div>
-                              <div className="mt-1 text-xs leading-5 text-slate-400 dark:text-slate-500">
+                              <div className="mt-1 text-xs leading-5 text-desktop-text-muted">
                                 {t.home.modeSessionTechnical}
                               </div>
                             </div>
                           </Link>
                           <Link
                             href={`/workspace/${activeWorkspaceId}/kanban`}
-                            className="flex h-full flex-col rounded-3xl border border-black/6 bg-white/80 p-5 text-left transition-colors hover:bg-white dark:border-white/8 dark:bg-white/5 dark:hover:bg-white/10"
+                            className={consoleCardClass}
                           >
-                            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-500">
+                            <div className={consoleMetaClass}>
                               {t.home.surfaceLabel}
                             </div>
-                            <div className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                            <div className="mt-2 text-lg font-semibold text-desktop-text-primary">
                               {t.home.kanbanSurfaceTitle}
                             </div>
-                            <div className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                            <div className="mt-2 text-sm leading-6 text-desktop-text-secondary">
                               {t.home.modeKanbanDescription}
                             </div>
-                            <div className="mt-4 border-t border-black/6 pt-3 dark:border-white/8">
-                              <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
+                            <div className="mt-4 border-t border-desktop-border pt-3">
+                              <div className="text-[10px] font-medium uppercase tracking-[0.16em] text-desktop-text-tertiary">
                                 {t.home.modeTechnicalLabel}
                               </div>
-                              <div className="mt-1 text-xs leading-5 text-slate-400 dark:text-slate-500">
+                              <div className="mt-1 text-xs leading-5 text-desktop-text-muted">
                                 {t.home.modeKanbanTechnical}
                               </div>
                             </div>
                           </Link>
                           <Link
                             href={`/workspace/${activeWorkspaceId}/team`}
-                            className="flex h-full flex-col rounded-3xl border border-black/6 bg-white/80 p-5 text-left transition-colors hover:bg-white dark:border-white/8 dark:bg-white/5 dark:hover:bg-white/10"
+                            className={consoleCardClass}
                           >
-                            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-500">
+                            <div className={consoleMetaClass}>
                               {t.home.surfaceLabel}
                             </div>
-                            <div className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                            <div className="mt-2 text-lg font-semibold text-desktop-text-primary">
                               {t.home.teamSurfaceTitle}
                             </div>
-                            <div className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                            <div className="mt-2 text-sm leading-6 text-desktop-text-secondary">
                               {t.home.modeTeamDescription}
                             </div>
-                            <div className="mt-4 border-t border-black/6 pt-3 dark:border-white/8">
-                              <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
+                            <div className="mt-4 border-t border-desktop-border pt-3">
+                              <div className="text-[10px] font-medium uppercase tracking-[0.16em] text-desktop-text-tertiary">
                                 {t.home.modeTechnicalLabel}
                               </div>
-                              <div className="mt-1 text-xs leading-5 text-slate-400 dark:text-slate-500">
+                              <div className="mt-1 text-xs leading-5 text-desktop-text-muted">
                                 {t.home.modeTeamTechnical}
                               </div>
                             </div>
@@ -451,8 +457,8 @@ function HomePageContent() {
                       ) : null}
 
                       {/* Readiness checklist */}
-                      <div className="rounded-[20px] border border-black/6 bg-white/80 px-5 py-4 dark:border-white/8 dark:bg-white/5">
-                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-500">
+                      <div className={consolePanelClass}>
+                        <div className={consoleMetaClass}>
                           {t.home.readinessTitle}
                         </div>
                         <div className="mt-3 flex flex-wrap gap-2">
@@ -461,11 +467,11 @@ function HomePageContent() {
                             onClick={handleOpenProviders}
                             className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
                               hasProviderConfig
-                                ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800/40 dark:bg-emerald-950/20 dark:text-emerald-400"
-                                : "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-800/40 dark:bg-amber-950/20 dark:text-amber-400"
+                                ? "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
+                                : "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)] hover:bg-desktop-bg-active"
                             }`}
                           >
-                            <span className={`h-1.5 w-1.5 rounded-full ${hasProviderConfig ? "bg-emerald-500" : "bg-amber-400"}`} />
+                            <span className={`h-1.5 w-1.5 rounded-full ${hasProviderConfig ? "bg-[var(--dt-status-success)]" : "bg-[var(--dt-status-warning)]"}`} />
                             {t.home.readinessModel}
                           </button>
                           <button
@@ -473,30 +479,30 @@ function HomePageContent() {
                             onClick={() => setShowRepoPickerForHome(true)}
                             className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
                               hasCodebase
-                                ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800/40 dark:bg-emerald-950/20 dark:text-emerald-400"
-                                : "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-800/40 dark:bg-amber-950/20 dark:text-amber-400"
+                                ? "border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] text-[var(--dt-status-success)]"
+                                : "border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] text-[var(--dt-status-warning)] hover:bg-desktop-bg-active"
                             }`}
                           >
-                            <span className={`h-1.5 w-1.5 rounded-full ${hasCodebase ? "bg-emerald-500" : "bg-amber-400"}`} />
+                            <span className={`h-1.5 w-1.5 rounded-full ${hasCodebase ? "bg-[var(--dt-status-success)]" : "bg-[var(--dt-status-warning)]"}`} />
                             {t.home.readinessCodebase}
                           </button>
                           <span
-                            className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11px] font-medium text-emerald-700 dark:border-emerald-800/40 dark:bg-emerald-950/20 dark:text-emerald-400"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-[var(--dt-status-success)]/25 bg-[var(--dt-status-success-subtle)] px-3 py-1.5 text-[11px] font-medium text-[var(--dt-status-success)]"
                           >
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                            <span className="h-1.5 w-1.5 rounded-full bg-[var(--dt-status-success)]" />
                             {t.home.readinessWorkspace}
                           </span>
                         </div>
                         {showRepoPickerForHome && (
-                          <div className="mt-4 border-t border-black/6 pt-4 dark:border-white/8">
+                          <div className="mt-4 border-t border-desktop-border pt-4">
                             <div className="mb-2 flex items-center justify-between">
-                              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                              <span className="text-[11px] font-medium text-desktop-text-secondary">
                                 {t.home.readinessCodebase}
                               </span>
                               <button
                                 type="button"
                                 onClick={() => setShowRepoPickerForHome(false)}
-                                className="text-[11px] text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+                                className="text-[11px] text-desktop-text-tertiary hover:text-desktop-text-primary"
                               >
                                 {t.common.cancel}
                               </button>
@@ -516,20 +522,20 @@ function HomePageContent() {
 
                       {/* Continue recent work */}
                       {(recentSessions.length > 0 || activeWorkspaceId) && (
-                        <div className="rounded-[20px] border border-black/6 bg-white/80 px-5 py-4 dark:border-white/8 dark:bg-white/5">
-                          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-500">
+                        <div className={consolePanelClass}>
+                          <div className={consoleMetaClass}>
                             {t.home.continueWork}
                           </div>
                           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                             {activeWorkspaceId && (
                               <Link
                                 href={`/workspace/${activeWorkspaceId}/sessions`}
-                                className="flex flex-col rounded-2xl border border-black/6 bg-[#faf9f4] p-4 transition-colors hover:bg-white dark:border-white/8 dark:bg-white/4 dark:hover:bg-white/8"
+                                className="flex flex-col rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface-muted p-4 transition-colors hover:bg-desktop-bg-active"
                               >
-                                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                <div className="text-sm font-semibold text-desktop-text-primary">
                                   {t.nav.sessions}
                                 </div>
-                                <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                                <div className="mt-1 text-[11px] text-desktop-text-secondary">
                                   {t.workspace.recoverSession}
                                 </div>
                               </Link>
@@ -537,12 +543,12 @@ function HomePageContent() {
                             {activeWorkspaceId && (
                               <Link
                                 href={`/workspace/${activeWorkspaceId}/kanban`}
-                                className="flex flex-col rounded-2xl border border-black/6 bg-[#faf9f4] p-4 transition-colors hover:bg-white dark:border-white/8 dark:bg-white/4 dark:hover:bg-white/8"
+                                className="flex flex-col rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface-muted p-4 transition-colors hover:bg-desktop-bg-active"
                               >
-                                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                <div className="text-sm font-semibold text-desktop-text-primary">
                                   {t.home.continueBoard}
                                 </div>
-                                <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                                <div className="mt-1 text-[11px] text-desktop-text-secondary">
                                   {activeWorkspace?.title ?? t.common.workspace}
                                 </div>
                               </Link>
@@ -550,12 +556,12 @@ function HomePageContent() {
                             {latestSession && (
                               <Link
                                 href={`/workspace/${latestSession.workspaceId}/sessions/${latestSession.sessionId}`}
-                                className="flex flex-col rounded-2xl border border-black/6 bg-[#faf9f4] p-4 transition-colors hover:bg-white dark:border-white/8 dark:bg-white/4 dark:hover:bg-white/8"
+                                className="flex flex-col rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface-muted p-4 transition-colors hover:bg-desktop-bg-active"
                               >
-                                <div className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                <div className="truncate text-sm font-semibold text-desktop-text-primary">
                                   {getSessionLabel(latestSession)}
                                 </div>
-                                <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                                <div className="mt-1 text-[11px] text-desktop-text-secondary">
                                   {formatRelativeTime(latestSession.createdAt, hydrated)}
                                 </div>
                               </Link>

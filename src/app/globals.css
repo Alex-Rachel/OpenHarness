@@ -8,12 +8,34 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #fafafa;
-  --foreground: #171717;
+  --background: #f7f7f2;
+  --foreground: #11110f;
   --sidebar-width: 300px;
   --topbar-height: 44px;
+  --font-sans: var(--font-routa-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: var(--font-routa-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --surface: #ffffff;
-  --border: #e5e7eb;
+  --surface-muted: #f1f1ec;
+  --surface-elevated: #ffffff;
+  --border: #ddddd6;
+  --border-strong: #c7c7bd;
+  --muted: #edede7;
+  --muted-foreground: #6f6f67;
+  --primary: #11110f;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f1ec;
+  --secondary-foreground: #22221f;
+  --accent-foreground: #ffffff;
+  --input: #ffffff;
+  --ring: #11110f;
+  --card: #ffffff;
+  --card-foreground: #11110f;
+  --popover: #ffffff;
+  --popover-foreground: #11110f;
+  --console-shadow-sm: 0 1px 2px rgb(17 17 15 / 6%);
+  --console-shadow-md: 0 18px 45px -34px rgb(17 17 15 / 36%);
+  --console-motion-fast: 140ms;
+  --console-motion: 220ms;
   --brand-blue-50: #eff6ff;
   --brand-blue-100: #dbeafe;
   --brand-blue-200: #bfdbfe;
@@ -98,8 +120,8 @@
   --danger-solid-hover: var(--brand-red-700);
   --danger-on-solid: #ffffff;
   --danger-ring: var(--brand-red-500);
-  --accent: var(--brand-amber-500);
-  --accent-hover: var(--brand-amber-600);
+  --accent: var(--primary);
+  --accent-hover: #2b2b27;
 }
 
 .harness-instructions-tree {
@@ -115,10 +137,28 @@
 }
 
 html.dark {
-  --background: #0a0c12;
-  --foreground: #ededed;
-  --surface: #12141c;
-  --border: #1c1f2e;
+  --background: #10100e;
+  --foreground: #f5f5ef;
+  --surface: #171714;
+  --surface-muted: #1f1f1b;
+  --surface-elevated: #20201c;
+  --border: #303028;
+  --border-strong: #48483d;
+  --muted: #24241f;
+  --muted-foreground: #a3a39a;
+  --primary: #f5f5ef;
+  --primary-foreground: #11110f;
+  --secondary: #24241f;
+  --secondary-foreground: #f5f5ef;
+  --accent-foreground: #11110f;
+  --input: #171714;
+  --ring: #e8e8dd;
+  --card: #171714;
+  --card-foreground: #f5f5ef;
+  --popover: #20201c;
+  --popover-foreground: #f5f5ef;
+  --console-shadow-sm: 0 1px 2px rgb(0 0 0 / 24%);
+  --console-shadow-md: 0 18px 45px -34px rgb(0 0 0 / 80%);
   --brand-route-soft: var(--brand-slate-600);
   --brand-gray-soft: var(--brand-slate-700);
   --danger-subtle: color-mix(in srgb, var(--brand-red-500) 16%, transparent);
@@ -130,8 +170,8 @@ html.dark {
   --danger-solid: var(--brand-red-500);
   --danger-solid-hover: var(--brand-red-600);
   --danger-ring: var(--brand-red-400);
-  --accent: var(--brand-amber-500);
-  --accent-hover: var(--brand-amber-400);
+  --accent: var(--primary);
+  --accent-hover: #d8d8ce;
 }
 
 html,
@@ -141,7 +181,27 @@ body {
   overflow: hidden;
   color: var(--foreground);
   background: var(--background);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  text-rendering: optimizeLegibility;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 .role-chip-routa {

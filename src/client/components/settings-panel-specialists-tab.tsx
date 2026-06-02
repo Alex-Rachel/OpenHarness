@@ -15,6 +15,7 @@ import {
   type ModelDefinition,
   type SpecialistForm,
 } from "./settings-panel-shared";
+import { dangerSurfaceClassName } from "./color-system";
 import { desktopAwareFetch } from "../utils/diagnostics";
 import {
   SPECIALIST_CATEGORY_OPTIONS,
@@ -34,7 +35,7 @@ const sectionTitleCls = "text-[10px] font-semibold uppercase tracking-[0.16em] t
 const secondaryButtonCls =
   "inline-flex items-center justify-center gap-1.5 rounded-sm border border-desktop-border bg-desktop-bg-secondary px-2.5 py-1.5 text-[11px] font-medium text-desktop-text-secondary transition hover:bg-desktop-bg-active hover:text-desktop-text-primary disabled:opacity-40";
 const primaryButtonCls =
-  "inline-flex items-center justify-center gap-1.5 rounded-sm bg-desktop-accent px-2.5 py-1.5 text-[11px] font-semibold text-white transition hover:brightness-110 disabled:opacity-40";
+  "inline-flex items-center justify-center gap-1.5 rounded-sm bg-desktop-accent px-2.5 py-1.5 text-[11px] font-semibold text-desktop-accent-text transition hover:bg-desktop-accent-strong disabled:opacity-40";
 const metaChipCls =
   "inline-flex items-center gap-1 rounded-full border border-desktop-border bg-desktop-bg-primary/50 px-2 py-0.5 text-[10px] font-medium text-desktop-text-secondary";
 const workbenchRowCls = "border-b border-desktop-border/70 px-4 py-4";
@@ -248,7 +249,7 @@ export function SpecialistsTab({ modelDefs }: SpecialistsTabProps) {
 
       {error ? (
         <div className="shrink-0 border-b border-desktop-border px-4 py-2.5">
-          <div className="rounded-sm border border-red-500/30 bg-red-500/10 px-3 py-2 text-[11px] text-red-300">
+          <div className={`rounded-sm px-3 py-2 text-[11px] ${dangerSurfaceClassName}`}>
             {error}
           </div>
         </div>
@@ -538,7 +539,7 @@ export function SpecialistsTab({ modelDefs }: SpecialistsTabProps) {
         </section>
       </div>
 
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-desktop-accent/30 bg-desktop-accent px-3 py-1.5 text-[10px] font-medium text-white">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-desktop-accent/30 bg-desktop-accent px-3 py-1.5 text-[10px] font-medium text-desktop-accent-text">
         <div className="flex min-w-0 flex-wrap items-center gap-3">
           <span>{selectedSpecialist ? sourceLabels[selectedSpecialist.source] : t.settings.specialistsTab.newProfile}</span>
           <span>{roleLabels[form.role]}</span>

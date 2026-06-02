@@ -327,7 +327,7 @@ function ProviderField({
         showStatusDot={false}
         ariaLabel={ariaLabel}
         dataTestId={dataTestId}
-        buttonClassName="flex w-full items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-200 dark:hover:bg-[#111722]"
+        buttonClassName="flex w-full items-center justify-between gap-2 rounded-xl border border-desktop-border bg-desktop-surface px-3 py-2 text-sm text-desktop-text-secondary transition hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
         labelClassName="truncate text-left"
       />
       <p className="text-[11px] text-slate-500 dark:text-slate-400">
@@ -372,7 +372,7 @@ function SpecialistCategoryTabs({
           className={`shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
             category === option.id
               ? "border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
-              : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200"
+              : "border-desktop-border bg-desktop-surface text-desktop-text-secondary hover:border-desktop-border-light hover:text-desktop-text-primary"
           }`}
         >
           {option.label}
@@ -663,7 +663,7 @@ export function ColumnAutomationWorkspace({
 
   if (manualOnly) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-[linear-gradient(135deg,_rgba(148,163,184,0.08),_rgba(255,255,255,0.98)_38%,_rgba(255,255,255,1)_100%)] p-3 dark:border-slate-800 dark:bg-[linear-gradient(135deg,_rgba(148,163,184,0.08),_rgba(15,23,42,0.92)_38%,_rgba(13,17,24,0.98)_100%)]">
+      <div className="rounded-lg border border-desktop-border bg-desktop-surface-muted p-3">
         <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
           {t.kanban.blockedManualOnly}
         </p>
@@ -686,7 +686,7 @@ export function ColumnAutomationWorkspace({
               <button
                 type="button"
                 onClick={applyDefaultAutomation}
-                className="rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 transition hover:bg-white dark:border-slate-700 dark:text-slate-200 dark:hover:bg-[#111722]"
+                className="rounded-md border border-desktop-border px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-desktop-text-secondary transition hover:bg-desktop-surface-elevated hover:text-desktop-text-primary"
               >
                 {t.kanban.defaults}
               </button>
@@ -781,11 +781,11 @@ export function ColumnAutomationWorkspace({
               </ConfigField>
             </div>
           </div>
-          <section className="mt-4 rounded-2xl border border-amber-200/90 bg-gradient-to-br from-amber-50/90 via-white to-slate-50/80 p-1 shadow-[0_1px_0_rgba(15,23,42,0.06)] dark:border-amber-500/25 dark:from-amber-950/35 dark:via-[#0d1118] dark:to-[#0a0f16] dark:shadow-[0_1px_0_rgba(0,0,0,0.35)]">
+          <section className="mt-4 rounded-2xl border border-[var(--dt-status-warning)]/25 bg-[var(--dt-status-warning-subtle)] p-1 shadow-[var(--dt-shadow-sm)]">
             <button
               type="button"
               onClick={() => setAdvancedExpanded((open) => !open)}
-              className="flex w-full items-center justify-between gap-3 rounded-xl border border-amber-300/50 bg-white/90 px-3 py-3 text-left shadow-sm ring-1 ring-amber-400/10 transition hover:border-amber-400/70 hover:bg-amber-50/80 dark:border-amber-500/30 dark:bg-[#111722]/95 dark:ring-amber-400/15 dark:hover:border-amber-400/45 dark:hover:bg-amber-500/[0.08]"
+              className="flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--dt-status-warning)]/25 bg-desktop-surface-elevated px-3 py-3 text-left shadow-[var(--dt-shadow-sm)] transition hover:bg-desktop-surface-muted"
               aria-expanded={advancedExpanded}
             >
               <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-amber-900/90 dark:text-amber-200/95">
@@ -796,7 +796,7 @@ export function ColumnAutomationWorkspace({
             {advancedExpanded ? (
             <div className="mt-2 space-y-2">
               {column.stage === "done" ? (
-                <label className="flex items-start gap-3 rounded-md border border-slate-200 bg-white/85 px-3 py-2 text-sm text-slate-700 dark:border-slate-800 dark:bg-[#111722] dark:text-slate-200">
+                <label className="flex items-start gap-3 rounded-md border border-desktop-border bg-desktop-surface-elevated px-3 py-2 text-sm text-desktop-text-secondary">
                   <input
                     type="checkbox"
                     className="mt-1 h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400 dark:border-slate-600"
@@ -822,7 +822,7 @@ export function ColumnAutomationWorkspace({
                 const stepSpecialist = findSpecialistById(specialists, step.specialistId) ?? null;
                 const stepTransport = getStepTransport(step);
                 return (
-                  <div key={step.id} className="rounded-md border border-slate-200 bg-slate-50/60 px-2 py-2 dark:border-slate-800 dark:bg-[#111722]">
+                  <div key={step.id} className="rounded-md border border-desktop-border bg-desktop-surface-muted px-2 py-2">
                     <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,132px)_minmax(0,1fr)_auto] md:items-start">
                       <div className="min-w-0">
                         <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">
@@ -931,7 +931,7 @@ export function ColumnAutomationWorkspace({
                             [nextSteps[index - 1], nextSteps[index]] = [nextSteps[index], nextSteps[index - 1]];
                             return nextSteps;
                           }))}
-                          className="rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-[#0b1119]"
+                          className="rounded-md border border-desktop-border px-2 py-1 text-xs font-medium text-desktop-text-secondary transition hover:bg-desktop-surface-elevated hover:text-desktop-text-primary disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           {t.kanban.up}
                         </button>
@@ -944,7 +944,7 @@ export function ColumnAutomationWorkspace({
                             [nextSteps[index], nextSteps[index + 1]] = [nextSteps[index + 1], nextSteps[index]];
                             return nextSteps;
                           }))}
-                          className="rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-[#0b1119]"
+                          className="rounded-md border border-desktop-border px-2 py-1 text-xs font-medium text-desktop-text-secondary transition hover:bg-desktop-surface-elevated hover:text-desktop-text-primary disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           {t.kanban.down}
                         </button>
@@ -956,7 +956,7 @@ export function ColumnAutomationWorkspace({
                             const nextSteps = steps.filter((_, stepIndex) => stepIndex !== index);
                             return nextSteps.length > 0 ? nextSteps : [createEmptyAutomationStep(0)];
                           }))}
-                          className="rounded-md border border-rose-200 px-2 py-1 text-xs font-medium text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-rose-500/30 dark:text-rose-300 dark:hover:bg-rose-500/10"
+                          className="rounded-md border border-desktop-danger-border px-2 py-1 text-xs font-medium text-desktop-danger-text transition hover:bg-desktop-danger-subtle disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           {t.kanban.remove}
                         </button>
@@ -965,16 +965,16 @@ export function ColumnAutomationWorkspace({
                   </div>
                 );
               }) : (
-                <div className="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-xs leading-5 text-slate-500 dark:border-slate-700 dark:bg-[#111722] dark:text-slate-400">
+                <div className="rounded-md border border-dashed border-desktop-border bg-desktop-surface-muted px-3 py-3 text-xs leading-5 text-desktop-text-secondary">
                   {t.kanban.singleStepAdvancedHint}
                 </div>
               )}
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-2 dark:border-slate-800 dark:bg-[#111722]">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-desktop-border bg-desktop-surface-muted px-2.5 py-2">
                 <div className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">{t.kanban.automationSteps}</div>
                 <button
                   type="button"
                   onClick={() => onUpdate(updateAutomationSteps(automation, (steps) => [...steps, createEmptyAutomationStep(steps.length)]))}
-                  className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 transition hover:border-slate-400 hover:bg-white dark:border-slate-700 dark:text-slate-200 dark:hover:bg-[#0b1119]"
+                  className="rounded-md border border-desktop-border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-desktop-text-secondary transition hover:bg-desktop-surface-elevated hover:text-desktop-text-primary"
                 >
                   {t.kanban.addStep}
                 </button>
@@ -988,7 +988,7 @@ export function ColumnAutomationWorkspace({
                       className={`flex cursor-pointer flex-col gap-1.5 rounded-lg border px-3 py-2.5 transition ${
                         checked
                           ? "border-amber-300 bg-amber-50 dark:border-amber-500/30 dark:bg-amber-500/10"
-                          : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-[#111722] dark:hover:border-slate-700"
+                          : "border-desktop-border bg-desktop-surface hover:border-desktop-border-light hover:bg-desktop-surface-elevated"
                       }`}
                     >
                       <div className="flex items-center justify-between gap-3">
@@ -1016,7 +1016,7 @@ export function ColumnAutomationWorkspace({
                   );
                 })}
               </div>
-              <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 dark:border-slate-800 dark:bg-[#111722]">
+              <div className="rounded-lg border border-desktop-border bg-desktop-surface-muted px-3 py-3">
                 <div className="mb-2">
                   <div className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">{t.kanban.storyReadinessGate}</div>
                   <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
@@ -1031,8 +1031,8 @@ export function ColumnAutomationWorkspace({
                         key={field}
                         className={`flex cursor-pointer flex-col gap-1.5 rounded-lg border px-3 py-2.5 transition ${
                           checked
-                            ? "border-sky-300 bg-sky-50 dark:border-sky-500/30 dark:bg-sky-500/10"
-                            : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-[#0b1119] dark:hover:border-slate-700"
+                            ? "border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)]"
+                            : "border-desktop-border bg-desktop-surface hover:border-desktop-border-light hover:bg-desktop-surface-elevated"
                         }`}
                       >
                         <div className="flex items-center justify-between gap-3">
@@ -1052,7 +1052,7 @@ export function ColumnAutomationWorkspace({
                                 requiredTaskFields: current.size > 0 ? Array.from(current) : undefined,
                               });
                             }}
-                            className="h-4 w-4 rounded border-slate-300 text-sky-500 focus:ring-sky-500"
+                            className="h-4 w-4 rounded border-desktop-border text-desktop-accent focus:ring-[var(--dt-focus-ring)]"
                           />
                         </div>
                         <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">{getTaskFieldHint(field, t)}</p>
@@ -1061,7 +1061,7 @@ export function ColumnAutomationWorkspace({
                   })}
                 </div>
               </div>
-              <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 dark:border-slate-800 dark:bg-[#111722]">
+              <div className="rounded-lg border border-desktop-border bg-desktop-surface-muted px-3 py-3">
                 <div className="mb-2">
                   <div className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">{t.kanban.transitionGates}</div>
                   <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
@@ -1084,7 +1084,7 @@ export function ColumnAutomationWorkspace({
                           requiredChecklist: items.length > 0 ? items : undefined,
                         });
                       }}
-                      className="min-h-24 w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition hover:bg-slate-50 focus:border-amber-400 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-100 dark:hover:bg-[#111722]"
+                      className="min-h-24 w-full min-w-0 rounded-xl border border-desktop-border bg-desktop-surface px-3 py-2 text-sm text-desktop-text-primary outline-none transition hover:bg-desktop-surface-muted focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/25"
                     />
                   </ConfigField>
                   <div className="space-y-3">
@@ -1100,7 +1100,7 @@ export function ColumnAutomationWorkspace({
                         <option value="warning">{t.kanban.gateModeWarning}</option>
                       </SelectControl>
                     </ConfigField>
-                    <label className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white px-3 py-3 dark:border-slate-800 dark:bg-[#0b1119]">
+                    <label className="flex items-start gap-3 rounded-lg border border-desktop-border bg-desktop-surface px-3 py-3">
                       <input
                         type="checkbox"
                         checked={automation.requiredHumanApproval ?? false}
@@ -1133,7 +1133,7 @@ export function ColumnAutomationWorkspace({
                   </ConfigField>
                 </div>
               </div>
-              <label className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white px-3 py-3 dark:border-slate-800 dark:bg-[#111722]">
+              <label className="flex items-start gap-3 rounded-lg border border-desktop-border bg-desktop-surface px-3 py-3">
                 <input
                   type="checkbox"
                   checked={automation.autoAdvanceOnSuccess ?? false}
@@ -1157,12 +1157,12 @@ export function ColumnAutomationWorkspace({
             <button
               type="button"
               onClick={applyDefaultAutomation}
-              className="rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 transition hover:bg-white dark:border-slate-700 dark:text-slate-200 dark:hover:bg-[#111722]"
+              className="rounded-md border border-desktop-border px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-desktop-text-secondary transition hover:bg-desktop-surface-elevated hover:text-desktop-text-primary"
             >
               {t.kanban.defaults}
             </button>
           </div>
-          <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-xs leading-5 text-slate-500 dark:border-slate-700 dark:bg-[#111722] dark:text-slate-400">
+          <div className="rounded-lg border border-dashed border-desktop-border bg-desktop-surface-muted px-4 py-4 text-xs leading-5 text-desktop-text-secondary">
             {t.kanban.turnOnAutomationHint}
           </div>
         </div>
@@ -1171,5 +1171,5 @@ export function ColumnAutomationWorkspace({
   );
 }
 
-const SELECT_CLASS = "h-10 w-full min-w-0 appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-10 text-sm text-slate-900 outline-none transition hover:bg-slate-50 focus:border-amber-400 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-100 dark:hover:bg-[#111722]";
-const INPUT_CLASS = "h-10 w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition hover:bg-slate-50 focus:border-amber-400 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-100 dark:hover:bg-[#111722]";
+const SELECT_CLASS = "h-10 w-full min-w-0 appearance-none rounded-xl border border-desktop-border bg-desktop-surface px-3 pr-10 text-sm text-desktop-text-primary outline-none transition hover:bg-desktop-surface-muted focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/25";
+const INPUT_CLASS = "h-10 w-full min-w-0 rounded-xl border border-desktop-border bg-desktop-surface px-3 text-sm text-desktop-text-primary outline-none transition hover:bg-desktop-surface-muted focus:border-desktop-accent focus:ring-2 focus:ring-[var(--dt-focus-ring)]/25";

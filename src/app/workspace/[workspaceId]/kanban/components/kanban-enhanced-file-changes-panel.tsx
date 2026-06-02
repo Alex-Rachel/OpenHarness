@@ -5,7 +5,6 @@ import { useTranslation } from "@/i18n";
 import { FolderOpen } from "lucide-react";
 import type { KanbanRepoChanges, KanbanFileChangeItem, KanbanTaskChanges, KanbanCommitInfo } from "../kanban-file-changes-types";
 import type { CodebaseData } from "@/client/hooks/use-workspaces";
-import { useVcsCapabilities } from "@/client/hooks/use-vcs-capabilities";
 import { KanbanUnstagedSection } from "./kanban-unstaged-section";
 import { KanbanStagedSection } from "./kanban-staged-section";
 import { KanbanCommitsSection } from "./kanban-commits-section";
@@ -57,13 +56,10 @@ export function KanbanEnhancedFileChangesPanel({
   const [commitsLoaded, setCommitsLoaded] = useState(false);
   const [lastLoadedCommitsRefreshToken, setLastLoadedCommitsRefreshToken] = useState(0);
 
-  // VCS capability gating
-  const capabilities = useVcsCapabilities(codebase);
-  const isVcsProject = codebase?.vcsType !== "none" && codebase?.vcsType !== undefined;
-
   // Support both sidebar mode (repos) and embedded mode (changes)
   const activeRepo = repos && repos.length > 0 ? repos[0] : null;
   const codebaseId = changes?.codebaseId || activeRepo?.codebaseId || "";
+  const isVcsProject = codebase?.vcsType === "none" ? false : Boolean(codebase || activeRepo || changes);
 
   const handleGitSuccess = useCallback(() => {
     onRefresh?.();
@@ -472,11 +468,11 @@ export function KanbanEnhancedFileChangesPanel({
 
       {/* Panel */}
       <aside
-        className="absolute inset-y-0 right-0 z-30 flex h-full w-[22rem] flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-2xl dark:border-[#1c1f2e] dark:bg-[#12141c]"
+        className="absolute inset-y-0 right-0 z-30 flex h-full w-[22rem] flex-col overflow-hidden rounded-2xl border border-desktop-border bg-desktop-surface-elevated shadow-[var(--dt-shadow-lg)]"
         data-testid="kanban-file-changes-panel"
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 dark:border-[#191c28]">
+        <div className="flex items-center justify-between gap-3 border-b border-desktop-border px-4 py-3">
           <div className="min-w-0">
             <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
               {t.kanban.fileChanges}
@@ -494,7 +490,7 @@ export function KanbanEnhancedFileChangesPanel({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-[#191c28]"
+              className="rounded-md border border-desktop-border px-2 py-1 text-xs text-desktop-text-secondary transition hover:bg-desktop-surface-muted hover:text-desktop-text-primary"
             >
               {t.kanban.hide}
             </button>
@@ -508,7 +504,7 @@ export function KanbanEnhancedFileChangesPanel({
               Loading repository changes...
             </div>
           ) : !activeRepo ? (
-            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-400 dark:border-slate-700 dark:bg-[#0d1018] dark:text-slate-500">
+            <div className="rounded-2xl border border-dashed border-desktop-border bg-desktop-surface-muted px-4 py-8 text-center text-sm text-desktop-text-tertiary">
               No repositories linked to this workspace
             </div>
           ) : !isVcsProject ? (

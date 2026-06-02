@@ -101,17 +101,17 @@ function fitnessDotClass(
   runtimeFitnessLoading: boolean,
   runtimeFitnessError: string | null | undefined,
 ): string {
-  if (summary?.currentStatus === "running") return "animate-pulse bg-sky-500";
+  if (summary?.currentStatus === "running") return "animate-pulse bg-[var(--dt-status-info)]";
   if (summary?.currentStatus === "failed") {
-    if (summary.hardGateBlocked) return "bg-rose-500";
-    if (summary.scoreBlocked) return "bg-orange-500";
-    return "bg-rose-500";
+    if (summary.hardGateBlocked) return "bg-desktop-danger-solid";
+    if (summary.scoreBlocked) return "bg-[var(--dt-status-warning)]";
+    return "bg-desktop-danger-solid";
   }
-  if (summary?.currentStatus === "skipped") return "bg-amber-500";
-  if (summary?.currentStatus === "passed") return "bg-emerald-500";
-  if (runtimeFitnessLoading) return "animate-pulse bg-slate-400";
-  if (runtimeFitnessError) return "bg-rose-500";
-  return "bg-slate-400";
+  if (summary?.currentStatus === "skipped") return "bg-[var(--dt-status-warning)]";
+  if (summary?.currentStatus === "passed") return "bg-[var(--dt-status-success)]";
+  if (runtimeFitnessLoading) return "animate-pulse bg-desktop-text-tertiary";
+  if (runtimeFitnessError) return "bg-desktop-danger-solid";
+  return "bg-desktop-text-tertiary";
 }
 
 export function KanbanStatusBar({
@@ -239,8 +239,8 @@ export function KanbanStatusBar({
             <span>{fileChangesSummary.changedFiles > 0 ? fileChangesSummary.changedFiles : "0"}</span>
             {fileChangesSummary.changedFiles > 0 && (
               <>
-                <span className="text-emerald-500">+{fileChangesSummary.totalAdditions}</span>
-                <span className="text-rose-500">-{fileChangesSummary.totalDeletions}</span>
+                <span className="text-[var(--dt-status-success)]">+{fileChangesSummary.totalAdditions}</span>
+                <span className="text-desktop-danger-text">-{fileChangesSummary.totalDeletions}</span>
               </>
             )}
           </button>
@@ -267,7 +267,7 @@ export function KanbanStatusBar({
       <div className="flex items-center divide-x divide-desktop-border/50">
         {/* 看板健康 */}
         {repoHealth && (repoHealth.missingRepoTasks > 0 || repoHealth.cwdMismatchTasks > 0) && (
-          <div className="flex items-center gap-2 px-2.5 h-6 text-amber-600 dark:text-amber-300">
+          <div className="flex items-center gap-2 px-2.5 h-6 text-[var(--dt-status-warning)]">
             <span className="font-medium">{t.kanban.kanbanHealth}</span>
             {repoHealth.missingRepoTasks > 0 && (
               <span>{repoHealth.missingRepoTasks} {t.kanban.missing}</span>
@@ -287,10 +287,10 @@ export function KanbanStatusBar({
             <span
               className={`w-1.5 h-1.5 shrink-0 rounded-full ${
                 repoSync.status === "error"
-                  ? "bg-rose-500"
+                  ? "bg-desktop-danger-solid"
                   : repoSync.status === "done"
-                    ? "bg-emerald-500"
-                    : "animate-pulse bg-sky-500"
+                    ? "bg-[var(--dt-status-success)]"
+                    : "animate-pulse bg-[var(--dt-status-info)]"
               }`}
             />
             <span className="max-w-[150px] truncate">
@@ -344,11 +344,11 @@ export function KanbanStatusBar({
         {board && (
           <div className="flex items-center gap-2 px-2.5 h-6 text-desktop-text-secondary">
             <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--dt-status-success)]" />
               {t.kanban.runningLabel} {boardQueue?.runningCount ?? 0}
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--dt-status-warning)]" />
               {t.kanban.queuedLabel} {boardQueue?.queuedCount ?? 0}
             </span>
           </div>

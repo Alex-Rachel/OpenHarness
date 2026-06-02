@@ -13,6 +13,7 @@ import React from "react";
 import { DesktopSidebar } from "./desktop-sidebar";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 import { DesktopShellHeader } from "./desktop-shell-header";
+import { DesktopWindowTitlebar } from "./desktop-window-titlebar";
 import type { WorkspaceData } from "@/client/hooks/use-workspaces";
 
 interface DesktopLayoutProps {
@@ -42,6 +43,8 @@ export function DesktopLayout({
       className="desktop-theme h-screen flex flex-col overflow-hidden bg-desktop-bg-primary"
       data-testid="desktop-shell-root"
     >
+      <DesktopWindowTitlebar workspaceId={workspaceId} />
+
       <DesktopShellHeader
         workspaceId={workspaceId}
         titleBarRight={titleBarRight}

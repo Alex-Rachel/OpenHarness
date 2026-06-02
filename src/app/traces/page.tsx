@@ -438,7 +438,7 @@ function TracePageContent() {
           )}
 
           {/* Trace Panel */}
-          <section className="flex-1 min-w-0 bg-desktop-bg-primary" aria-label="Trace content">
+          <section className="min-w-0 flex-1 bg-desktop-bg-primary" aria-label={t.traces.traceContent}>
             {selectedSessionId ? (
               <>
                 {activeTab === "chat" && (
@@ -468,17 +468,23 @@ function TracePageContent() {
   );
 }
 
+function TracePageFallback() {
+  const { t } = useTranslation();
+
+  return (
+    <div className="desktop-theme flex h-screen items-center justify-center bg-desktop-bg-primary">
+      <div className="text-center">
+        <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-desktop-accent border-t-transparent" />
+        <p className="text-sm text-desktop-text-secondary">{t.common.loading}</p>
+      </div>
+    </div>
+  );
+}
+
 // Default export with Suspense boundary for useSearchParams()
 export default function TracePage() {
   return (
-    <Suspense fallback={
-      <div className="desktop-theme flex h-screen items-center justify-center bg-desktop-bg-primary">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-desktop-accent border-t-transparent" />
-          <p className="text-sm text-desktop-text-secondary">Loading...</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<TracePageFallback />}>
       <TracePageContent />
     </Suspense>
   );

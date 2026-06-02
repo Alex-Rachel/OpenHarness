@@ -121,6 +121,7 @@ impl Database {
                     is_default      INTEGER NOT NULL DEFAULT 0,
                     source_type     TEXT,
                     source_url      TEXT,
+                    vcs_type        TEXT DEFAULT 'git',
                     created_at      INTEGER NOT NULL,
                     updated_at      INTEGER NOT NULL
                 );
@@ -398,6 +399,7 @@ impl Database {
             Self::ignore_duplicate_column(conn.execute("ALTER TABLE acp_sessions ADD COLUMN custom_args TEXT NOT NULL DEFAULT '[]'", []))?;
             Self::ignore_duplicate_column(conn.execute("ALTER TABLE codebases ADD COLUMN source_type TEXT", []))?;
             Self::ignore_duplicate_column(conn.execute("ALTER TABLE codebases ADD COLUMN source_url TEXT", []))?;
+            Self::ignore_duplicate_column(conn.execute("ALTER TABLE codebases ADD COLUMN vcs_type TEXT DEFAULT 'git'", []))?;
             conn.execute_batch(
                 "CREATE TABLE IF NOT EXISTS kanban_boards (
                     id TEXT PRIMARY KEY,
