@@ -42,6 +42,15 @@ describe("detectVcsType", () => {
     expect(detectVcsType("/project")).toBe("svn");
   });
 
+  it("detects SVN subdirectory (SVN 1.7+: .svn only at ancestor)", () => {
+    // SVN root at /svnroot, subdirectory /svnroot/client/GameProject
+    mockedPaths.add("/svnroot/.svn");
+    mockedPaths.add("/svnroot");
+    mockedPaths.add("/svnroot/client");
+    mockedPaths.add("/svnroot/client/GameProject");
+    expect(detectVcsType("/svnroot/client/GameProject")).toBe("svn");
+  });
+
   it("detects plain directory (no VCS metadata)", () => {
     mockedPaths.add("/project");
     expect(detectVcsType("/project")).toBe("none");

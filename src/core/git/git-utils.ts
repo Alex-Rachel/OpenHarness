@@ -1198,13 +1198,23 @@ export function validateRepoInput(input: string): ValidationResult {
   const bridge = getServerBridge();
   if (bridge.fs.existsSync(normalizedPath)) {
     // Auto-detect VCS type from directory contents
-    const vcsPath = path.join(normalizedPath, ".git");
-    const svnPath = path.join(normalizedPath, ".svn");
     let vcsType: "git" | "svn" | "none" = "none";
-    if (bridge.fs.existsSync(vcsPath)) {
+    if (bridge.fs.existsSync(path.join(normalizedPath, ".git"))) {
       vcsType = "git";
-    } else if (bridge.fs.existsSync(svnPath)) {
+    } else if (bridge.fs.existsSync(path.join(normalizedPath, ".svn"))) {
       vcsType = "svn";
+    } else {
+      // SVN 1.7+: .svn only at working copy root — walk up to find it
+      let current = path.dirname(normalizedPath);
+      while (true) {
+        if (bridge.fs.existsSync(path.join(current, ".svn"))) {
+          vcsType = "svn";
+          break;
+        }
+        const parent = path.dirname(current);
+        if (parent === current) break; // reached filesystem root
+        current = parent;
+      }
     }
     return { valid: true, vcsType };
   }

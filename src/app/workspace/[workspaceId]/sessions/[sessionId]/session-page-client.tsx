@@ -21,9 +21,8 @@ import {CraftersView} from "@/client/components/task-panel";
 import {AgentInstallPanel} from "@/client/components/agent-install-panel";
 import {SessionCanvasPanel} from "@/client/components/session-canvas-panel";
 import {LeftSidebar} from "./left-sidebar";
-import {DesktopAppShell} from "@/client/components/desktop-app-shell";
-import {WorkspaceSwitcher} from "@/client/components/workspace-switcher";
-import {useWorkspaces, useCodebases} from "@/client/hooks/use-workspaces";
+import {useWorkspaceContext} from "../../workspace-context";
+import {useCodebases} from "@/client/hooks/use-workspaces";
 import {useAcp} from "@/client/hooks/use-acp";
 import {useNotes} from "@/client/hooks/use-notes";
 import type {RepoSelection} from "@/client/components/repo-picker";
@@ -173,7 +172,8 @@ export function SessionPageClient() {
   const [isResumingSession, setIsResumingSession] = useState(false);
 
   // ── Workspace state ───────────────────────────────────────────────────
-  const workspacesHook = useWorkspaces();
+  const workspacesHook = useWorkspaceContext();
+  const { setTitleBarRight, clearTitleBarRight } = workspacesHook;
   const { codebases } = useCodebases(workspaceId);
 
   // Auto-select default codebase as repo when workspace changes
@@ -186,11 +186,6 @@ export function SessionPageClient() {
   const handleWorkspaceSelect = useCallback((wsId: string) => {
     router.push(`/workspace/${wsId}/sessions`);
   }, [router]);
-
-  const handleWorkspaceCreate = useCallback(async (title: string) => {
-    const ws = await workspacesHook.createWorkspace(title);
-    if (ws) router.push(`/workspace/${ws.id}/sessions`);
-  }, [workspacesHook, router]);
 
   const acp = useAcp();
   const {
@@ -913,6 +908,13 @@ export function SessionPageClient() {
     </>
   );
 
+  useEffect(() => {
+    if (isEmbedMode) return;
+    setTitleBarRight(sessionTitleBarRight);
+    return () => clearTitleBarRight();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEmbedMode, activeSessionRecord?.resumeCapabilities?.supported, activeSessionRecord?.cwd, isResumingSession, acp.loading, setTitleBarRight, clearTitleBarRight]);
+
   const sessionPageContent = (
     <div className={`desktop-theme flex min-w-0 flex-col bg-[var(--dt-bg-primary)] ${isEmbedMode ? "h-screen embed-mode" : "h-full"}`}>
 
@@ -1185,22 +1187,5 @@ export function SessionPageClient() {
     return sessionPageContent;
   }
 
-  return (
-    <DesktopAppShell
-      workspaceId={workspaceId}
-      workspaceSwitcher={
-        <WorkspaceSwitcher
-          workspaces={workspacesHook.workspaces}
-          activeWorkspaceId={workspaceId}
-          onSelect={handleWorkspaceSelect}
-          onCreate={handleWorkspaceCreate}
-          loading={workspacesHook.loading}
-          compact
-        />
-      }
-      titleBarRight={sessionTitleBarRight}
-    >
-      {sessionPageContent}
-    </DesktopAppShell>
-  );
+  return sessionPageContent;
 }

@@ -249,7 +249,8 @@ function HomePageContent() {
       return true;
     }
 
-    return false;
+    const data = await response.json().catch(() => ({}));
+    return data?.error ?? false;
   }, [activeWorkspaceId, fetchCodebases, workspacesHook.workspaces]);
 
   const activeWorkspace = workspacesHook.workspaces.find((workspace) => workspace.id === activeWorkspaceId) ?? null;

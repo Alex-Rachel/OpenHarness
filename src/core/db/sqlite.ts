@@ -405,14 +405,16 @@ function initializeSqliteTables(db: SqliteDatabase): void {
       is_default INTEGER NOT NULL DEFAULT 0,
       source_type TEXT,
       source_url TEXT,
+      vcs_type TEXT DEFAULT 'git',
       created_at INTEGER NOT NULL DEFAULT (unixepoch('now') * 1000),
       updated_at INTEGER NOT NULL DEFAULT (unixepoch('now') * 1000)
     )
   `);
 
-  // Add source_type/source_url to existing codebases tables that predate this migration
-  try { db.run(sql`ALTER TABLE codebases ADD COLUMN source_type TEXT`); } catch { /* column already exists */ }
-  try { db.run(sql`ALTER TABLE codebases ADD COLUMN source_url TEXT`); } catch { /* column already exists */ }
+  // Add columns to existing codebases tables that predate these migrations
+  runAddColumn(sql`ALTER TABLE codebases ADD COLUMN source_type TEXT`);
+  runAddColumn(sql`ALTER TABLE codebases ADD COLUMN source_url TEXT`);
+  runAddColumn(sql`ALTER TABLE codebases ADD COLUMN vcs_type TEXT DEFAULT 'git'`);
 
   applyWorktreesTableDdl((statement) => {
     db.run(sql.raw(statement));

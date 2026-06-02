@@ -655,7 +655,7 @@ export function OnboardingCard({
   preferredMode: OnboardingMode | null;
   onCreateWorkspace: (title: string) => Promise<boolean>;
   onOpenProviders: () => void;
-  onAddCodebase: (selection: RepoSelection) => Promise<boolean>;
+  onAddCodebase: (selection: RepoSelection) => Promise<boolean | string>;
   onSelectMode: (mode: OnboardingMode) => void;
   onDismiss?: () => void;
 }) {
@@ -699,11 +699,11 @@ export function OnboardingCard({
 
     setCodebaseBusy(true);
     setCodebaseError(null);
-    const created = await onAddCodebase(repoSelection);
-    if (!created) {
-      setCodebaseError(t.errors.saveFailed);
-    } else {
+    const result = await onAddCodebase(repoSelection);
+    if (result === true) {
       setRepoSelection(null);
+    } else {
+      setCodebaseError(typeof result === "string" ? result : t.errors.saveFailed);
     }
     setCodebaseBusy(false);
   };

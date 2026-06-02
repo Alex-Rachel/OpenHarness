@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   ChevronDown,
   ChevronRight,
@@ -9,11 +8,9 @@ import {
   Search,
 } from "lucide-react";
 
-import { DesktopAppShell } from "@/client/components/desktop-app-shell";
 import { RepoPicker, type RepoSelection } from "@/client/components/repo-picker";
-import { WorkspaceSwitcher } from "@/client/components/workspace-switcher";
 import { useAcp } from "@/client/hooks/use-acp";
-import { useCodebases, useWorkspaces } from "@/client/hooks/use-workspaces";
+import { useCodebases } from "@/client/hooks/use-workspaces";
 import { desktopAwareFetch } from "@/client/utils/diagnostics";
 import { saveRepoSelection } from "@/client/utils/repo-selection-storage";
 import { useTranslation } from "@/i18n";
@@ -113,12 +110,8 @@ export function FeatureExplorerPageClient({
   workspaceId: string;
 }) {
   const inferredGroupId = "inferred-surfaces";
-  const router = useRouter();
   const { t, locale } = useTranslation();
-  const workspacesHook = useWorkspaces();
   const { codebases } = useCodebases(workspaceId);
-
-  const workspace = workspacesHook.workspaces.find((item) => item.id === workspaceId) ?? null;
   const analysisAcp = useAcp();
   const analysisAcpConnected = analysisAcp.connected;
   const analysisAcpLoading = analysisAcp.loading;
@@ -486,17 +479,6 @@ export function FeatureExplorerPageClient({
     });
   }, [effectiveFeatureId]);
 
-  const handleWorkspaceSelect = (nextWorkspaceId: string) => {
-    router.push(`/workspace/${encodeURIComponent(nextWorkspaceId)}/feature-explorer`);
-  };
-
-  const handleWorkspaceCreate = async (title: string) => {
-    const created = await workspacesHook.createWorkspace(title);
-    if (created?.id) {
-      router.push(`/workspace/${encodeURIComponent(created.id)}/feature-explorer`);
-    }
-  };
-
   const handleRepoSelectionChange = (selection: RepoSelection | null) => {
     setRepoSelectionOverrides((prev) => ({ ...prev, [workspaceId]: selection }));
   };
@@ -834,29 +816,13 @@ export function FeatureExplorerPageClient({
     : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary";
 
   return (
-    <DesktopAppShell
-      workspaceId={workspaceId}
-      workspaceTitle={workspace?.title ?? workspaceId}
-      workspaceSwitcher={(
-        <WorkspaceSwitcher
-          workspaces={workspacesHook.workspaces}
-          activeWorkspaceId={workspaceId}
-          activeWorkspaceTitle={workspace?.title ?? workspaceId}
-          onSelect={handleWorkspaceSelect}
-          onCreate={handleWorkspaceCreate}
-          loading={workspacesHook.loading}
-          compact
-          desktop
-        />
-      )}
-    >
-      <div className="flex h-full min-h-0 bg-desktop-bg-primary">
-        <main className="flex min-w-0 flex-1">
-          <section
-            ref={resizeContainerRef}
-            className="grid min-h-0 flex-1 grid-cols-1"
-            style={isWideLayout
-              ? {
+    <div className="flex h-full min-h-0 bg-desktop-bg-primary">
+      <main className="flex min-w-0 flex-1">
+        <section
+          ref={resizeContainerRef}
+          className="grid min-h-0 flex-1 grid-cols-1"
+          style={isWideLayout
+            ? {
                   gridTemplateColumns: `${leftPanelWidth}px 8px minmax(320px,1fr) 8px ${rightPanelWidth}px`,
                 }
               : undefined}
@@ -1362,6 +1328,5 @@ export function FeatureExplorerPageClient({
           t={t}
         />
       </div>
-    </DesktopAppShell>
   );
 }

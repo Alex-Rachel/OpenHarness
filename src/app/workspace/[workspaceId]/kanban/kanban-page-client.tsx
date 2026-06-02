@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useAcp } from "@/client/hooks/use-acp";
 import { useKanbanEvents } from "@/client/hooks/use-kanban-events";
-import { useWorkspaces, useCodebases } from "@/client/hooks/use-workspaces";
+import { useCodebases } from "@/client/hooks/use-workspaces";
 import { desktopAwareFetch } from "@/client/utils/diagnostics";
-import { DesktopAppShell } from "@/client/components/desktop-app-shell";
-import { WorkspaceSwitcher } from "@/client/components/workspace-switcher";
 import { useTranslation } from "@/i18n";
 import { KanbanTab } from "./kanban-tab";
 import {
@@ -38,15 +36,13 @@ interface SpecialistOption {
 
 export function KanbanPageClient() {
   const params = useParams();
-  const router = useRouter();
   const rawWorkspaceId = params.workspaceId as string;
   const workspaceId =
     rawWorkspaceId === "__placeholder__" && typeof window !== "undefined"
       ? (window.location.pathname.match(/^\/workspace\/([^/]+)/)?.[1] ?? rawWorkspaceId)
       : rawWorkspaceId;
   const acp = useAcp();
-  const { locale, t } = useTranslation();
-  const workspacesHook = useWorkspaces();
+  const { locale } = useTranslation();
   const { codebases, fetchCodebases } = useCodebases(workspaceId);
 
   const [boards, setBoards] = useState<KanbanBoardInfo[]>([]);
@@ -456,40 +452,10 @@ export function KanbanPageClient() {
     return result.sessionId;
   }, [acp, codebases, workspaceId]);
 
-  const workspace = workspacesHook.workspaces.find((w) => w.id === workspaceId);
-  const activeWorkspaceTitle = workspace?.title ?? (workspaceId === "default" ? t.workspace.defaultWorkspace : workspaceId);
-
-  const handleWorkspaceSelect = useCallback((nextWorkspaceId: string) => {
-    router.push(`/workspace/${nextWorkspaceId}/kanban`);
-  }, [router]);
-
-  const handleWorkspaceCreate = useCallback(async (title: string) => {
-    const workspaceResult = await workspacesHook.createWorkspace(title);
-    if (workspaceResult) {
-      router.push(`/workspace/${workspaceResult.id}/kanban`);
-    }
-  }, [router, workspacesHook]);
-
   return (
-    <DesktopAppShell
-      workspaceId={workspaceId}
-      workspaceTitle={activeWorkspaceTitle}
-      workspaceSwitcher={(
-        <WorkspaceSwitcher
-          workspaces={workspacesHook.workspaces}
-          activeWorkspaceId={workspaceId}
-          activeWorkspaceTitle={activeWorkspaceTitle}
-          onSelect={handleWorkspaceSelect}
-          onCreate={handleWorkspaceCreate}
-          loading={workspacesHook.loading}
-          compact
-          desktop
-        />
-      )}
-    >
-      <div className="flex h-full flex-col overflow-hidden bg-desktop-bg-primary" data-testid="kanban-page-shell">
-        <div className="flex-1 min-h-0 overflow-hidden">
-          <KanbanTab
+    <div className="flex h-full flex-col overflow-hidden bg-desktop-bg-primary" data-testid="kanban-page-shell">
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <KanbanTab
             workspaceId={workspaceId}
             refreshSignal={refreshKey}
             boards={boards}
@@ -508,6 +474,5 @@ export function KanbanPageClient() {
           />
         </div>
       </div>
-    </DesktopAppShell>
   );
 }

@@ -98,7 +98,15 @@ export async function POST(
     vcsType,
   });
 
-  await system.codebaseStore.add(codebase);
+  try {
+    await system.codebaseStore.add(codebase);
+  } catch (err) {
+    console.error("[codebases POST] store.add failed:", err);
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Failed to save codebase" },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json({ codebase }, { status: 201 });
 }

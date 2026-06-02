@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import { DesktopAppShell } from "@/client/components/desktop-app-shell";
 import { AcpProviderDropdown } from "@/client/components/acp-provider-dropdown";
 import { useAcp } from "@/client/hooks/use-acp";
 import { storePendingPrompt } from "@/client/utils/pending-prompt";
@@ -375,11 +374,7 @@ export function RepoSlidePageClient() {
     </div>
   );
 
-  return (
-    <DesktopAppShell workspaceId={workspaceId}>
-      {content}
-    </DesktopAppShell>
-  );
+  return content;
 }
 
 function StatCard({ label, value }: { label: string; value: string }) {

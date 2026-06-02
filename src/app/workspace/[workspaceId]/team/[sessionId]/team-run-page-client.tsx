@@ -2,15 +2,14 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DesktopAppShell } from "@/client/components/desktop-app-shell";
-import { WorkspaceSwitcher } from "@/client/components/workspace-switcher";
 import type { ChatMessage } from "@/client/components/chat-panel/types";
 import { getToolEventLabel } from "@/client/components/chat-panel/tool-call-name";
 import { TiptapInput } from "@/client/components/tiptap-input";
 import { useAcp } from "@/client/hooks/use-acp";
 import { useNotes } from "@/client/hooks/use-notes";
 import { consumePendingPrompt } from "@/client/utils/pending-prompt";
-import { useCodebases, useWorkspaces } from "@/client/hooks/use-workspaces";
+import { useCodebases } from "@/client/hooks/use-workspaces";
+import { useWorkspaceContext } from "../../workspace-context";
 import { desktopAwareFetch } from "@/client/utils/diagnostics";
 import type { RepoSelection } from "@/client/components/repo-picker";
 import type { AcpSessionNotification } from "@/core/store/acp-session-store";
@@ -163,7 +162,7 @@ export function TeamRunPageClient() {
     connect: connectModalAcp,
     selectSession: selectModalSession,
   } = modalAcp;
-  const workspacesHook = useWorkspaces();
+  const workspacesHook = useWorkspaceContext();
   const { codebases } = useCodebases(workspaceId);
   const notesHook = useNotes(workspaceId, sessionId);
   const [session, setSession] = useState<SessionInfo | null>(null);
@@ -1347,30 +1346,10 @@ export function TeamRunPageClient() {
   }, [selectModalSession]);
 
   return (
-    <DesktopAppShell
-      workspaceId={workspaceId}
-      workspaceTitle={workspace?.title ?? workspaceId}
-      workspaceSwitcher={(
-        <WorkspaceSwitcher
-          workspaces={workspacesHook.workspaces}
-          activeWorkspaceId={workspaceId}
-          activeWorkspaceTitle={workspace?.title ?? workspaceId}
-          onSelect={(nextWorkspaceId) => router.push(`/workspace/${nextWorkspaceId}/team`)}
-          onCreate={async (title) => {
-            const nextWorkspace = await workspacesHook.createWorkspace(title);
-            if (nextWorkspace) {
-              router.push(`/workspace/${nextWorkspace.id}/team`);
-            }
-          }}
-          loading={workspacesHook.loading}
-          compact
-        />
-      )}
-    >
-      <div className="flex h-full flex-col overflow-hidden bg-desktop-bg-primary">
-        <TeamRunPageHeader
-          workspaceId={workspaceId}
-          selectedSessionId={sessionId}
+    <div className="flex h-full flex-col overflow-hidden bg-desktop-bg-primary">
+      <TeamRunPageHeader
+        workspaceId={workspaceId}
+        selectedSessionId={sessionId}
           selectedSessionName={selectedTeamRunName}
           teamRuns={teamRuns}
           isSwitchingTeamRun={isSwitchingTeamRun}
@@ -1438,7 +1417,6 @@ export function TeamRunPageClient() {
             onFocusSession={focusSessionBlock}
           />
         </div>
-      </div>
 
       {selectedSessionForModal && selectedSessionStream && (
         <TeamRunSessionModal
@@ -1455,6 +1433,6 @@ export function TeamRunPageClient() {
           onSelectSession={handleSelectSessionForModal}
         />
       )}
-    </DesktopAppShell>
+    </div>
   );
 }

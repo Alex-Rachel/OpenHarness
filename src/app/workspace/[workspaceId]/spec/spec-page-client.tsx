@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
   ArrowUpRight,
   ChevronDown,
@@ -12,10 +12,8 @@ import {
   PieChart,
 } from "lucide-react";
 import { resolveApiPath } from "@/client/config/backend";
-import { DesktopAppShell } from "@/client/components/desktop-app-shell";
 import { MarkdownViewer } from "@/client/components/markdown/markdown-viewer";
-import { WorkspaceSwitcher } from "@/client/components/workspace-switcher";
-import { useWorkspaces } from "@/client/hooks/use-workspaces";
+import { useWorkspaceContext } from "../workspace-context";
 import { desktopAwareFetch } from "@/client/utils/diagnostics";
 import { useTranslation } from "@/i18n";
 import {
@@ -1281,28 +1279,15 @@ export function SpecBoardPanel({ workspaceId }: { workspaceId: string }) {
 export function SpecPageClient() {
   const { t } = useTranslation();
   const params = useParams();
-  const router = useRouter();
   const rawWorkspaceId = params.workspaceId as string;
   const workspaceId =
     rawWorkspaceId === "__placeholder__" && typeof window !== "undefined"
       ? (window.location.pathname.match(/^\/workspace\/([^/]+)/)?.[1] ?? rawWorkspaceId)
       : rawWorkspaceId;
 
-  const workspacesHook = useWorkspaces();
-  const workspace = workspacesHook.workspaces.find((item) => item.id === workspaceId);
+  const { loading } = useWorkspaceContext();
 
-  const handleWorkspaceSelect = useCallback((nextWorkspaceId: string) => {
-    router.push(`/workspace/${nextWorkspaceId}/spec`);
-  }, [router]);
-
-  const handleWorkspaceCreate = useCallback(async (title: string) => {
-    const workspaceResult = await workspacesHook.createWorkspace(title);
-    if (workspaceResult) {
-      router.push(`/workspace/${workspaceResult.id}/spec`);
-    }
-  }, [router, workspacesHook]);
-
-  if (workspacesHook.loading && workspaceId !== "default") {
+  if (loading && workspaceId !== "default") {
     return (
       <div className="desktop-theme flex h-screen items-center justify-center bg-desktop-bg-primary">
         <div className="flex items-center gap-3 text-desktop-text-secondary">
@@ -1314,29 +1299,12 @@ export function SpecPageClient() {
   }
 
   return (
-    <DesktopAppShell
-      workspaceId={workspaceId}
-      workspaceTitle={workspace?.title ?? (workspaceId === "default" ? t.workspace.defaultWorkspace : workspaceId)}
-      workspaceSwitcher={(
-        <WorkspaceSwitcher
-          workspaces={workspacesHook.workspaces}
-          activeWorkspaceId={workspaceId}
-          activeWorkspaceTitle={workspace?.title ?? (workspaceId === "default" ? t.workspace.defaultWorkspace : workspaceId)}
-          onSelect={handleWorkspaceSelect}
-          onCreate={handleWorkspaceCreate}
-          loading={workspacesHook.loading}
-          compact
-          desktop
-        />
-      )}
-    >
-      <div className="flex h-full min-h-0 bg-[#f3f5f8] text-slate-900 dark:bg-[#0a0f16] dark:text-slate-50">
-        <main className="flex min-w-0 flex-1 flex-col">
-          <div className="min-h-0 flex-1 overflow-hidden p-3">
-            <SpecBoardPanel workspaceId={workspaceId} />
-          </div>
-        </main>
-      </div>
-    </DesktopAppShell>
+    <div className="flex h-full min-h-0 bg-[#f3f5f8] text-slate-900 dark:bg-[#0a0f16] dark:text-slate-50">
+      <main className="flex min-w-0 flex-1 flex-col">
+        <div className="min-h-0 flex-1 overflow-hidden p-3">
+          <SpecBoardPanel workspaceId={workspaceId} />
+        </div>
+      </main>
+    </div>
   );
 }

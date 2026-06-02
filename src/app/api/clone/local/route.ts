@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
       branch: branchInfo.current,
       branches: branchInfo.branches,
       status: getRepoStatus(repoPath),
+      vcsType: validation.vcsType ?? "none",
     });
   } catch (err) {
     return NextResponse.json(
