@@ -24,6 +24,7 @@ interface DesktopLayoutProps {
   workspacesLoading?: boolean;
   onWorkspaceSelect: (wsId: string) => void;
   onWorkspaceCreate: (title: string) => Promise<void>;
+  onWorkspaceDelete?: (wsId: string) => Promise<void>;
   /** Optional right side content for the title bar */
   titleBarRight?: React.ReactNode;
 }
@@ -36,6 +37,7 @@ export function DesktopLayout({
   workspacesLoading,
   onWorkspaceSelect,
   onWorkspaceCreate,
+  onWorkspaceDelete,
   titleBarRight,
 }: DesktopLayoutProps) {
   return (
@@ -55,6 +57,7 @@ export function DesktopLayout({
             activeWorkspaceTitle={activeWorkspaceTitle}
             onSelect={onWorkspaceSelect}
             onCreate={onWorkspaceCreate}
+            onDelete={onWorkspaceDelete}
             loading={workspacesLoading}
             compact
           />

@@ -33,6 +33,7 @@ export interface UseWorkspacesReturn {
   fetchWorkspaces: () => Promise<void>;
   createWorkspace: (title: string) => Promise<WorkspaceData | null>;
   archiveWorkspace: (id: string) => Promise<void>;
+  deleteWorkspace: (id: string) => Promise<void>;
 }
 
 export function useWorkspaces(): UseWorkspacesReturn {
@@ -73,11 +74,18 @@ export function useWorkspaces(): UseWorkspacesReturn {
     await fetchWorkspaces();
   }, [fetchWorkspaces]);
 
+  const deleteWorkspace = useCallback(async (id: string): Promise<void> => {
+    await desktopAwareFetch(`/api/workspaces/${id}`, {
+      method: "DELETE",
+    });
+    await fetchWorkspaces();
+  }, [fetchWorkspaces]);
+
   useEffect(() => {
     fetchWorkspaces();
   }, [fetchWorkspaces]);
 
-  return { workspaces, loading, fetchWorkspaces, createWorkspace, archiveWorkspace };
+  return { workspaces, loading, fetchWorkspaces, createWorkspace, archiveWorkspace, deleteWorkspace };
 }
 
 export function useCodebases(workspaceId: string): {

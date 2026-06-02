@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { WorkspaceData } from "../hooks/use-workspaces";
 import { useTranslation } from "@/i18n";
 import { normalizeWorkspaceQueryId } from "../utils/workspace-id";
-import { Check, ChevronDown, Folder, Plus, Search } from "lucide-react";
+import { Check, ChevronDown, Folder, Plus, Search, Trash2 } from "lucide-react";
 
 const DESKTOP_LAST_WORKSPACE_ID_STORAGE_KEY = "routa.desktop.last-workspace-id";
 
@@ -23,6 +23,7 @@ interface WorkspaceSwitcherProps {
   activeWorkspaceTitle?: string;
   onSelect: (workspaceId: string) => void;
   onCreate?: (title: string) => Promise<void> | void;
+  onDelete?: (workspaceId: string) => Promise<void> | void;
   loading?: boolean;
   compact?: boolean;
   /** Use desktop/VS Code style theme */
@@ -35,6 +36,7 @@ export function WorkspaceSwitcher({
   activeWorkspaceTitle,
   onSelect,
   onCreate,
+  onDelete,
   loading,
   compact,
   desktop,
@@ -43,6 +45,8 @@ export function WorkspaceSwitcher({
   const [creating, setCreating] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
@@ -54,6 +58,7 @@ export function WorkspaceSwitcher({
     setOpen(false);
     setCreating(false);
     setSearchQuery("");
+    setConfirmDeleteId(null);
   }, []);
 
   useEffect(() => {
@@ -104,6 +109,21 @@ export function WorkspaceSwitcher({
     await onCreate(title);
     setNewTitle("");
     closeDropdown();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!onDelete) return;
+    setDeleting(true);
+    try {
+      await onDelete(id);
+      setConfirmDeleteId(null);
+      // If we deleted the active workspace, close the dropdown
+      if (id === activeWorkspaceId) {
+        closeDropdown();
+      }
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const filteredWorkspaces = searchQuery
@@ -197,25 +217,69 @@ export function WorkspaceSwitcher({
               </div>
             )}
             {filteredWorkspaces.map((ws) => (
-              <button
-                key={ws.id}
-                type="button"
-                onClick={() => {
-                  onSelect(ws.id);
-                  closeDropdown();
-                }}
-                className={`${listItemBase} ${
-                  ws.id === activeWorkspaceId
-                    ? activeItemCls
-                    : `${panelText} hover:bg-current/10`
-                }`}
-              >
-                <Folder className={rowIcon} strokeWidth={2} />
-                <span className="min-w-0 flex-1 truncate">{ws.title}</span>
-                {ws.id === activeWorkspaceId ? (
-                  <Check className={rowActiveIcon} fill="currentColor" />
-                ) : null}
-              </button>
+              confirmDeleteId === ws.id ? (
+                <div
+                  key={ws.id}
+                  className={`${listItemBase} flex-col !items-stretch gap-1.5 rounded-md bg-red-500/10 border border-red-500/20 px-2.5 py-2`}
+                >
+                  <span className={`text-[11px] ${panelText}`}>{t.workspace.confirmDelete}</span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(ws.id)}
+                      disabled={deleting}
+                      className="rounded bg-red-600 px-2 py-0.5 text-[11px] font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                    >
+                      {deleting ? "..." : t.workspace.deleteWorkspace}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmDeleteId(null)}
+                      disabled={deleting}
+                      className={`rounded border border-current/20 px-2 py-0.5 text-[11px] ${panelText} hover:bg-current/10 disabled:opacity-50`}
+                    >
+                      {t.common.cancel}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  key={ws.id}
+                  className={`${listItemBase} group relative ${
+                    ws.id === activeWorkspaceId
+                      ? activeItemCls
+                      : `${panelText} hover:bg-current/10`
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSelect(ws.id);
+                      closeDropdown();
+                    }}
+                    className="flex items-center gap-2 min-w-0 flex-1"
+                  >
+                    <Folder className={rowIcon} strokeWidth={2} />
+                    <span className="min-w-0 flex-1 truncate">{ws.title}</span>
+                    {ws.id === activeWorkspaceId ? (
+                      <Check className={rowActiveIcon} fill="currentColor" />
+                    ) : null}
+                  </button>
+                  {onDelete && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setConfirmDeleteId(ws.id);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 flex-shrink-0 rounded p-0.5 text-desktop-text-secondary hover:text-red-500 hover:bg-red-500/10 transition-opacity"
+                      title={t.workspace.deleteWorkspace}
+                    >
+                      <Trash2 className={isDesktopTheme ? "w-3 h-3" : "w-3.5 h-3.5"} strokeWidth={2} />
+                    </button>
+                  )}
+                </div>
+              )
             ))}
           </div>
 

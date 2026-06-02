@@ -830,6 +830,9 @@ export interface TranslationDictionary extends ExtendedTranslationDictionarySect
     noBoard: string;
     activeBoard: string;
     noRecentSession: string;
+    deleteWorkspace: string;
+    confirmDelete: string;
+    deleteWorkspaceHint: string;
     primarySurface: string;
     kanbanDescription: string;
     boards: string;

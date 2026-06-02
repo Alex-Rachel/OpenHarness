@@ -119,7 +119,15 @@ function HomePageContent() {
     }
 
     if (!activeWorkspaceId && workspacesHook.workspaces.length > 0) {
-      setActiveWorkspaceId(workspacesHook.workspaces[0].id);
+      // Restore last-used workspace from localStorage (saved by WorkspaceSwitcher)
+      const lastWorkspaceId = typeof window !== "undefined"
+        ? window.localStorage.getItem("routa.desktop.last-workspace-id")
+        : null;
+      if (lastWorkspaceId && workspacesHook.workspaces.some((w) => w.id === lastWorkspaceId)) {
+        setActiveWorkspaceId(lastWorkspaceId);
+      } else {
+        setActiveWorkspaceId(workspacesHook.workspaces[0].id);
+      }
     }
   }, [activeWorkspaceId, searchParams, workspacesHook.workspaces]);
 
@@ -198,6 +206,15 @@ function HomePageContent() {
     }
     return false;
   }, [workspacesHook]);
+
+  const handleWorkspaceDelete = useCallback(async (workspaceId: string) => {
+    await workspacesHook.deleteWorkspace(workspaceId);
+    // Clear active workspace if it was deleted
+    if (activeWorkspaceId === workspaceId) {
+      const remaining = workspacesHook.workspaces.filter((w) => w.id !== workspaceId);
+      setActiveWorkspaceId(remaining.length > 0 ? remaining[0].id : null);
+    }
+  }, [workspacesHook, activeWorkspaceId]);
 
   const handleOpenProviders = useCallback(() => {
     setSettingsInitialTab("providers");
@@ -323,6 +340,7 @@ function HomePageContent() {
           onCreate={async (title) => {
             await handleWorkspaceCreate(title);
           }}
+          onDelete={handleWorkspaceDelete}
           loading={workspacesHook.loading}
           compact
           desktop

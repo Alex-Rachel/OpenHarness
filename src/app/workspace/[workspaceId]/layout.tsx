@@ -17,7 +17,7 @@ function WorkspaceLayoutShell({
 }) {
   const router = useRouter();
   const { t } = useTranslation();
-  const { workspaces, loading, createWorkspace, titleBarRight } = useWorkspaceContext();
+  const { workspaces, loading, createWorkspace, deleteWorkspace, titleBarRight } = useWorkspaceContext();
 
   const workspace = workspaces.find((w) => w.id === workspaceId);
   const activeWorkspaceTitle = workspace?.title ?? (workspaceId === "default" ? t.workspace.defaultWorkspace : workspaceId);
@@ -33,6 +33,12 @@ function WorkspaceLayoutShell({
     }
   }, [router, createWorkspace]);
 
+  const handleWorkspaceDelete = useCallback(async (workspaceId: string) => {
+    await deleteWorkspace(workspaceId);
+    // Navigate to home after deleting the active workspace
+    router.push("/");
+  }, [router, deleteWorkspace]);
+
   return (
     <DesktopAppShell
       workspaceId={workspaceId}
@@ -45,6 +51,7 @@ function WorkspaceLayoutShell({
           activeWorkspaceTitle={activeWorkspaceTitle}
           onSelect={handleWorkspaceSelect}
           onCreate={handleWorkspaceCreate}
+          onDelete={handleWorkspaceDelete}
           loading={loading}
           compact
           desktop
