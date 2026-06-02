@@ -784,7 +784,7 @@ impl AcpManager {
                 &session_id,
                 tool_mode.as_deref(),
                 mcp_profile.as_deref(),
-            ))
+            )?)
         } else {
             None
         };

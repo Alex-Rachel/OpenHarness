@@ -11,6 +11,10 @@ use serde_json::{Map, Value};
 const QODER_MCP_SERVER_NAME: &str = "routa-coordination";
 const QODER_MCP_SCOPE: &str = "local";
 
+/// Directory and prefix for Claude MCP temp config files.
+const CLAUDE_MCP_CONFIG_DIRNAME: &str = ".claude/mcp-tmp";
+const CLAUDE_MCP_CONFIG_PREFIX: &str = "routa-mcp-";
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum McpCleanupAction {
     QoderRemove {
@@ -53,13 +57,19 @@ fn build_mcp_endpoint(
     format!("{}/api/mcp?{}", base_url, params.join("&"))
 }
 
+/// Build Claude MCP config by writing it to a temp file.
+///
+/// Claude Code's `--mcp-config` accepts a file path or inline JSON, but when
+/// spawned with `shell: true` (needed on Windows for bare `claude` command),
+/// cmd.exe strips double quotes from inline JSON, corrupting it. Writing to a
+/// file avoids this issue entirely.
 pub fn build_claude_mcp_config(
     workspace_id: &str,
     session_id: &str,
     tool_mode: Option<&str>,
     mcp_profile: Option<&str>,
-) -> String {
-    serde_json::json!({
+) -> Result<String, String> {
+    let json = serde_json::json!({
         "mcpServers": {
             "routa-coordination": {
                 "url": build_mcp_endpoint(workspace_id, session_id, tool_mode, mcp_profile),
@@ -70,7 +80,34 @@ pub fn build_claude_mcp_config(
             }
         }
     })
-    .to_string()
+    .to_string();
+
+    let home_dir = dirs::home_dir().ok_or_else(|| "Failed to resolve home directory".to_string())?;
+    let config_dir = home_dir.join(CLAUDE_MCP_CONFIG_DIRNAME);
+
+    // Create a stable filename keyed by workspace_id (hex-encoded for safety)
+    let slug = hex_encode(workspace_id.as_bytes());
+    let filename = format!(
+        "{}{}.json",
+        CLAUDE_MCP_CONFIG_PREFIX,
+        &slug[..16.min(slug.len())]
+    );
+
+    std::fs::create_dir_all(&config_dir)
+        .map_err(|e| format!("Failed to create Claude MCP config dir: {e}"))?;
+
+    let config_path = config_dir.join(&filename);
+    std::fs::write(&config_path, &json)
+        .map_err(|e| format!("Failed to write Claude MCP config file: {e}"))?;
+
+    tracing::info!("[MCP:Claude] Wrote config to {}", config_path.display());
+
+    Ok(config_path.to_string_lossy().to_string())
+}
+
+/// Simple hex encoding for generating safe filenames from workspace IDs.
+fn hex_encode(data: &[u8]) -> String {
+    data.iter().map(|b| format!("{:02x}", b)).collect()
 }
 
 pub fn build_acp_http_mcp_servers(
@@ -450,16 +487,27 @@ mod tests {
     }
 
     #[test]
-    fn claude_inline_config_uses_routa_coordination_server() {
+    fn claude_config_writes_file_with_routa_coordination_server() {
         let config = build_claude_mcp_config(
             "default",
             "session-123",
             Some("essential"),
             Some("team-coordination"),
-        );
-        assert!(config.contains("\"routa-coordination\""));
-        assert!(config.contains("\"type\":\"http\""));
-        assert!(config.contains("mcpProfile=team-coordination"));
+        )
+        .expect("build_claude_mcp_config should succeed");
+
+        // Should return a file path (not inline JSON)
+        assert!(config.ends_with(".json"), "expected .json file path, got: {config}");
+        assert!(config.contains("routa-mcp-"), "expected routa-mcp prefix, got: {config}");
+
+        // Verify the file content contains the expected MCP server config
+        let content = std::fs::read_to_string(&config).expect("should read config file");
+        assert!(content.contains("\"routa-coordination\""));
+        assert!(content.contains("\"type\":\"http\""));
+        assert!(content.contains("mcpProfile=team-coordination"));
+
+        // Cleanup
+        let _ = std::fs::remove_file(&config);
     }
 
     #[test]
