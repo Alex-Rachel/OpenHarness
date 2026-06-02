@@ -16,7 +16,7 @@ import {
   getSvnDiff,
   svnCommit,
   svnUpdate,
-  get_svn_log,
+  getSvnLog,
   svnBlame,
   svnRevert,
   svnAdd,

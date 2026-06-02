@@ -91,7 +91,7 @@ export function getSvnStatus(repoPath: string): SvnStatus {
  *   ?       newfile.ts
  *   A  +    merged.ts
  */
-function parseSvnStatus(output: string): SvnStatusEntry[] {
+export function parseSvnStatus(output: string): SvnStatusEntry[] {
   if (!output.trim()) return [];
 
   return output
@@ -222,7 +222,7 @@ export function getSvnFileLog(
  *   Commit message here
  *   ------------------------------------------------------------------------
  */
-function parseSvnLog(output: string): SvnLogEntry[] {
+export function parseSvnLog(output: string): SvnLogEntry[] {
   if (!output.trim()) return [];
 
   const separator = "-".repeat(72);
@@ -269,7 +269,7 @@ export function svnBlame(repoPath: string, filePath: string): SvnBlameLine[] {
  * Example:
  *   42 john const foo = "bar";
  */
-function parseSvnBlame(output: string): SvnBlameLine[] {
+export function parseSvnBlame(output: string): SvnBlameLine[] {
   if (!output.trim()) return [];
 
   return output
@@ -278,7 +278,7 @@ function parseSvnBlame(output: string): SvnBlameLine[] {
     .map((line, index) => {
       // SVN blame format: revision-padded author-padded content
       // Try to parse: number, then username, then rest
-      const match = line.match(/^\s*(\d+|\-+)\s+(\S+)\s?(.*)/);
+      const match = line.match(/^\s*(\d+|-+)\s+(\S+)\s?(.*)/);
       if (!match) {
         return { lineNumber: index + 1, revision: 0, author: "", content: line };
       }

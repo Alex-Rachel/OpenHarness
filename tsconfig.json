@@ -43,6 +43,7 @@
   ],
   "exclude": [
     "node_modules",
+    "out/**/*",
     "target/**/*",
     "src/test/**/*",
     "src/app/_api_excluded/**/*",
