@@ -138,3 +138,7 @@ tools/ppt-template/output/
 tools/ppt-template/node_modules/
 .agents
 /people/
+
+
+# openspec
+openspec/
