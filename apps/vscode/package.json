@@ -1,7 +1,7 @@
 {
   "name": "routa-vscode",
-  "displayName": "Routa",
-  "description": "Run Routa inside VS Code as a local multi-agent coordination workspace.",
+  "displayName": "OpenHarness",
+  "description": "Run OpenHarness inside VS Code as a local multi-agent coordination workspace.",
   "version": "0.1.0",
   "publisher": "phodal",
   "private": true,

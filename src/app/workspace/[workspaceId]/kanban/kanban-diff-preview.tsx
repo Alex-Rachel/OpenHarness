@@ -356,8 +356,8 @@ export function parseCommitDiffFiles(patch: string): CommitDiffFile[] {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    // New file starts with "diff --git a/... b/..."
-    if (line.startsWith("diff --git ")) {
+    // New file starts with "diff --git a/... b/..." (Git) or "Index: path" (SVN)
+    if (line.startsWith("diff --git ") || line.startsWith("Index: ")) {
       // Save previous file if exists
       if (currentFile) {
         files.push({
@@ -367,15 +367,27 @@ export function parseCommitDiffFiles(patch: string): CommitDiffFile[] {
         } as CommitDiffFile);
       }
 
-      // Parse paths from "diff --git a/path1 b/path2"
-      const match = line.match(/^diff --git a\/(.+) b\/(.+)$/);
-      if (match) {
-        const previousPath = match[1];
-        const path = match[2];
+      if (line.startsWith("diff --git ")) {
+        // Parse paths from "diff --git a/path1 b/path2"
+        const match = line.match(/^diff --git a\/(.+) b\/(.+)$/);
+        if (match) {
+          const previousPath = match[1];
+          const path = match[2];
+          currentFile = {
+            path,
+            previousPath: previousPath !== path ? previousPath : undefined,
+            status: "modified", // Default, will be refined below
+            startLineIndex: i,
+          };
+          currentFileAdditions = 0;
+          currentFileDeletions = 0;
+        }
+      } else {
+        // SVN format: "Index: path/to/file"
+        const svnPath = line.replace(/^Index:\s*/, "").trim();
         currentFile = {
-          path,
-          previousPath: previousPath !== path ? previousPath : undefined,
-          status: "modified", // Default, will be refined below
+          path: svnPath,
+          status: "modified",
           startLineIndex: i,
         };
         currentFileAdditions = 0;
@@ -438,7 +450,7 @@ export function parseUnifiedDiffPreview(diff: { patch: string; additions?: numbe
   let countedBodyLines = false;
 
   const parsedLines = lines.map((line, sourceLineIndex) => {
-    if (line.startsWith("+++ b/")) return { kind: "meta" as const, text: line, sourceLineIndex };
+    if (line.startsWith("+++ b/") || line.startsWith("+++ ")) return { kind: "meta" as const, text: line, sourceLineIndex };
     if (line.startsWith("+") && !line.startsWith("+++")) {
       if (diff.additions == null) additions += 1;
       countedBodyLines = true;
@@ -463,13 +475,16 @@ export function parseUnifiedDiffPreview(diff: { patch: string; additions?: numbe
     }
     if (
       line.startsWith("diff --git ")
+      || line.startsWith("Index: ")
       || line.startsWith("index ")
       || line.startsWith("--- ")
+      || line.startsWith("===")
       || line.startsWith("new file mode ")
       || line.startsWith("deleted file mode ")
       || line.startsWith("similarity index ")
       || line.startsWith("rename from ")
       || line.startsWith("rename to ")
+      || line.startsWith("Property changes on: ")
     ) {
       return { kind: "meta" as const, text: line, sourceLineIndex };
     }

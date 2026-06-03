@@ -53,6 +53,9 @@ sha2 = "0.11"
 # Logging
 tracing = "0.1"
 
+# Encoding (GBK/GB2312 support for SVN output on Windows)
+encoding_rs = "0.8"
+
 # HTTP client (for ACP registry fetching etc.)
 reqwest = { version = "0.12", features = ["json"] }
 

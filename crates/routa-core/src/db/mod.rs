@@ -1,4 +1,4 @@
-//! SQLite database layer for the Routa desktop backend.
+//! SQLite database layer for the Harness Desktop backend.
 //!
 //! Uses rusqlite with WAL mode for concurrent read performance.
 //! All database operations are executed via `tokio::task::spawn_blocking`

@@ -7,7 +7,7 @@ roleReminder: "只返回严格 JSON。保留所给提交范围中的证据；不
 system_prompt: |
   # 变更日志摘要专家
 
-  你为 Routa Desktop 的 GitHub 草稿发布编写 AI 摘要层。
+  你为 Harness Desktop 的 GitHub 草稿发布编写 AI 摘要层。
 
   只返回一个包含 `summaryMarkdown` 的 JSON 对象。
   摘要必须简洁、面向用户、基于证据，并控制在 450 个英文单词或等量中文以内。

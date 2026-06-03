@@ -5,7 +5,7 @@
  * All operations shell out to the `svn` CLI via svnExec().
  */
 
-import { svnExec } from "./svn-exec";
+import { svnExec, svnExecBuffered } from "./svn-exec";
 
 // ─── Types ─────────────────────────────────────────────────────────
 
@@ -222,6 +222,21 @@ export function getSvnFileLog(
  *   Commit message here
  *   ------------------------------------------------------------------------
  */
+/**
+ * Normalize SVN date string to ISO 8601 format.
+ *
+ * SVN raw format: "2024-01-15 10:30:00 +0800 (Mon, 15 Jan 2024)"
+ * ISO 8601:       "2024-01-15T10:30:00+08:00"
+ */
+function normalizeSvnDate(raw: string): string {
+  // Strip parenthetical timezone name
+  const withoutParens = raw.replace(/\s*\([^)]+\)\s*$/, "").trim();
+  // Convert "YYYY-MM-DD HH:MM:SS +HHMM" → "YYYY-MM-DDTHH:MM:SS+HH:MM"
+  const iso = withoutParens
+    .replace(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) ([+-]\d{2})(\d{2})$/, "$1T$2$3:$4");
+  return iso;
+}
+
 export function parseSvnLog(output: string): SvnLogEntry[] {
   if (!output.trim()) return [];
 
@@ -241,7 +256,7 @@ export function parseSvnLog(output: string): SvnLogEntry[] {
 
       const revision = parseInt(headerMatch[1], 10);
       const author = headerMatch[2].trim();
-      const date = headerMatch[3].trim();
+      const date = normalizeSvnDate(headerMatch[3].trim());
       // Message is everything after the header line, skip empty separator line
       const message = lines.slice(1).join("\n").trim();
 
@@ -342,4 +357,283 @@ export function getSvnRepoRootUrl(repoPath: string): string {
   } catch {
     return "";
   }
+}
+
+// ─── Log Verbose (with file changes) ──────────────────────────────
+
+export interface SvnLogVerboseEntry extends SvnLogEntry {
+  /** Files changed in this revision */
+  files: SvnLogChangedFile[];
+}
+
+export interface SvnLogChangedFile {
+  /** Action: "A" (added), "M" (modified), "D" (deleted), "R" (replaced) */
+  action: string;
+  /** File path */
+  path: string;
+  /** Copy-from path (for copies/moves) */
+  copyFromPath?: string;
+  /** Copy-from revision (for copies/moves) */
+  copyFromRevision?: string;
+}
+
+/**
+ * Get SVN log with verbose file change information.
+ * Runs `svn log -v -l <limit>` and parses the output.
+ */
+export function getSvnLogVerbose(repoPath: string, limit: number = 25): SvnLogVerboseEntry[] {
+  const output = svnExecBuffered(["log", "-v", "-l", String(limit)], { cwd: repoPath });
+  return parseSvnLogVerbose(output);
+}
+
+/**
+ * Get verbose log for a specific revision range.
+ * Runs `svn log -v -r <start>:<end>` or `svn log -v -r <revision>`.
+ */
+export function getSvnLogVerboseByRevision(
+  repoPath: string,
+  revision: string,
+): SvnLogVerboseEntry[] {
+  const output = svnExecBuffered(["log", "-v", "-r", revision], { cwd: repoPath });
+  return parseSvnLogVerbose(output);
+}
+
+/**
+ * Parse verbose `svn log -v` output into structured entries with file changes.
+ *
+ * Verbose log format:
+ *   ------------------------------------------------------------------------
+ *   r42 | author | 2024-01-15 10:30:00 +0000 | 1 line
+ *   Changed paths:
+ *     M /trunk/src/foo.ts
+ *     A /trunk/src/bar.ts (from /trunk/src/baz.ts:r41)
+ *
+ *   Commit message here
+ *   ------------------------------------------------------------------------
+ */
+export function parseSvnLogVerbose(output: string): SvnLogVerboseEntry[] {
+  if (!output.trim()) return [];
+
+  const separator = "-".repeat(72);
+  const blocks = output.split(separator).filter((block) => block.trim().length > 0);
+
+  return blocks
+    .map((block) => {
+      const lines = block.trim().split("\n");
+      if (lines.length < 2) return null;
+
+      // Parse header line: r42 | author | date | N lines
+      const headerMatch = lines[0].match(/^r(\d+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|/);
+      if (!headerMatch) return null;
+
+      const revision = parseInt(headerMatch[1], 10);
+      const author = headerMatch[2].trim();
+      const date = normalizeSvnDate(headerMatch[3].trim());
+
+      // Parse changed paths section
+      const files: SvnLogChangedFile[] = [];
+      let inChangedPaths = false;
+      let messageStartIdx = lines.length;
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+
+        if (line.startsWith("Changed paths:")) {
+          inChangedPaths = true;
+          continue;
+        }
+
+        if (inChangedPaths) {
+          // Changed path lines start with whitespace: "   M /trunk/src/foo.ts"
+          const pathMatch = line.match(/^\s+([AMD_R])\s+(.+?)(?:\s+\(from\s+(.+?):(\d+)\))?$/);
+          if (pathMatch) {
+            files.push({
+              action: pathMatch[1].trim(),
+              path: pathMatch[2].trim(),
+              copyFromPath: pathMatch[3]?.trim(),
+              copyFromRevision: pathMatch[4]?.trim(),
+            });
+          } else if (line.trim() === "" || !line.startsWith(" ")) {
+            // Empty line or non-indented line → end of changed paths
+            inChangedPaths = false;
+            messageStartIdx = i;
+            break;
+          }
+        }
+      }
+
+      // If we didn't find changed paths, message starts after header
+      if (!inChangedPaths && files.length === 0) {
+        // Find the first blank line after header
+        for (let i = 1; i < lines.length; i++) {
+          if (lines[i].trim() === "") {
+            messageStartIdx = i + 1;
+            break;
+          }
+          if (!lines[i].startsWith("Changed paths:") && !lines[i].startsWith(" ")) {
+            messageStartIdx = i;
+            break;
+          }
+        }
+      }
+
+      // Collect message lines
+      const messageLines: string[] = [];
+      for (let i = messageStartIdx; i < lines.length; i++) {
+        const line = lines[i];
+        // Stop at trailing blank lines or next separator
+        if (line.trim() === "" && messageLines.length > 0) break;
+        if (line.trim() !== "") messageLines.push(line);
+      }
+      const message = messageLines.join("\n").trim();
+
+      return { revision, author, date, message, files };
+    })
+    .filter((entry): entry is SvnLogVerboseEntry => entry !== null);
+}
+
+// ─── Revision Diff ─────────────────────────────────────────────────
+
+/**
+ * Get the diff introduced by a specific revision.
+ * Runs `svn diff -c <revision>` (shows changes in that revision).
+ */
+export function getSvnRevisionDiff(repoPath: string, revision: number): string {
+  try {
+    return svnExecBuffered(["diff", "-c", String(revision)], { cwd: repoPath });
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * Get the diff between two revisions.
+ * Runs `svn diff -r <oldRev>:<newRev>`.
+ */
+export function getSvnDiffBetweenRevisions(
+  repoPath: string,
+  oldRevision: number,
+  newRevision: number,
+): string {
+  try {
+    return svnExecBuffered(["diff", "-r", `${oldRevision}:${newRevision}`], { cwd: repoPath });
+  } catch {
+    return "";
+  }
+}
+
+// ─── Cat (historical file content) ─────────────────────────────────
+
+/**
+ * Get file content at a specific revision.
+ * Runs `svn cat -r <revision> <file>`.
+ *
+ * Useful for viewing historical file versions without checking out.
+ */
+export function getSvnCat(repoPath: string, filePath: string, revision: number): string {
+  return svnExecBuffered(["cat", "-r", String(revision), filePath], { cwd: repoPath });
+}
+
+// ─── Structured Info ───────────────────────────────────────────────
+
+export interface SvnInfoResult {
+  /** Repository root URL */
+  repoRootUrl: string;
+  /** Repository UUID */
+  repoUuid: string;
+  /** Working copy revision */
+  revision: number;
+  /** Working copy path (relative to repo root) */
+  relativeUrl: string;
+  /** Last changed author */
+  lastChangedAuthor: string;
+  /** Last changed revision */
+  lastChangedRevision: number;
+  /** Last changed date (raw SVN format) */
+  lastChangedDate: string;
+  /** Schedule status (e.g. "normal", "add", "delete") */
+  schedule: string;
+  /** Node kind (e.g. "file", "dir") */
+  nodeKind: string;
+}
+
+/**
+ * Get structured repository info.
+ * Runs `svn info` and parses the key-value output.
+ */
+export function getSvnInfo(repoPath: string): SvnInfoResult {
+  const output = svnExec(["info"], { cwd: repoPath });
+  return parseSvnInfo(output);
+}
+
+/**
+ * Parse `svn info` output into a structured object.
+ *
+ * Output format:
+ *   Path: .
+ *   Working Copy Root Path: /home/user/project
+ *   URL: https://example.com/svn/trunk
+ *   Relative URL: ^/trunk
+ *   Repository Root: https://example.com/svn
+ *   Repository UUID: abcd-1234
+ *   Revision: 42
+ *   Node Kind: directory
+ *   Schedule: normal
+ *   Last Changed Author: john
+ *   Last Changed Rev: 40
+ *   Last Changed Date: 2024-01-15 10:30:00 +0000
+ */
+export function parseSvnInfo(output: string): SvnInfoResult {
+  const result: Partial<SvnInfoResult> = {};
+
+  for (const line of output.split("\n")) {
+    const colonIdx = line.indexOf(": ");
+    if (colonIdx === -1) continue;
+
+    const key = line.substring(0, colonIdx).trim();
+    const value = line.substring(colonIdx + 2).trim();
+
+    switch (key) {
+      case "Repository Root":
+        result.repoRootUrl = value;
+        break;
+      case "Repository UUID":
+        result.repoUuid = value;
+        break;
+      case "Revision":
+        result.revision = parseInt(value, 10) || 0;
+        break;
+      case "Relative URL":
+        result.relativeUrl = value;
+        break;
+      case "Last Changed Author":
+        result.lastChangedAuthor = value;
+        break;
+      case "Last Changed Rev":
+        result.lastChangedRevision = parseInt(value, 10) || 0;
+        break;
+      case "Last Changed Date":
+        // Keep the raw date, let callers parse it
+        result.lastChangedDate = value;
+        break;
+      case "Schedule":
+        result.schedule = value;
+        break;
+      case "Node Kind":
+        result.nodeKind = value;
+        break;
+    }
+  }
+
+  return {
+    repoRootUrl: result.repoRootUrl ?? "",
+    repoUuid: result.repoUuid ?? "",
+    revision: result.revision ?? 0,
+    relativeUrl: result.relativeUrl ?? "",
+    lastChangedAuthor: result.lastChangedAuthor ?? "",
+    lastChangedRevision: result.lastChangedRevision ?? 0,
+    lastChangedDate: result.lastChangedDate ?? "",
+    schedule: result.schedule ?? "normal",
+    nodeKind: result.nodeKind ?? "dir",
+  };
 }

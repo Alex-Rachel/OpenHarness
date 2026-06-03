@@ -67,7 +67,7 @@ describe("generate-changelog", () => {
       version: "0.2.6",
     });
 
-    expect(output).toContain("# Routa Desktop v0.2.6");
+    expect(output).toContain("# Harness Desktop v0.2.6");
     expect(output).toContain("## Summary");
     expect(output).toContain("A curated desktop release summary.");
     expect(output).toContain("## Install");

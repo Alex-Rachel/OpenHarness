@@ -27,7 +27,9 @@ export type VcsCapability =
   | "worktree"         // Worktree isolation for parallel agents
   | "blame"            // Line-level authorship (annotate/blame)
   | "logGraph"         // Graph-style commit log visualization
-  | "remoteAuth";      // Remote repository authentication
+  | "remoteAuth"       // Remote repository authentication
+  | "info"             // Repository metadata (svn info / git log -1)
+  | "add";             // Add files to version control (svn add / git add)
 
 /** Type guard for VcsType */
 export function isVcsType(value: string): value is VcsType {
@@ -40,5 +42,6 @@ export function isVcsCapability(value: string): value is VcsCapability {
     "fileBrowse", "fileEdit", "diff", "commitHistory", "stageUnstage",
     "commit", "branchManagement", "pullUpdate", "push", "rebase",
     "reset", "worktree", "blame", "logGraph", "remoteAuth",
+    "info", "add",
   ].includes(value);
 }

@@ -30,7 +30,9 @@ pub use routa_core::shell_env;
 pub use routa_core::skills;
 pub use routa_core::state;
 pub use routa_core::store;
+pub use routa_core::svn;
 pub use routa_core::tools;
+pub use routa_core::vcs;
 
 // Also re-export commonly used types at the top level
 pub use routa_core::{AppState, AppStateInner, Database, ServerError};

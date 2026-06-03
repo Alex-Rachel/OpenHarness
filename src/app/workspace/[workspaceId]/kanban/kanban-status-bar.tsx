@@ -255,10 +255,10 @@ export function KanbanStatusBar({
                 ? "bg-desktop-bg-active text-desktop-accent"
                 : "text-desktop-text-primary hover:bg-desktop-bg-active"
             }`}
-            title={t.gitLog.title}
+            title={defaultCodebase?.vcsType === "svn" ? t.gitLog.svnTitle : t.gitLog.title}
           >
             <Activity className="w-3 h-3" />
-            <span>{t.gitLog.title}</span>
+            <span>{defaultCodebase?.vcsType === "svn" ? t.gitLog.svnTitle : t.gitLog.title}</span>
           </button>
         )}
       </div>

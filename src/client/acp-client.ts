@@ -422,16 +422,35 @@ export class BrowserAcpClient {
       params.skillContent = skillContext.skillContent;
     }
 
-    const response = await fetch(resolveApiPath("api/acp", this.baseUrl), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id,
-        method: "session/prompt",
-        params,
-      }),
-    });
+    // Use AbortController with a 15-minute timeout to prevent the fetch from
+    // hanging indefinitely if the backend SSE stream never closes.
+    const abortController = new AbortController();
+    const timeoutId = window.setTimeout(() => abortController.abort(), 15 * 60 * 1000);
+
+    let response: Response;
+    try {
+      response = await fetch(resolveApiPath("api/acp", this.baseUrl), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id,
+          method: "session/prompt",
+          params,
+        }),
+        signal: abortController.signal,
+      });
+    } catch (err) {
+      window.clearTimeout(timeoutId);
+      if (err instanceof DOMException && err.name === "AbortError") {
+        throw new AcpClientError(
+          "Prompt timed out waiting for agent response (15 min)",
+          -32603,
+        );
+      }
+      throw err;
+    }
+    window.clearTimeout(timeoutId);
 
     const contentType = response.headers.get("Content-Type") || "";
 

@@ -495,7 +495,7 @@ fn render_startup_error_html(api_url: &str, db_path: &str, error: &str) -> Strin
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Routa Desktop Startup Error</title>
+    <title>Harness Desktop Startup Error</title>
     <style>
       :root {{
         color-scheme: light dark;
@@ -572,7 +572,7 @@ fn render_startup_error_html(api_url: &str, db_path: &str, error: &str) -> Strin
   </head>
   <body>
     <main class="panel">
-      <h1>Routa Desktop could not start its backend</h1>
+      <h1>Harness Desktop could not start its backend</h1>
       <p>
         The desktop window was not connected to a fresh Rust backend. This usually means another
         process is already using the desktop port, or startup failed before the app could safely
@@ -602,7 +602,7 @@ fn render_startup_error_html(api_url: &str, db_path: &str, error: &str) -> Strin
 fn show_startup_error(window: &tauri::WebviewWindow, api_url: &str, db_path: &str, error: &str) {
     let html = render_startup_error_html(api_url, db_path, error);
     let serialized_html = serde_json::to_string(&html)
-        .unwrap_or_else(|_| "\"<h1>Routa Desktop startup failed</h1>\"".to_string());
+        .unwrap_or_else(|_| "\"<h1>Harness Desktop startup failed</h1>\"".to_string());
     let js = format!("document.open(); document.write({serialized_html}); document.close();");
     let _ = window.eval(js);
 }

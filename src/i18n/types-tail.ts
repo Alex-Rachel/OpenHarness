@@ -379,5 +379,6 @@ export interface TailTranslationDictionarySections {
     hideRefs: string;
     parents: string;
     files: string;
+    svnTitle: string;
   };
 }

@@ -268,7 +268,22 @@ impl AcpWarmupService {
             .map(|p| p.to_string_lossy().to_string())
             .unwrap_or_default();
 
+        // On Windows, .CMD/.BAT files cannot be spawned directly with
+        // CREATE_NO_WINDOW — wrap them with `cmd.exe /C`.
+        #[cfg(windows)]
+        let mut cmd = {
+            let lower = runtime_path.to_string_lossy().to_ascii_lowercase();
+            if lower.ends_with(".cmd") || lower.ends_with(".bat") {
+                let mut c = Command::new("cmd.exe");
+                c.arg("/C").arg(runtime_path);
+                c
+            } else {
+                Command::new(runtime_path)
+            }
+        };
+        #[cfg(not(windows))]
         let mut cmd = Command::new(runtime_path);
+
         cmd.args(&args)
             .stdout(std::process::Stdio::null())
             .stderr(std::process::Stdio::null());

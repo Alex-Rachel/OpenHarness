@@ -14,6 +14,7 @@ import { KanbanGitOperationButtons } from "./kanban-git-operation-buttons";
 import { KanbanWorkflowActions } from "./kanban-workflow-actions";
 import { loadKanbanFileDiff } from "./kanban-file-diff-loader";
 import { useGitOperations } from "../hooks/use-git-operations";
+import { useVcsOperations } from "../hooks/use-vcs-operations";
 import { useKeyboardShortcuts } from "../hooks/use-keyboard-shortcuts";
 
 interface KanbanEnhancedFileChangesPanelProps {
@@ -72,9 +73,26 @@ export function KanbanEnhancedFileChangesPanel({
       // Expected: codebase may not be a git repository or may be in a special state
       return;
     }
-    console.error("Git operation failed:", error);
+    console.error("VCS operation failed:", error);
   }, []);
 
+  // Use unified VCS operations for SVN, Git operations for Git
+  const isSvn = codebase?.vcsType === "svn";
+  const vcsOps = useVcsOperations({
+    workspaceId,
+    codebaseId,
+    vcsType: codebase?.vcsType ?? "git",
+    onSuccess: handleGitSuccess,
+    onError: handleGitError,
+  });
+  const gitOps = useGitOperations({
+    workspaceId,
+    codebaseId,
+    onSuccess: handleGitSuccess,
+    onError: handleGitError,
+  });
+
+  // Pick the right operations based on VCS type
   const {
     stageFiles,
     unstageFiles,
@@ -87,12 +105,7 @@ export function KanbanEnhancedFileChangesPanel({
     rebaseBranch,
     resetBranch,
     loading: gitLoading
-  } = useGitOperations({
-    workspaceId,
-    codebaseId,
-    onSuccess: handleGitSuccess,
-    onError: handleGitError,
-  });
+  } = isSvn ? vcsOps : gitOps;
 
   // Separate files into unstaged and staged
   const { unstagedFiles, stagedFiles } = useMemo(() => {

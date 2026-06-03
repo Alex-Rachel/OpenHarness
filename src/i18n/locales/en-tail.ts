@@ -381,5 +381,6 @@ export const enTail: TailTranslationDictionarySections = {
     hideRefs: "Hide refs",
     parents: "Parents",
     files: "files",
+    svnTitle: "SVN Log",
   },
 };

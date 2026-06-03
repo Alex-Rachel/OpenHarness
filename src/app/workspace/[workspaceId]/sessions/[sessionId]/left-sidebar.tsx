@@ -73,10 +73,10 @@ function SpecViewer({ specNote, onDeleteNote }: {
   return (
     <div className="flex flex-col h-full">
       {/* Spec header */}
-      <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
+      <div className="px-3 py-2 border-b border-desktop-border flex items-center justify-between shrink-0">
         <div className="flex items-center gap-1.5">
-          <FileText className="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
-          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+          <FileText className="w-3.5 h-3.5 text-desktop-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+          <span className="text-xs font-semibold text-desktop-accent">
             {specNote?.title || t.common.spec}
           </span>
         </div>
@@ -84,7 +84,7 @@ function SpecViewer({ specNote, onDeleteNote }: {
           <button
             onClick={() => onDeleteNote(specNote.id)}
             title={t.common.deleteSpec}
-            className="p-0.5 rounded text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            className="p-0.5 rounded text-desktop-text-tertiary hover:text-desktop-danger-solid hover:bg-desktop-danger-subtle transition-colors"
           >
             <X className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
           </button>
@@ -95,10 +95,10 @@ function SpecViewer({ specNote, onDeleteNote }: {
         {specNote ? (
           <MarkdownViewer
             content={specNote.content || t.common.noSpecContentYet}
-            className="text-[12px] text-slate-700 dark:text-slate-300"
+            className="text-[12px] text-desktop-text-primary"
           />
         ) : (
-          <div className="h-full rounded-xl border border-dashed border-blue-200 bg-blue-50/60 px-3 py-4 text-[12px] text-blue-700 dark:border-blue-900/50 dark:bg-blue-950/20 dark:text-blue-200">
+          <div className="h-full rounded-xl border border-dashed border-desktop-border bg-desktop-surface-muted px-3 py-4 text-[12px] text-desktop-text-secondary">
             {t.common.noSpecNoteYet}
           </div>
         )}
@@ -129,10 +129,10 @@ function TaskSnapshotSummary({
     <div className="shrink-0 border-t border-desktop-border bg-desktop-surface-muted" data-testid="session-quick-access">
       <div className="px-3 py-2 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-desktop-text-tertiary">
             Quick Access
           </p>
-          <p className="mt-1 text-[12px] text-slate-600 dark:text-slate-300">
+          <p className="mt-1 text-[12px] text-desktop-text-secondary">
             {taskCount > 0
               ? `${taskCount} task${taskCount === 1 ? "" : "s"}${runningCount > 0 ? `, ${runningCount} running` : ""}`
               : t.common.specAvailable}
@@ -143,7 +143,7 @@ function TaskSnapshotSummary({
             <button
               type="button"
               onClick={onOpenSpec}
-              className="px-2 py-1 rounded-md text-[10px] font-medium text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+              className="px-2 py-1 rounded-md text-[10px] font-medium text-desktop-accent bg-desktop-bg-tertiary hover:bg-desktop-bg-active transition-colors"
             >
               Spec
             </button>
@@ -152,7 +152,7 @@ function TaskSnapshotSummary({
             <button
               type="button"
               onClick={onOpenTasks}
-              className="px-2 py-1 rounded-md text-[10px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors"
+              className="px-2 py-1 rounded-md text-[10px] font-medium text-desktop-status-success bg-[var(--dt-status-success-subtle)] hover:bg-desktop-bg-active transition-colors"
             >
               Open Tasks
             </button>
@@ -166,13 +166,13 @@ function TaskSnapshotSummary({
           data-testid="session-spec-preview"
           className="mx-3 mb-3 flex w-[calc(100%-1.5rem)] flex-col gap-1 rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface px-3 py-2 text-left transition-colors hover:bg-desktop-surface-muted"
         >
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-blue-500 dark:text-blue-300">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-desktop-accent">
             Spec Preview
           </span>
           {specPreviewLines.map((line, index) => (
             <span
               key={`${index}-${line}`}
-              className="text-[11px] leading-5 text-slate-600 dark:text-slate-300 line-clamp-1"
+              className="text-[11px] leading-5 text-desktop-text-secondary line-clamp-1"
             >
               {line}
             </span>
@@ -303,7 +303,7 @@ function SessionsSplitPane({
             onMouseDown={() => setIsDraggingSplit(true)}
             data-testid="session-sidebar-split-handle"
           >
-            <div className="h-1 w-10 rounded-full bg-slate-300 dark:bg-slate-600" />
+            <div className="h-1 w-10 rounded-full bg-desktop-text-tertiary" />
           </div>
           <div
             className="min-h-44 shrink-0 overflow-hidden"
@@ -337,15 +337,15 @@ function SessionsSplitPane({
 
 /* ─── Mini Task List (summary list in Sessions tab) ─────────────────── */
 const STATUS_COLORS: Record<string, string> = {
-  pending:     "bg-slate-300 dark:bg-slate-600",
-  confirmed:   "bg-blue-400 dark:bg-blue-500",
-  running:     "bg-amber-400 animate-pulse",
-  completed:   "bg-emerald-500",
-  error:       "bg-red-500",
-  IN_PROGRESS: "bg-amber-400 animate-pulse",
-  COMPLETED:   "bg-emerald-500",
-  FAILED:      "bg-red-500",
-  PENDING:     "bg-slate-300 dark:bg-slate-600",
+  pending:     "bg-desktop-text-tertiary",
+  confirmed:   "bg-desktop-status-info",
+  running:     "bg-desktop-status-warning animate-pulse",
+  completed:   "bg-desktop-status-success",
+  error:       "bg-desktop-danger-solid",
+  IN_PROGRESS: "bg-desktop-status-warning animate-pulse",
+  COMPLETED:   "bg-desktop-status-success",
+  FAILED:      "bg-desktop-danger-solid",
+  PENDING:     "bg-desktop-text-tertiary",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -400,24 +400,24 @@ function MiniTaskList({
     <div className="px-3 py-2 space-y-2" data-testid="session-task-snapshot">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-desktop-text-tertiary">
             Task Snapshot
           </span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-desktop-bg-tertiary text-desktop-text-tertiary">
             {items.length} total
           </span>
           {runningCount > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--dt-status-warning-subtle)] text-desktop-status-warning">
               {runningCount} running
             </span>
           )}
           {completedCount > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--dt-status-success-subtle)] text-desktop-status-success">
               {completedCount} done
             </span>
           )}
         </div>
-        <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 shrink-0">
+        <span className="text-[10px] font-medium text-desktop-text-tertiary shrink-0">
           quick run
         </span>
       </div>
@@ -428,13 +428,13 @@ function MiniTaskList({
             data-testid="session-task-snapshot-item"
             className="flex w-full items-center gap-2 rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface px-2.5 py-2"
           >
-            <span className={`mt-1 w-1.5 h-1.5 rounded-full shrink-0 ${STATUS_COLORS[item.status] ?? "bg-slate-300"}`} />
+            <span className={`mt-1 w-1.5 h-1.5 rounded-full shrink-0 ${STATUS_COLORS[item.status] ?? "bg-desktop-text-tertiary"}`} />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-medium text-slate-700 dark:text-slate-200 truncate">
+                <span className="text-[11px] font-medium text-desktop-text-primary truncate">
                   {item.title}
                 </span>
-                <span className="text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500 shrink-0">
+                <span className="text-[9px] uppercase tracking-wider text-desktop-text-tertiary shrink-0">
                   {STATUS_LABEL[item.status] ?? item.status}
                 </span>
               </div>
@@ -451,7 +451,7 @@ function MiniTaskList({
                   setExecutingId((current) => current === item.id ? null : current);
                 }
               }}
-              className="shrink-0 inline-flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] font-medium text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-wait disabled:opacity-60 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-300 dark:hover:bg-emerald-900/30"
+              className="shrink-0 inline-flex items-center gap-1 rounded-md border border-desktop-border bg-[var(--dt-status-success-subtle)] px-2 py-1 text-[10px] font-medium text-desktop-status-success transition-colors hover:bg-desktop-bg-active disabled:cursor-wait disabled:opacity-60"
               title={`${item.actionLabel ?? "Run"} ${item.title}`}
             >
               <Play className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
@@ -478,8 +478,8 @@ function TabButton({ active, label, badge, badgePulse, icon, onClick }: {
       onClick={onClick}
       className={`flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded-t-md border-b-2 transition-colors whitespace-nowrap ${
         active
-          ? "border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/10"
-          : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+          ? "border-desktop-accent text-desktop-accent bg-desktop-bg-tertiary"
+          : "border-transparent text-desktop-text-tertiary hover:text-desktop-text-primary hover:bg-desktop-bg-active"
       }`}
     >
       {icon}
@@ -487,10 +487,10 @@ function TabButton({ active, label, badge, badgePulse, icon, onClick }: {
       {badge != null && badge > 0 && (
         <span className={`text-[9px] font-bold px-1 py-0.5 rounded-full leading-none ${
           badgePulse
-            ? "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 animate-pulse"
+            ? "bg-[var(--dt-status-warning-subtle)] text-desktop-status-warning animate-pulse"
             : active
-              ? "bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300"
-              : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
+              ? "bg-desktop-bg-tertiary text-desktop-accent"
+              : "bg-desktop-bg-tertiary text-desktop-text-tertiary"
         }`}>
           {badge > 99 ? "99+" : badge}
         </span>
@@ -569,7 +569,7 @@ export function LeftSidebar({
           <div className="flex flex-col items-center py-2 gap-1.5 h-full">
             <button
               onClick={onToggleCollapse}
-              className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              className="p-1.5 rounded-md hover:bg-desktop-bg-active text-desktop-text-tertiary hover:text-desktop-text-primary transition-colors"
               title={t.common.expandSidebar}
             >
               <ChevronsRight className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
@@ -579,7 +579,7 @@ export function LeftSidebar({
             <button
               onClick={() => { onCreateSession(""); }}
               disabled={!canCreateSession}
-              className="p-1.5 rounded-md text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-1.5 rounded-md text-desktop-accent hover:bg-desktop-bg-tertiary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               title={t.common.newSession}
             >
               <Plus className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
@@ -588,7 +588,7 @@ export function LeftSidebar({
             {/* Sessions */}
             <button
               onClick={() => { onToggleCollapse(); setActiveTab("sessions"); }}
-              className={`p-1.5 rounded-md transition-colors ${activeTab === "sessions" ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+              className={`p-1.5 rounded-md transition-colors ${activeTab === "sessions" ? "text-desktop-accent bg-desktop-bg-tertiary" : "text-desktop-text-tertiary hover:text-desktop-text-primary hover:bg-desktop-bg-active"}`}
               title={t.sessions.title}
             >
               <MessageSquareMore className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
@@ -597,7 +597,7 @@ export function LeftSidebar({
             {/* Spec */}
             <button
               onClick={() => { onToggleCollapse(); setActiveTab("spec"); }}
-              className={`p-1.5 rounded-md transition-colors ${activeTab === "spec" ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+              className={`p-1.5 rounded-md transition-colors ${activeTab === "spec" ? "text-desktop-accent bg-desktop-bg-tertiary" : "text-desktop-text-tertiary hover:text-desktop-text-primary hover:bg-desktop-bg-active"}`}
               title={t.common.spec}
             >
               <FileText className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
@@ -606,12 +606,12 @@ export function LeftSidebar({
             {/* Tasks */}
             <button
               onClick={() => { onToggleCollapse(); setActiveTab("tasks"); }}
-              className={`relative p-1.5 rounded-md transition-colors ${activeTab === "tasks" ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20" : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+              className={`relative p-1.5 rounded-md transition-colors ${activeTab === "tasks" ? "text-desktop-status-success bg-[var(--dt-status-success-subtle)]" : "text-desktop-text-tertiary hover:text-desktop-text-primary hover:bg-desktop-bg-active"}`}
               title={t.common.tasks}
             >
               <ClipboardCheck className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
               {taskCount > 0 && (
-                <span className={`absolute -top-0.5 -right-0.5 w-3.5 h-3.5 flex items-center justify-center rounded-full text-white text-[8px] font-bold ${hasRunningTasks ? "bg-amber-400 animate-pulse" : "bg-emerald-500"}`}>
+                <span className={`absolute -top-0.5 -right-0.5 w-3.5 h-3.5 flex items-center justify-center rounded-full text-[var(--dt-accent-text)] text-[8px] font-bold ${hasRunningTasks ? "bg-desktop-status-warning animate-pulse" : "bg-desktop-status-success"}`}>
                   {taskCount > 9 ? "9+" : taskCount}
                 </span>
               )}
@@ -622,7 +622,7 @@ export function LeftSidebar({
           /* ─── Expanded: tabbed sidebar ───────────────────────── */
           <>
             {/* Header: codebase + new session + collapse */}
-            <div className="px-3 py-1.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
+            <div className="px-3 py-1.5 border-b border-desktop-border flex items-center justify-between gap-2 shrink-0">
               <div className="flex items-center gap-1.5 min-w-0">
                 <button
                   onClick={() => {
@@ -632,15 +632,15 @@ export function LeftSidebar({
                     }
                     onToggleCollapse();
                   }}
-                  className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors shrink-0"
+                  className="p-1 rounded-md hover:bg-desktop-bg-active text-desktop-text-tertiary hover:text-desktop-text-primary transition-colors shrink-0"
                   title={showMobileSidebar ? t.nav.closeSidebar : t.common.collapseSidebar}
                 >
                   <ChevronsLeft className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
                 </button>
                 {codebases.length > 0 && repoSelection && (
                   <>
-                    <Folder className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                    <Folder className="w-3.5 h-3.5 text-desktop-accent shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+                    <span className="text-xs text-desktop-text-secondary truncate">
                       {repoSelection.name ?? repoSelection.path.split("/").pop()}
                     </span>
                   </>
@@ -654,7 +654,7 @@ export function LeftSidebar({
                   }}
                   disabled={!canCreateSession}
                   title={t.common.newSession}
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium text-desktop-accent hover:bg-desktop-bg-tertiary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <Plus className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
                   <span className="hidden sm:inline">{t.common.new}</span>
@@ -663,7 +663,7 @@ export function LeftSidebar({
             </div>
 
             {/* Tab bar */}
-            <div className="flex items-end px-1 pt-1 border-b border-slate-200 dark:border-slate-700 shrink-0 gap-0.5 overflow-x-auto">
+            <div className="flex items-end px-1 pt-1 border-b border-desktop-border shrink-0 gap-0.5 overflow-x-auto">
               <TabButton
                 active={activeTab === "sessions"}
                 label={t.sessions.title}

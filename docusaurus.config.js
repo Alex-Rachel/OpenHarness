@@ -1,11 +1,11 @@
 /** @type {import("@docusaurus/types").Config} */
 module.exports = {
-  title: "Routa",
+  title: "OpenHarness",
   tagline: "Workspace-first multi-agent coordination for real software delivery",
   url: "https://phodal.github.io",
   baseUrl: "/routa/",
   organizationName: "phodal",
-  projectName: "routa",
+  projectName: "OpenHarness",
   trailingSlash: false,
   favicon: "favicon.ico",
   staticDirectories: ["public"],
@@ -81,7 +81,7 @@ module.exports = {
       isCloseable: true,
     },
     navbar: {
-      title: "Routa",
+      title: "OpenHarness",
       logo: {
         alt: "Routa logo",
         src: "logo-symbol.svg",

@@ -34,7 +34,7 @@ npx docusaurus serve --dir docs-site --port 3001
 
 ### 1. View in UI
 
-1. Open Routa Desktop or Web
+1. Open Harness Desktop or Web
 2. Go to **Settings → Harness**
 3. Select a workspace and repository
 4. Click the **Architecture** tab

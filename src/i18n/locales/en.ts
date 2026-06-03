@@ -189,7 +189,7 @@ const en: TranslationDictionary = {
   },
 
   desktopWindow: {
-    appLabel: "Routa",
+    appLabel: "OpenHarness",
     fileMenu: "File",
     editMenu: "Edit",
     viewMenu: "View",
@@ -727,7 +727,7 @@ const en: TranslationDictionary = {
     typeMessageAutoCreate: "Type a message to auto-create a session...",
     session: "Session",
     noResults: "No results",
-    cloneRepoFirst: "Clone a repository first",
+    cloneRepoFirst: "Add a codebase first",
     selectModel: "Select model",
     defaultModel: "Default model",
     brave: "Brave",

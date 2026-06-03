@@ -13,12 +13,14 @@ const GIT_CAPABILITIES: VcsCapability[] = [
   "fileBrowse", "fileEdit", "diff", "commitHistory", "stageUnstage",
   "commit", "branchManagement", "pullUpdate", "push", "rebase",
   "reset", "worktree", "blame", "logGraph", "remoteAuth",
+  "info", "add",
 ];
 
 /** Capabilities supported by SVN. */
 const SVN_CAPABILITIES: VcsCapability[] = [
   "fileBrowse", "fileEdit", "diff", "commitHistory",
   "commit", "pullUpdate", "push", "blame", "remoteAuth",
+  "info", "add",
 ];
 
 /** Capabilities for non-VCS directories (plain folders). */

@@ -29,6 +29,8 @@ const CAPABILITY_LABELS: Record<VcsCapability, string> = {
   blame: "Blame",
   logGraph: "Log graph",
   remoteAuth: "Remote authentication",
+  info: "Repository info",
+  add: "Add to version control",
 };
 
 /**

@@ -88,7 +88,23 @@ impl AcpProcess {
         let resolved_command =
             crate::shell_env::which(command).unwrap_or_else(|| command.to_string());
 
+        // On Windows, .CMD/.BAT files cannot be spawned directly with
+        // CREATE_NO_WINDOW — the batch processor fails with
+        // "batch file arguments are invalid".  Wrap them with `cmd.exe /C`.
+        #[cfg(windows)]
+        let mut command_builder = {
+            let lower = resolved_command.to_ascii_lowercase();
+            if lower.ends_with(".cmd") || lower.ends_with(".bat") {
+                let mut c = tokio::process::Command::new("cmd.exe");
+                c.arg("/C").arg(&resolved_command);
+                c
+            } else {
+                tokio::process::Command::new(&resolved_command)
+            }
+        };
+        #[cfg(not(windows))]
         let mut command_builder = tokio::process::Command::new(&resolved_command);
+
         command_builder
             .args(args)
             .current_dir(cwd)

@@ -205,7 +205,23 @@ impl ClaudeCodeProcess {
         let resolved_command = crate::shell_env::which(&self.config.command)
             .unwrap_or_else(|| self.config.command.clone());
 
+        // On Windows, .CMD/.BAT files cannot be spawned directly with
+        // CREATE_NO_WINDOW — the batch processor fails with
+        // "batch file arguments are invalid".  Wrap them with `cmd.exe /C`.
+        #[cfg(windows)]
+        let mut cmd = {
+            let lower = resolved_command.to_ascii_lowercase();
+            if lower.ends_with(".cmd") || lower.ends_with(".bat") {
+                let mut c = Command::new("cmd.exe");
+                c.arg("/C").arg(&resolved_command);
+                c
+            } else {
+                Command::new(&resolved_command)
+            }
+        };
+        #[cfg(not(windows))]
         let mut cmd = Command::new(&resolved_command);
+
         cmd.arg("-p");
         cmd.args(["--output-format", "stream-json"]);
         cmd.args(["--input-format", "stream-json"]);
@@ -397,6 +413,26 @@ impl ClaudeCodeProcess {
 
             alive.store(false, Ordering::SeqCst);
             tracing::info!("[ClaudeCode:{}] stdout reader exited", display_name);
+
+            // When the process exits while a prompt is in-flight, the prompt
+            // oneshot sender gets dropped and the background prompt task will
+            // emit a synthetic turn_complete.  But as a safety net, also emit
+            // one here so any SSE listener is unblocked even if the prompt
+            // task hasn't reacted yet.
+            if let Some(sid) = session_id.lock().await.clone() {
+                let eos = serde_json::json!({
+                    "jsonrpc": "2.0",
+                    "method": "session/update",
+                    "params": {
+                        "sessionId": sid,
+                        "update": {
+                            "sessionUpdate": "turn_complete",
+                            "stopReason": "end_turn"
+                        }
+                    }
+                });
+                let _ = notification_tx.send(eos);
+            }
         });
 
         // Spawn stderr reader — capture output during startup for diagnostics

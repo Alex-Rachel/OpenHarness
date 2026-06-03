@@ -329,7 +329,7 @@ function renderDeterministicSummary({ commits, changedFiles, range, version }) {
   const displayVersion = version ? `v${version}` : range.to;
   const lines = ["## Summary", ""];
   lines.push(
-    `Routa Desktop ${displayVersion} includes ${commits.length} non-merge commits from \`${displayRange}\`.`,
+    `Harness Desktop ${displayVersion} includes ${commits.length} non-merge commits from \`${displayRange}\`.`,
     "",
     "### Highlights",
     "",
@@ -362,7 +362,7 @@ function readOptionalSummary(summaryFile) {
 
 function buildSpecialistPrompt({ commits, changedFiles, range, repo, version }) {
   return JSON.stringify({
-    task: "Generate the AI-Powered Changelog Summary for a Routa Desktop GitHub draft release. Return strict JSON: {\"summaryMarkdown\":\"...\"}. The markdown must be concise, user-facing, and must not repeat the full technical changelog.",
+    task: "Generate the AI-Powered Changelog Summary for a Harness Desktop GitHub draft release. Return strict JSON: {\"summaryMarkdown\":\"...\"}. The markdown must be concise, user-facing, and must not repeat the full technical changelog.",
     repository: repo,
     version,
     range,
@@ -424,7 +424,7 @@ function renderReleaseNotes({ aiSummary, changedFiles, commits, range, repo, ver
   const titleVersion = version ? ` v${version}` : ` ${range.to}`;
   const summary = aiSummary ?? renderDeterministicSummary({ commits, changedFiles, range, version });
   const lines = [
-    `# Routa Desktop${titleVersion}`,
+    `# Harness Desktop${titleVersion}`,
     "",
     summary,
     "",

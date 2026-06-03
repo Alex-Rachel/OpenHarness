@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Default capabilities for Routa Desktop",
+  "description": "Default capabilities for Harness Desktop",
   "windows": ["*"],
   "webviews": ["*"],
   "platforms": ["linux", "macOS", "windows"],

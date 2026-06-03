@@ -43,7 +43,7 @@ Kanban CLI 在 Desktop/local server 运行时，应优先复用 `http://127.0.0.
 
 - Environment: desktop + cli
 - Trigger:
-  1. 启动 Routa Desktop，确认本地服务运行在 `http://127.0.0.1:3210`
+  1. 启动 Harness Desktop，确认本地服务运行在 `http://127.0.0.1:3210`
   2. 打开 Desktop 看板页面 `http://localhost:3210/workspace/default/kanban?boardId=af4302cd-e0db-4f81-823d-ebbab8a25e31`
   3. 在 repo cwd 直接执行 `routa kanban board list --workspace-id default`
   4. 返回的 board id 与 Desktop 页面中的 board id 不一致

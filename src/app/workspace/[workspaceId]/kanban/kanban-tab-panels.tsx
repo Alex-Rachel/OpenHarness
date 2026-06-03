@@ -44,6 +44,7 @@ import type { KanbanRepoChanges } from "./kanban-file-changes-types";
 import { buildKanbanTaskAdaptiveHarnessOptions } from "./kanban-task-adaptive";
 import { ChevronRight as _ChevronRight, GitBranch as _GitBranch } from "lucide-react";
 import { GitLogPanel, RealGitAdapter, MockGitAdapter } from "./git-log";
+import { VcsLogPanel, useVcsLogAdapter } from "./vcs-log";
 
 interface SessionRestoreTranscriptMessage {
   role?: string;
@@ -431,6 +432,23 @@ export function KanbanBoardSurface({
     }
     return defaultCodebase?.repoPath ?? codebases[0]?.repoPath ?? null;
   }, [codebases, defaultCodebase?.repoPath, gitLogRepoPath]);
+
+  // Resolve VCS type for the active repo (for VcsLogPanel dispatch)
+  const activeCodebase = useMemo(
+    () => codebases.find((c) => c.repoPath === activeGitLogRepoPath) ?? defaultCodebase ?? codebases[0],
+    [codebases, activeGitLogRepoPath, defaultCodebase],
+  );
+  const activeVcsType = useMemo(() => {
+    return (activeCodebase?.vcsType as "git" | "svn" | "none" | undefined) ?? "git";
+  }, [activeCodebase?.vcsType]);
+
+  // Unified VCS adapter — selects Git or SVN adapter based on vcsType
+  const vcsAdapter = useVcsLogAdapter({
+    vcsType: activeVcsType,
+    mock: codebases.length === 0,
+    workspaceId,
+    codebaseId: activeCodebase?.id,
+  });
   const activeDragTask = useMemo(
     () => activeDragTaskId ? boardTasks.find((task) => task.id === activeDragTaskId) ?? null : null,
     [activeDragTaskId, boardTasks],
@@ -487,15 +505,17 @@ export function KanbanBoardSurface({
             open={fileChangesOpenValue}
             onClose={() => setFileChangesOpenValue(false)}
             onRefresh={onRefresh}
+            codebase={defaultCodebase ?? codebases[0]}
           />
           {gitLogOpenValue && (
             <div className="absolute bottom-0 left-0 right-0 z-10 border-t border-desktop-border bg-desktop-surface shadow-[var(--dt-shadow-md)]" style={{ height: "340px" }}>
-              <GitLogPanel
-                adapter={gitAdapter}
+              <VcsLogPanel
+                adapter={vcsAdapter}
                 repoPath={activeGitLogRepoPath ?? "/mock/repo"}
                 codebases={codebases}
                 onSelectRepoPath={setGitLogRepoPath}
-                title={t.gitLog.title}
+                title={activeVcsType === "svn" ? t.gitLog.svnTitle : t.gitLog.title}
+                vcsType={activeVcsType}
               />
             </div>
           )}

@@ -188,7 +188,7 @@ const zh: TranslationDictionary = {
   },
 
   desktopWindow: {
-    appLabel: "Routa",
+    appLabel: "OpenHarness",
     fileMenu: "\u6587\u4ef6",
     editMenu: "\u7f16\u8f91",
     viewMenu: "\u67e5\u770b",
@@ -723,7 +723,7 @@ const zh: TranslationDictionary = {
     typeMessageAutoCreate: "输入消息以自动创建会话...",
     session: "会话",
     noResults: "无结果",
-    cloneRepoFirst: "先克隆仓库",
+    cloneRepoFirst: "请先添加代码库",
     selectModel: "选择模型",
     defaultModel: "默认模型",
     brave: "Brave",

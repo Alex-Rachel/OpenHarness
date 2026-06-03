@@ -183,11 +183,45 @@ export function MessageBubble({
     }
 }
 
+const bubbleSurfaceClass =
+    "w-full rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-surface px-4 py-3 text-sm text-desktop-text-primary shadow-[var(--dt-shadow-sm)]";
+const bubbleInsetClass =
+    "rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-bg-secondary";
+const metadataPillClass =
+    "inline-flex items-center rounded-full border border-desktop-border bg-desktop-bg-secondary px-2.5 py-1 text-[10px] font-medium text-desktop-text-secondary";
+const disclosureLabelClass =
+    "text-[10px] font-semibold uppercase tracking-[0.16em] text-desktop-text-tertiary";
+const codeBlockClass =
+    "block rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-bg-primary px-3 py-2 font-mono text-[11px] text-desktop-text-primary break-all";
+const dangerPanelClass =
+    "rounded-[var(--dt-radius-md)] border border-desktop-danger-border bg-desktop-danger-subtle px-3 py-2 text-[11px] text-desktop-danger-text";
+
+function getStatusDotClass(
+    status: string | undefined,
+    pendingTone: "accent" | "info" | "warning" | "neutral" = "neutral",
+): string {
+    if (status === "completed") return "bg-desktop-status-success";
+    if (status === "failed") return "bg-desktop-danger-solid";
+    if (status === "running" || status === "in_progress" || status === "streaming") {
+        return "bg-desktop-status-warning animate-pulse";
+    }
+
+    switch (pendingTone) {
+        case "accent":
+            return "bg-desktop-accent";
+        case "info":
+            return "bg-desktop-status-info animate-pulse";
+        case "warning":
+            return "bg-desktop-status-warning animate-pulse";
+        default:
+            return "bg-desktop-text-tertiary";
+    }
+}
+
 function UserBubble({content}: { content: string }) {
     return (
         <div className="w-full">
-            <div
-                className="w-full px-3 py-2 rounded-xl border border-blue-100/70 dark:border-blue-900/30 bg-blue-50/60 dark:bg-blue-900/10 text-sm text-blue-900 dark:text-blue-100 whitespace-pre-wrap">
+            <div className={`${bubbleSurfaceClass} bg-desktop-bg-secondary whitespace-pre-wrap`}>
                 {content}
             </div>
         </div>
@@ -417,9 +451,8 @@ function shouldRenderPermissionCommand(requestTitle: string, command: string | n
 function AssistantBubble({content}: { content: string }) {
     return (
         <div className="w-full">
-            <div
-                className="w-full px-3 py-2 rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-[#151924] text-sm text-slate-900 dark:text-slate-100">
-                <MarkdownViewer content={content} className="text-sm"/>
+            <div className={`${bubbleSurfaceClass} bg-desktop-surface`}>
+                <MarkdownViewer content={content} className="text-sm text-desktop-text-primary"/>
             </div>
         </div>
     );
@@ -433,14 +466,14 @@ function ThoughtBubble({content}: { content: string }) {
         <div className="w-full">
             <button type="button" onClick={() => setExpanded((e) => !e)} className="w-full text-left group">
                 <div className="flex items-center gap-1.5 mb-0.5">
-                    <ChevronRight className={`w-3 h-3 text-slate-400 transition-transform duration-150 ${expanded ? "rotate-90" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
-                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                    <ChevronRight className={`h-3 w-3 text-desktop-text-tertiary transition-transform duration-[var(--dt-motion-fast)] ${expanded ? "rotate-90" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+                    <span className={disclosureLabelClass}>
                         {t.messageBubble.thinking}
                     </span>
                 </div>
             </button>
             {expanded ? (
-                <div className="mt-0.5 px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-700 whitespace-pre-wrap dark:border-slate-800/50 dark:bg-slate-900/10 dark:text-slate-300">
+                <div className={`mt-1 whitespace-pre-wrap px-3 py-2 text-xs text-desktop-text-secondary ${bubbleInsetClass}`}>
                     {displayContent}
                 </div>
             ) : null}
@@ -448,8 +481,31 @@ function ThoughtBubble({content}: { content: string }) {
     );
 }
 
-/** Format raw input for inline display (truncated) */
 function formatToolInputInline(rawInput?: Record<string, unknown>, maxLen = 60): string {
+    if (!rawInput || Object.keys(rawInput).length === 0) return "";
+
+    const truncateStart = (value: string) => value.length > maxLen ? `...${value.slice(-maxLen)}` : value;
+    const truncateEnd = (value: string) => value.length > maxLen ? `${value.slice(0, maxLen)}...` : value;
+
+    const path = rawInput.file_path ?? rawInput.path ?? rawInput.file ?? rawInput.filePath;
+    if (typeof path === "string") return truncateStart(path);
+
+    if (typeof rawInput.command === "string") return truncateEnd(rawInput.command);
+
+    const pattern = rawInput.pattern ?? rawInput.glob_pattern ?? rawInput.query;
+    if (typeof pattern === "string") return truncateEnd(pattern);
+
+    const infoRequest = rawInput.information_request;
+    if (typeof infoRequest === "string") return truncateEnd(infoRequest);
+
+    const firstKey = Object.keys(rawInput)[0];
+    const firstVal = rawInput[firstKey];
+    const str = typeof firstVal === "string" ? firstVal : JSON.stringify(firstVal);
+    return truncateEnd(str);
+}
+
+/** Format raw input for inline display (truncated) */
+function formatToolInputInlineLegacy(rawInput?: Record<string, unknown>, maxLen = 60): string {
     if (!rawInput || Object.keys(rawInput).length === 0) return "";
     // For common tools, show the most relevant param
     const path = rawInput.file_path ?? rawInput.path ?? rawInput.file ?? rawInput.filePath;
@@ -525,46 +581,32 @@ function getToolIcon(kind?: string, toolName?: string): React.ReactNode {
 /**
  * Get styling based on tool kind for visual distinction.
  */
-function getToolStyling(kind?: string): { bgClass: string; borderClass: string; iconColorClass: string } {
+function getToolStyling(kind?: string): { iconWrapClass: string; iconColorClass: string } {
     switch (normalizeToolKind(kind)) {
         case "shell":
             return {
-                bgClass: "bg-slate-50 dark:bg-slate-900/30",
-                borderClass: "border-slate-200 dark:border-slate-700/50",
-                iconColorClass: "text-slate-600 dark:text-slate-400",
+                iconWrapClass: "bg-desktop-bg-secondary",
+                iconColorClass: "text-desktop-text-secondary",
             };
         case "edit-file":
         case "write-file":
-            return {
-                bgClass: "bg-blue-50/50 dark:bg-blue-900/10",
-                borderClass: "border-blue-200/50 dark:border-blue-800/30",
-                iconColorClass: "text-blue-600 dark:text-blue-400",
-            };
         case "read-file":
+        case "web-fetch":
+        case "web-search":
             return {
-                bgClass: "bg-emerald-50/50 dark:bg-emerald-900/10",
-                borderClass: "border-emerald-200/50 dark:border-emerald-800/30",
-                iconColorClass: "text-emerald-600 dark:text-emerald-400",
+                iconWrapClass: "bg-desktop-bg-secondary",
+                iconColorClass: "text-desktop-accent",
             };
         case "glob":
         case "grep":
             return {
-                bgClass: "bg-slate-50/60 dark:bg-slate-900/20",
-                borderClass: "border-slate-200/60 dark:border-slate-700/40",
-                iconColorClass: "text-slate-600 dark:text-slate-400",
-            };
-        case "web-fetch":
-        case "web-search":
-            return {
-                bgClass: "bg-blue-50/50 dark:bg-blue-900/10",
-                borderClass: "border-blue-200/50 dark:border-blue-800/30",
-                iconColorClass: "text-blue-600 dark:text-blue-400",
+                iconWrapClass: "bg-desktop-bg-secondary",
+                iconColorClass: "text-desktop-text-secondary",
             };
         default:
             return {
-                bgClass: "bg-slate-50 dark:bg-[#161922]",
-                borderClass: "border-slate-200/50 dark:border-slate-800/50",
-                iconColorClass: "text-slate-500 dark:text-slate-400",
+                iconWrapClass: "bg-desktop-bg-secondary",
+                iconColorClass: "text-desktop-text-tertiary",
             };
     }
 }
@@ -594,11 +636,7 @@ function ToolBubble({
 }) {
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
-    const statusColor =
-        toolStatus === "completed" ? "bg-emerald-500"
-            : toolStatus === "failed" ? "bg-red-500"
-                : toolStatus === "in_progress" || toolStatus === "running" || toolStatus === "streaming" ? "bg-amber-500 animate-pulse"
-                    : "bg-slate-400";
+    const statusColor = getStatusDotClass(toolStatus, "neutral");
 
     // Infer the actual tool name - handles cases where providers send file paths as title
     const displayName = inferToolDisplayName(toolName, toolKind, rawInput);
@@ -618,36 +656,38 @@ function ToolBubble({
             <button
                 type="button"
                 onClick={() => setExpanded((e) => !e)}
-                className={`w-full px-2.5 py-1.5 rounded-md border ${styling.bgClass} ${styling.borderClass} flex items-center gap-2 text-left hover:brightness-95 dark:hover:brightness-110 transition-all`}
+                className="flex w-full items-center gap-3 rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-surface px-3 py-2 text-left shadow-[var(--dt-shadow-sm)] transition-colors hover:bg-desktop-surface-muted"
             >
-                <span className={`shrink-0 ${styling.iconColorClass}`}>{icon}</span>
-                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${statusColor}`}/>
-                <span className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate flex-1">
+                <span className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${styling.iconWrapClass} ${styling.iconColorClass}`}>
+                    {icon}
+                </span>
+                <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${statusColor}`}/>
+                <span className="min-w-0 flex-1 truncate text-xs font-medium text-desktop-text-primary">
                     {displayName}
                 </span>
                 {inputPreview && (
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[40%]">
+                    <span className="max-w-[40%] truncate text-[11px] text-desktop-text-secondary">
                         {inputPreview}
                     </span>
                 )}
                 {!inputPreview && outputSummary && (
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[40%]">
+                    <span className="max-w-[40%] truncate text-[11px] text-desktop-text-secondary">
                         {outputSummary}
                     </span>
                 )}
-                <ChevronRight className={`w-2.5 h-2.5 text-slate-400 transition-transform duration-150 shrink-0 ${expanded ? "rotate-90" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+                <ChevronRight className={`h-3 w-3 shrink-0 text-desktop-text-tertiary transition-transform duration-[var(--dt-motion-fast)] ${expanded ? "rotate-90" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
             </button>
             {expanded && (hasInput || hasOutput) && (
-                <div className={`mt-1 ml-4 rounded-md border ${styling.bgClass} ${styling.borderClass} overflow-hidden`}>
+                <div className="mt-2 overflow-hidden rounded-[var(--dt-radius-md)] border border-desktop-border bg-desktop-bg-primary">
                     {hasInput && (
-                        <div className="px-2.5 py-2">
-                            <div className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-1">{t.messageBubble.input}</div>
+                        <div className="px-3 py-3">
+                            <div className={`mb-1 ${disclosureLabelClass}`}>{t.messageBubble.input}</div>
                             <ToolInputTable input={rawInput} />
                         </div>
                     )}
-                    {hasInput && hasOutput && <div className={`border-t ${styling.borderClass}`}/>}
+                    {hasInput && hasOutput && <div className="border-t border-desktop-border"/>}
                     {hasOutput && (
-                        <div className="overflow-hidden rounded-b-md">
+                        <div className="overflow-hidden rounded-b-[var(--dt-radius-md)]">
                             <ToolOutputView output={structuredOutput} toolName={displayName} />
                         </div>
                     )}
@@ -722,20 +762,22 @@ export function AskUserQuestionBubble({
     };
 
     return (
-        <div className="w-full rounded-md border border-amber-200/80 dark:border-amber-800/40 bg-amber-50/40 dark:bg-amber-950/10 overflow-hidden">
-            <div className="px-2.5 py-1.5 space-y-2">
+        <div className="w-full overflow-hidden rounded-[var(--dt-radius-lg)] border border-desktop-border bg-desktop-surface shadow-[var(--dt-shadow-sm)]">
+            <div className="space-y-3 px-3 py-3">
                 {questions.map((item) => {
                     const selectedValues = answers[item.question]
                         ? answers[item.question].split(",").map((value) => value.trim()).filter(Boolean)
                         : [];
                     return (
-                        <div key={item.question}>
-                            <div className="flex items-center gap-1.5 mb-1">
-                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isCompleted ? "bg-emerald-500" : isFailed ? "bg-red-500" : "bg-amber-500 animate-pulse"}`} />
-                                <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">{item.header}</span>
-                                <span className="text-xs text-slate-700 dark:text-slate-300">{item.question}</span>
+                        <div key={item.question} className={`space-y-2 px-3 py-3 ${bubbleInsetClass}`}>
+                            <div className="flex items-start gap-2">
+                                <span className={`mt-1 h-1.5 w-1.5 rounded-full shrink-0 ${getStatusDotClass(message.toolStatus, "accent")}`} />
+                                <div className="min-w-0">
+                                    <div className={disclosureLabelClass}>{item.header}</div>
+                                    <div className="mt-1 text-sm font-medium text-desktop-text-primary">{item.question}</div>
+                                </div>
                             </div>
-                            <div className="flex flex-wrap gap-1.5 pl-3">
+                            <div className="flex flex-wrap gap-1.5">
                                 {(item.options ?? []).map((option) => {
                                     const selected = selectedValues.includes(option.label);
                                     return (
@@ -747,10 +789,10 @@ export function AskUserQuestionBubble({
                                                 ? toggleMultiAnswer(item.question, option.label)
                                                 : updateSingleAnswer(item.question, option.label)}
                                             title={option.description}
-                                            className={`rounded-md border px-2 py-0.5 text-[11px] transition-colors ${selected
-                                                ? "border-amber-500 bg-amber-500 text-white dark:bg-amber-600"
-                                                : "border-amber-200 dark:border-amber-700/50 bg-white/80 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:border-amber-400 dark:hover:border-amber-600"
-                                            } ${!isAwaitingInput ? "cursor-default" : "cursor-pointer"}`}
+                                            className={`rounded-full border px-3 py-1.5 text-[11px] transition-colors ${selected
+                                                ? "border-desktop-accent bg-desktop-accent text-desktop-accent-text"
+                                                : "border-desktop-border bg-desktop-bg-primary text-desktop-text-secondary hover:bg-desktop-bg-active hover:text-desktop-text-primary"
+                                            } ${!isAwaitingInput ? "cursor-default" : "cursor-pointer"} disabled:opacity-50`}
                                         >
                                             {option.label}
                                         </button>
@@ -762,7 +804,7 @@ export function AskUserQuestionBubble({
                 })}
 
                 {submitError && (
-                    <div className="rounded-md border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-950/20 px-2 py-1 text-[11px] text-red-700 dark:text-red-300">
+                    <div className={dangerPanelClass}>
                         {submitError}
                     </div>
                 )}
@@ -773,7 +815,7 @@ export function AskUserQuestionBubble({
                             type="button"
                             onClick={handleSubmit}
                             disabled={submitting || questions.length === 0}
-                            className="rounded-md bg-amber-600 px-2.5 py-1 text-[11px] font-medium text-white transition-colors hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="rounded-full bg-desktop-accent px-3 py-1.5 text-[11px] font-medium text-desktop-accent-text shadow-[var(--dt-shadow-sm)] transition-colors hover:bg-desktop-accent-strong disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {submitting ? "..." : t.messageBubble.submit}
                         </button>
@@ -881,35 +923,35 @@ export function PermissionRequestBubble({
 
     if (isCompleted || isFailed) {
         return (
-            <div className="w-full rounded-md border border-sky-200/80 dark:border-sky-800/40 bg-sky-50/40 dark:bg-sky-950/10 overflow-hidden">
+            <div className="w-full rounded-md border border-desktop-border bg-desktop-surface overflow-hidden">
                 <button
                     type="button"
                     disabled={!hasDetailSections}
                     onClick={() => hasDetailSections && setDetailsExpanded((value) => !value)}
                     className={`flex w-full items-center gap-2 px-2.5 py-2 text-left ${hasDetailSections ? "cursor-pointer" : "cursor-default"}`}
                 >
-                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isCompleted ? "bg-emerald-500" : "bg-red-500"}`} />
-                    <span className="text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-400 shrink-0">
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isCompleted ? "bg-desktop-status-success" : "bg-desktop-danger-solid"}`} />
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-desktop-status-info shrink-0">
                         {t.messageBubble.requestPermissions}
                     </span>
-                    <div className="min-w-0 flex-1 text-xs text-slate-700 dark:text-slate-200 truncate">
+                    <div className="min-w-0 flex-1 text-xs text-desktop-text-primary truncate">
                         {compactSummary || requestTitle}
                     </div>
                     {completionText ? (
-                        <span className="shrink-0 inline-flex items-center rounded-full bg-white/80 px-2 py-1 text-[11px] font-medium text-slate-600 ring-1 ring-slate-200 dark:bg-slate-900/60 dark:text-slate-300 dark:ring-slate-700">
+                        <span className="shrink-0 inline-flex items-center rounded-full bg-desktop-bg-secondary px-2 py-1 text-[11px] font-medium text-desktop-text-secondary ring-1 ring-desktop-border">
                             {completionText}
                             {outcome === "approve" && !selectedOption ? ` · ${scopeLabel}` : ""}
                         </span>
                     ) : null}
                     {hasDetailSections ? (
-                        <ChevronRight className={`h-3 w-3 shrink-0 text-slate-400 transition-transform ${detailsExpanded ? "rotate-90" : ""}`} />
+                        <ChevronRight className={`h-3 w-3 shrink-0 text-desktop-text-tertiary transition-transform ${detailsExpanded ? "rotate-90" : ""}`} />
                     ) : null}
                 </button>
                 {detailsExpanded ? (
-                    <div className="border-t border-sky-200/80 px-2.5 py-2 dark:border-sky-800/40">
+                    <div className="border-t border-desktop-border px-2.5 py-2">
                         <div className="space-y-2">
                             {isMcpApproval && mcpDescription ? (
-                                <div className="text-xs text-slate-700 dark:text-slate-300">
+                                <div className="text-xs text-desktop-text-secondary">
                                     {mcpDescription}
                                 </div>
                             ) : null}
@@ -918,7 +960,7 @@ export function PermissionRequestBubble({
                                     {mcpParams.map((param) => (
                                         <span
                                             key={`${param.name}:${param.value}`}
-                                            className="inline-flex items-center rounded-full bg-white/85 px-2 py-1 text-[11px] font-medium text-slate-700 ring-1 ring-slate-200 dark:bg-slate-900/60 dark:text-slate-200 dark:ring-slate-700"
+                                            className="inline-flex items-center rounded-full bg-desktop-bg-secondary px-2 py-1 text-[11px] font-medium text-desktop-text-secondary ring-1 ring-desktop-border"
                                         >
                                             {`${param.name}: ${param.value}`}
                                         </span>
@@ -926,12 +968,12 @@ export function PermissionRequestBubble({
                                 </div>
                             ) : null}
                             {shouldRenderPermissionCommand(requestTitle, command) ? (
-                                <code className="block rounded-md bg-white/80 px-2 py-1.5 text-[11px] text-slate-700 ring-1 ring-slate-200 dark:bg-slate-900/60 dark:text-slate-200 dark:ring-slate-700 break-all">
+                                <code className="block rounded-md bg-desktop-bg-secondary px-2 py-1.5 text-[11px] text-desktop-text-secondary ring-1 ring-desktop-border break-all">
                                     {command}
                                 </code>
                             ) : null}
                             {reason && !isMcpApproval ? (
-                                <div className="text-xs text-slate-700 dark:text-slate-300">
+                                <div className="text-xs text-desktop-text-secondary">
                                     {reason}
                                 </div>
                             ) : null}
@@ -940,7 +982,7 @@ export function PermissionRequestBubble({
                                     {amendment.map((entry) => (
                                         <span
                                             key={entry}
-                                            className="inline-flex items-center rounded-full bg-white/85 px-2 py-1 text-[11px] font-medium text-slate-700 ring-1 ring-slate-200 dark:bg-slate-900/60 dark:text-slate-200 dark:ring-slate-700"
+                                            className="inline-flex items-center rounded-full bg-desktop-bg-secondary px-2 py-1 text-[11px] font-medium text-desktop-text-secondary ring-1 ring-desktop-border"
                                         >
                                             {entry}
                                         </span>
@@ -948,8 +990,8 @@ export function PermissionRequestBubble({
                                 </div>
                             ) : null}
                             {Object.keys(requestedPermissions).length > 0 && !isMcpApproval ? (
-                                <details className="rounded-md border border-slate-200/80 bg-white/70 px-2 py-1.5 dark:border-slate-700/80 dark:bg-slate-900/40">
-                                    <summary className="cursor-pointer text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                                <details className="rounded-md border border-desktop-border bg-desktop-bg-secondary px-2 py-1.5">
+                                    <summary className="cursor-pointer text-[11px] font-medium text-desktop-text-secondary">
                                         {t.messageBubble.permissionTechnicalDetails}
                                     </summary>
                                     <div className="mt-2">
@@ -965,19 +1007,19 @@ export function PermissionRequestBubble({
     }
 
     return (
-        <div className="w-full rounded-md border border-sky-200/80 dark:border-sky-800/40 bg-sky-50/40 dark:bg-sky-950/10 overflow-hidden">
+        <div className="w-full rounded-md border border-desktop-border bg-desktop-surface overflow-hidden">
             <div className="px-2.5 py-2 space-y-2">
                 <div className="flex items-center gap-1.5">
-                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isCompleted ? "bg-emerald-500" : isFailed ? "bg-red-500" : "bg-sky-500 animate-pulse"}`} />
-                    <span className="text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-400">
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isCompleted ? "bg-desktop-status-success" : isFailed ? "bg-desktop-danger-solid" : "bg-desktop-status-info animate-pulse"}`} />
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-desktop-status-info">
                         {t.messageBubble.requestPermissions}
                     </span>
                 </div>
-                <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                <div className="text-sm font-medium text-desktop-text-primary">
                     {isMcpApproval && mcpTitle ? mcpTitle : requestTitle}
                 </div>
                 {isMcpApproval && mcpDescription ? (
-                    <div className="text-xs text-slate-700 dark:text-slate-300">
+                    <div className="text-xs text-desktop-text-secondary">
                         {mcpDescription}
                     </div>
                 ) : null}
@@ -986,7 +1028,7 @@ export function PermissionRequestBubble({
                         {mcpParams.map((param) => (
                             <span
                                 key={`${param.name}:${param.value}`}
-                                className="inline-flex items-center rounded-full bg-white/85 px-2 py-1 text-[11px] font-medium text-slate-700 ring-1 ring-slate-200 dark:bg-slate-900/60 dark:text-slate-200 dark:ring-slate-700"
+                                className="inline-flex items-center rounded-full bg-desktop-bg-secondary px-2 py-1 text-[11px] font-medium text-desktop-text-secondary ring-1 ring-desktop-border"
                             >
                                 {`${param.name}: ${param.value}`}
                             </span>
@@ -995,34 +1037,34 @@ export function PermissionRequestBubble({
                 ) : null}
                 {shouldRenderPermissionCommand(requestTitle, command) ? (
                     <div className="space-y-1">
-                        <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        <div className="text-[11px] font-medium text-desktop-text-tertiary">
                             {t.messageBubble.permissionCommand}
                         </div>
-                        <code className="block rounded-md bg-white/80 px-2 py-1.5 text-[11px] text-slate-700 ring-1 ring-slate-200 dark:bg-slate-900/60 dark:text-slate-200 dark:ring-slate-700 break-all">
+                        <code className="block rounded-md bg-desktop-bg-secondary px-2 py-1.5 text-[11px] text-desktop-text-secondary ring-1 ring-desktop-border break-all">
                             {command}
                         </code>
                     </div>
                 ) : null}
                 {reason && !isMcpApproval ? (
                     <div className="space-y-1">
-                        <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        <div className="text-[11px] font-medium text-desktop-text-tertiary">
                             {t.messageBubble.permissionReason}
                         </div>
-                        <div className="text-xs text-slate-700 dark:text-slate-300">
+                        <div className="text-xs text-desktop-text-secondary">
                             {reason}
                         </div>
                     </div>
                 ) : null}
                 {amendment.length > 0 && !isMcpApproval ? (
                     <div className="space-y-1">
-                        <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        <div className="text-[11px] font-medium text-desktop-text-tertiary">
                             {t.messageBubble.permissionSuggestedAccess}
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                             {amendment.map((entry) => (
                                 <span
                                     key={entry}
-                                    className="inline-flex items-center rounded-full bg-white/85 px-2 py-1 text-[11px] font-medium text-slate-700 ring-1 ring-slate-200 dark:bg-slate-900/60 dark:text-slate-200 dark:ring-slate-700"
+                                    className="inline-flex items-center rounded-full bg-desktop-bg-secondary px-2 py-1 text-[11px] font-medium text-desktop-text-secondary ring-1 ring-desktop-border"
                                 >
                                     {entry}
                                 </span>
@@ -1038,7 +1080,7 @@ export function PermissionRequestBubble({
                                 type="button"
                                 disabled={submitting}
                                 onClick={() => void handleOptionSubmit(option)}
-                                className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 disabled:opacity-50 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-200"
+                                className="rounded-full border border-desktop-border bg-desktop-surface px-3 py-1.5 text-xs font-medium text-desktop-text-primary disabled:opacity-50"
                             >
                                 {getOptionLabel(option, option.optionId ?? option.kind ?? "option")}
                             </button>
@@ -1052,7 +1094,7 @@ export function PermissionRequestBubble({
                                 value={scope}
                                 onChange={(event) => setScope(event.target.value === "session" ? "session" : "turn")}
                                 disabled={submitting}
-                                className="h-8 rounded-md border border-slate-200 bg-white px-2 text-xs text-slate-700 dark:border-slate-700 dark:bg-[#0b1119] dark:text-slate-200"
+                                className="h-8 rounded-md border border-desktop-border bg-desktop-surface px-2 text-xs text-desktop-text-primary"
                             >
                                 <option value="turn">{getOptionLabel(onceOption, t.messageBubble.permissionScopeTurn)}</option>
                                 <option value="session">{getOptionLabel(alwaysOption, t.messageBubble.permissionScopeSession)}</option>
@@ -1061,7 +1103,7 @@ export function PermissionRequestBubble({
                                 type="button"
                                 disabled={submitting}
                                 onClick={() => void handleSubmit("approve")}
-                                className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900"
+                                className="rounded-md bg-desktop-accent px-3 py-1.5 text-xs font-semibold text-desktop-accent-text disabled:opacity-50"
                             >
                                 {t.messageBubble.permissionAllow}
                             </button>
@@ -1069,19 +1111,19 @@ export function PermissionRequestBubble({
                                 type="button"
                                 disabled={submitting}
                                 onClick={() => void handleSubmit("deny")}
-                                className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200"
+                                className="rounded-md border border-desktop-border px-3 py-1.5 text-xs font-medium text-desktop-text-primary disabled:opacity-50"
                             >
                                 {t.messageBubble.permissionDeny}
                             </button>
                         </div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                        <div className="text-[11px] text-desktop-text-tertiary">
                             {t.messageBubble.permissionScopeHint}
                         </div>
                     </div>
                 )}
                 {!isMcpApproval && (Object.keys(requestedPermissions).length > 0 || options.length > 0) ? (
-                    <details className="rounded-md border border-slate-200/80 bg-white/70 px-2 py-1.5 dark:border-slate-700/80 dark:bg-slate-900/40">
-                        <summary className="cursor-pointer text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                    <details className="rounded-md border border-desktop-border bg-desktop-bg-secondary px-2 py-1.5">
+                        <summary className="cursor-pointer text-[11px] font-medium text-desktop-text-secondary">
                             {t.messageBubble.permissionTechnicalDetails}
                         </summary>
                         <div className="mt-2 space-y-2">
@@ -1091,7 +1133,7 @@ export function PermissionRequestBubble({
                                     {options.map((option) => (
                                         <span
                                             key={option.optionId ?? option.name ?? option.kind}
-                                            className="inline-flex items-center rounded-full border border-slate-200 px-2 py-1 text-[10px] text-slate-600 dark:border-slate-700 dark:text-slate-300"
+                                            className="inline-flex items-center rounded-full border border-desktop-border px-2 py-1 text-[10px] text-desktop-text-secondary"
                                         >
                                             {getOptionLabel(option, option.optionId ?? option.kind ?? "option")}
                                         </span>
@@ -1102,7 +1144,7 @@ export function PermissionRequestBubble({
                     </details>
                 ) : null}
                 {submitError ? (
-                    <div className="text-xs text-rose-600 dark:text-rose-400">{submitError}</div>
+                    <div className="text-xs text-desktop-danger-text">{submitError}</div>
                 ) : null}
             </div>
         </div>
@@ -1117,10 +1159,10 @@ function TaskBubble({
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
     const statusColor =
-        toolStatus === "completed" ? "bg-emerald-500"
-            : toolStatus === "failed" ? "bg-red-500"
-                : toolStatus === "running" ? "bg-amber-500 animate-pulse"
-                    : "bg-slate-400";
+        toolStatus === "completed" ? "bg-desktop-status-success"
+            : toolStatus === "failed" ? "bg-desktop-danger-solid"
+                : toolStatus === "running" ? "bg-desktop-status-warning animate-pulse"
+                    : "bg-desktop-text-tertiary";
     const statusLabel =
         toolStatus === "completed" ? t.messageBubble.status.done
             : toolStatus === "failed" ? t.messageBubble.status.failed
@@ -1135,29 +1177,29 @@ function TaskBubble({
     return (
         <div className="w-full">
             <div
-                className="w-full rounded-lg border border-amber-200 dark:border-amber-800/50 overflow-hidden bg-amber-50/50 dark:bg-amber-900/10">
+                className="w-full rounded-lg border border-desktop-border overflow-hidden bg-desktop-surface">
                 <button
                     type="button"
                     onClick={() => setExpanded((e) => !e)}
                     className="w-full px-3 py-2 flex items-center gap-2 text-left"
                 >
                     <span className={`w-2 h-2 rounded-full shrink-0 ${statusColor}`}/>
-                    <span className="text-xs font-semibold text-amber-700 dark:text-amber-400 shrink-0">
+                    <span className="text-xs font-semibold text-desktop-status-warning shrink-0">
             {t.messageBubble.task}{subagentType ? ` [${subagentType}]` : ""}
           </span>
                     {description && (
-                        <span className="text-xs text-slate-700 dark:text-slate-300 truncate flex-1">
+                        <span className="text-xs text-desktop-text-primary truncate flex-1">
               {description}
             </span>
                     )}
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 shrink-0">
+                    <span className="text-[10px] text-desktop-text-tertiary shrink-0">
             {statusLabel}
           </span>
-                    <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-150 shrink-0 ${expanded ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+                    <ChevronDown className={`w-3 h-3 text-desktop-text-tertiary transition-transform duration-150 shrink-0 ${expanded ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
                 </button>
                 {expanded && (prompt || content) && (
                     <div
-                        className="px-3 py-2 border-t border-amber-200/50 dark:border-amber-800/30 text-xs text-slate-600 dark:text-slate-400 whitespace-pre-wrap max-h-32 overflow-y-auto">
+                        className="px-3 py-2 border-t border-desktop-border text-xs text-desktop-text-secondary whitespace-pre-wrap max-h-32 overflow-y-auto">
                         {prompt || content}
                     </div>
                 )}
@@ -1195,13 +1237,13 @@ function PlanBubble({content, entries}: { content: string; entries?: PlanEntry[]
     // Fallback for plain text plan content
     return (
         <div className="w-full">
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#161922] overflow-hidden">
-                <div className="px-3 py-2 flex items-center gap-2 bg-slate-100 dark:bg-[#1a1d2e] border-b border-slate-200 dark:border-slate-700">
-                    <span className="w-2 h-2 rounded-full bg-slate-500" />
-                    <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{t.messageBubble.plan}</span>
+            <div className="rounded-lg border border-desktop-border bg-desktop-surface overflow-hidden">
+                <div className="px-3 py-2 flex items-center gap-2 bg-desktop-surface-muted border-b border-desktop-border">
+                    <span className="w-2 h-2 rounded-full bg-desktop-text-tertiary" />
+                    <span className="text-xs font-medium text-desktop-text-secondary">{t.messageBubble.plan}</span>
                 </div>
                 <div className="px-3 py-2">
-                    <div className="text-xs text-slate-600 dark:text-slate-400 whitespace-pre-wrap">{content}</div>
+                    <div className="text-xs text-desktop-text-secondary whitespace-pre-wrap">{content}</div>
                 </div>
             </div>
         </div>
@@ -1220,7 +1262,7 @@ function UsageBadge({used, size, costAmount, costCurrency}: {
     const formatTokens = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
 
     // Determine color based on percentage
-    const strokeColor = pct > 80 ? "#f87171" : pct > 50 ? "#fbbf24" : "#4ade80";
+    const strokeColor = pct > 80 ? "var(--dt-status-danger)" : pct > 50 ? "var(--dt-status-warning)" : "var(--dt-status-success)";
 
     // SVG circle parameters
     const radius = 16;
@@ -1243,7 +1285,7 @@ function UsageBadge({used, size, costAmount, costCurrency}: {
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="3"
-                        className="text-slate-200 dark:text-slate-700"
+                        className="text-desktop-border"
                     />
                     {/* Progress circle */}
                     {size && (
@@ -1263,7 +1305,7 @@ function UsageBadge({used, size, costAmount, costCurrency}: {
                 </svg>
 
                 {/* Percentage text in center */}
-                <span className="absolute text-[9px] font-semibold text-slate-600 dark:text-slate-300">
+                <span className="absolute text-[9px] font-semibold text-desktop-text-secondary">
           {size ? `${pct}%` : formatTokens(used)}
         </span>
 
@@ -1271,12 +1313,12 @@ function UsageBadge({used, size, costAmount, costCurrency}: {
                 <div
                     className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                     <div
-                        className="px-3 py-2 rounded-lg bg-slate-900 dark:bg-slate-800 text-white text-xs whitespace-nowrap shadow-lg border border-slate-700">
+                        className="px-3 py-2 rounded-lg bg-desktop-bg-primary text-desktop-text-primary text-xs whitespace-nowrap shadow-lg border border-desktop-border">
                         <div
                             className="font-medium">{formatTokens(used)}{size ? ` / ${formatTokens(size)}` : ""} {t.messageBubble.tokens}
                         </div>
                         {costAmount !== undefined && costAmount > 0 && (
-                            <div className="text-slate-300 mt-0.5">${costAmount.toFixed(4)} {costCurrency ?? "USD"}</div>
+                            <div className="text-desktop-text-secondary mt-0.5">${costAmount.toFixed(4)} {costCurrency ?? "USD"}</div>
                         )}
                     </div>
                 </div>
@@ -1290,16 +1332,16 @@ function InfoBubble({content, rawData}: { content: string; rawData?: Record<stri
     if (rawData) {
         return (
             <div className="flex justify-center my-1">
-                <div className="max-w-xl w-full rounded-lg bg-slate-50 dark:bg-[#161922] border border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 overflow-hidden">
+                <div className="max-w-xl w-full rounded-lg bg-desktop-surface-muted border border-desktop-border text-[11px] text-desktop-text-tertiary overflow-hidden">
                     <button
-                        className="w-full flex items-center gap-1.5 px-3 py-1.5 hover:bg-slate-100 dark:hover:bg-[#1e2230] transition-colors text-left"
+                        className="w-full flex items-center gap-1.5 px-3 py-1.5 hover:bg-desktop-bg-active transition-colors text-left"
                         onClick={() => setExpanded(v => !v)}
                     >
                         <span className="opacity-60">{expanded ? "▾" : "▸"}</span>
                         <span className="font-mono">{content}</span>
                     </button>
                     {expanded && (
-                        <pre className="px-3 pb-2 overflow-x-auto whitespace-pre-wrap break-all font-mono text-[10px] text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800">
+                        <pre className="px-3 pb-2 overflow-x-auto whitespace-pre-wrap break-all font-mono text-[10px] text-desktop-text-tertiary border-t border-desktop-border">
                             {JSON.stringify(rawData, null, 2)}
                         </pre>
                     )}
@@ -1310,7 +1352,7 @@ function InfoBubble({content, rawData}: { content: string; rawData?: Record<stri
     return (
         <div className="flex justify-center">
             <div
-                className="px-3 py-1 rounded-full bg-slate-50 dark:bg-[#161922] border border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
+                className="px-3 py-1 rounded-full bg-desktop-surface-muted border border-desktop-border text-[11px] text-desktop-text-tertiary">
                 {content}
             </div>
         </div>

@@ -8,7 +8,7 @@ role_reminder: "Return strict JSON only. Preserve evidence from the provided com
 system_prompt: |
   # Changelog Summary Specialist
 
-  You write the AI-powered summary layer for Routa Desktop GitHub draft releases.
+  You write the AI-powered summary layer for Harness Desktop GitHub draft releases.
 
   ## Input
 

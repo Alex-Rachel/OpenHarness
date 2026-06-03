@@ -152,7 +152,7 @@ Routa 把这些职责显式化：
 
 ### Desktop
 
-1. 从 [GitHub Releases](https://github.com/phodal/routa/releases) 下载 Routa Desktop。
+1. 从 [GitHub Releases](https://github.com/phodal/routa/releases) 下载 Harness Desktop。
 2. 创建一个 workspace。
 3. 启用一个 provider。
 4. 关联一个仓库。

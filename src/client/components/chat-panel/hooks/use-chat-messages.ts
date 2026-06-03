@@ -58,6 +58,11 @@ export function useChatMessages({
   const processedMessageIdsRef = useRef<Set<string>>(new Set());
   const transcriptRetryCountRef = useRef<Record<string, number>>({});
 
+  // Safety net: track last activity time to detect stale "running" state.
+  // If isSessionRunning stays true for too long without any updates, force-reset it.
+  const lastActivityTsRef = useRef<number>(0);
+  const RUNNING_STATE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes (matches backend SSE timeout)
+
   const resetStreamingRefs = useCallback((sessionId: string) => {
     streamingMsgIdRef.current[sessionId] = null;
     streamingThoughtIdRef.current[sessionId] = null;
@@ -151,8 +156,30 @@ export function useChatMessages({
     processedMessageIdsRef.current.clear();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset running state on session change
     setIsSessionRunning(false);
+    lastActivityTsRef.current = 0;
     void fetchSessionHistory(activeSessionId);
   }, [activeSessionId, fetchSessionHistory]);
+
+  // Safety net: if isSessionRunning stays true for too long without any
+  // activity updates (e.g. SSE stream broke without turn_complete, or the
+  // backend process crashed), force-reset it so the UI doesn't stay stuck
+  // showing a "running" state with the pause button permanently active.
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setIsSessionRunning((running) => {
+        if (!running) return false;
+        const last = lastActivityTsRef.current;
+        if (last > 0 && Date.now() - last > RUNNING_STATE_TIMEOUT_MS) {
+          // eslint-disable-next-line no-console
+          console.warn("[useChatMessages] Resetting stale isSessionRunning (no activity for 10 min)");
+          lastActivityTsRef.current = 0;
+          return false;
+        }
+        return true;
+      });
+    }, 30_000); // check every 30 seconds
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (!activeSessionId) return;
@@ -217,6 +244,7 @@ export function useChatMessages({
             || kind === "tool_call_params_delta"
             || kind === "tool_call_update"
           ) {
+            lastActivityTsRef.current = Date.now();
             setIsSessionRunning(true);
           } else if (kind === "turn_complete") {
             setIsSessionRunning(false);

@@ -159,7 +159,7 @@ Choose the shortest path that matches how you want to use Routa.
 
 ### Desktop
 
-1. Download Routa Desktop from [GitHub Releases](https://github.com/phodal/routa/releases).
+1. Download Harness Desktop from [GitHub Releases](https://github.com/phodal/routa/releases).
 2. Create a workspace.
 3. Enable one provider.
 4. Attach a repository.

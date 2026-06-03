@@ -24,7 +24,7 @@ Routa 桌面版现在的实现，已经不是“先有观点，后补产品”�
 
 ```mermaid
 flowchart LR
-	Desktop["Routa Desktop<br/>Tauri Shell"] --> Menu["Dashboard / Kanban / Traces / Settings"]
+	Desktop["Harness Desktop<br/>Tauri Shell"] --> Menu["Dashboard / Kanban / Traces / Settings"]
 	Desktop --> Frontend["Next.js UI"]
 	Frontend --> Fetch["desktopAwareFetch + resolveApiPath"]
 	Fetch --> Server["Embedded Rust Server<br/>127.0.0.1:3210"]

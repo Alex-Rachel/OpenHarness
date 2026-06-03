@@ -4,7 +4,10 @@
 //! POST  /api/clone/branches - Fetch remote branches then return all
 //! PATCH /api/clone/branches - Checkout a branch
 //! DELETE /api/clone/branches - Delete a local branch
+//!
+//! Supports both Git and SVN repositories.
 
+use std::path::Path;
 use axum::{extract::Query, routing::get, Json, Router};
 use serde::Deserialize;
 
@@ -12,6 +15,8 @@ use crate::api::repo_context::resolve_repo_dir_or_error;
 use crate::error::ServerError;
 use crate::git;
 use crate::state::AppState;
+use crate::svn;
+use crate::vcs::{self, VcsType};
 
 pub fn router() -> Router<AppState> {
     Router::new().route(
@@ -29,6 +34,13 @@ struct BranchQuery {
     repo_path: Option<String>,
 }
 
+/// Detect the VCS type of the resolved repo path.
+fn detect_vcs(repo_path: &str) -> VcsType {
+    vcs::detect_vcs_type(Path::new(repo_path)).unwrap_or(VcsType::Git)
+}
+
+// ─── GET ──────────────────────────────────────────────────────────────
+
 async fn get_branches(
     Query(query): Query<BranchQuery>,
 ) -> Result<Json<serde_json::Value>, ServerError> {
@@ -39,8 +51,17 @@ async fn get_branches(
         .to_string_lossy()
         .to_string();
 
+    let vcs_type = detect_vcs(&repo_path);
+
+    match vcs_type {
+        VcsType::Svn => get_branches_svn(&repo_path).await,
+        _ => get_branches_git(&repo_path).await,
+    }
+}
+
+async fn get_branches_git(repo_path: &str) -> Result<Json<serde_json::Value>, ServerError> {
     let (current, local, remote, status) = tokio::task::spawn_blocking({
-        let rp = repo_path.clone();
+        let rp = repo_path.to_string();
         move || {
             let current = git::get_current_branch(&rp).unwrap_or_else(|| "unknown".into());
             let local = git::list_local_branches(&rp);
@@ -60,6 +81,31 @@ async fn get_branches(
     })))
 }
 
+async fn get_branches_svn(repo_path: &str) -> Result<Json<serde_json::Value>, ServerError> {
+    let rp = repo_path.to_string();
+    let (current, branches, has_changes) = tokio::task::spawn_blocking(move || {
+        let current = svn::get_svn_current_branch(&rp).unwrap_or_else(|| "unknown".into());
+        let branches = svn::list_svn_branches(&rp);
+        let status = svn::get_svn_branch_status(&rp);
+        (current, branches, status.has_uncommitted_changes)
+    })
+    .await
+    .map_err(|e| ServerError::Internal(e.to_string()))?;
+
+    Ok(Json(serde_json::json!({
+        "current": current,
+        "local": [],
+        "remote": branches,
+        "status": {
+            "ahead": 0,
+            "behind": 0,
+            "hasUncommittedChanges": has_changes,
+        },
+    })))
+}
+
+// ─── POST (fetch) ─────────────────────────────────────────────────────
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct FetchBranchesBody {
@@ -76,8 +122,17 @@ async fn fetch_branches(
         .to_string_lossy()
         .to_string();
 
+    let vcs_type = detect_vcs(&repo_path);
+
+    match vcs_type {
+        VcsType::Svn => fetch_branches_svn(&repo_path).await,
+        _ => fetch_branches_git(&repo_path).await,
+    }
+}
+
+async fn fetch_branches_git(repo_path: &str) -> Result<Json<serde_json::Value>, ServerError> {
     let (current, local, remote, status) = tokio::task::spawn_blocking({
-        let rp = repo_path.clone();
+        let rp = repo_path.to_string();
         move || {
             git::fetch_remote(&rp);
             let current = git::get_current_branch(&rp).unwrap_or_else(|| "unknown".into());
@@ -98,6 +153,33 @@ async fn fetch_branches(
     })))
 }
 
+async fn fetch_branches_svn(repo_path: &str) -> Result<Json<serde_json::Value>, ServerError> {
+    let rp = repo_path.to_string();
+    let (current, branches, has_changes) = tokio::task::spawn_blocking(move || {
+        // SVN: run update first (equivalent of git fetch + merge)
+        svn::svn_update(&rp);
+        let current = svn::get_svn_current_branch(&rp).unwrap_or_else(|| "unknown".into());
+        let branches = svn::list_svn_branches(&rp);
+        let status = svn::get_svn_branch_status(&rp);
+        (current, branches, status.has_uncommitted_changes)
+    })
+    .await
+    .map_err(|e| ServerError::Internal(e.to_string()))?;
+
+    Ok(Json(serde_json::json!({
+        "current": current,
+        "local": [],
+        "remote": branches,
+        "status": {
+            "ahead": 0,
+            "behind": 0,
+            "hasUncommittedChanges": has_changes,
+        },
+    })))
+}
+
+// ─── PATCH (checkout / reset) ─────────────────────────────────────────
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct CheckoutBody {
@@ -115,28 +197,13 @@ async fn checkout(Json(body): Json<CheckoutBody>) -> Result<Json<serde_json::Val
         .to_string_lossy()
         .to_string();
 
-    if body.action.as_deref() == Some("reset") {
-        let (branch_info, status, repo_status) = tokio::task::spawn_blocking({
-            let rp = repo_path.clone();
-            move || {
-                git::reset_local_changes(&rp).map_err(ServerError::Internal)?;
-                let branch_info = git::get_branch_info(&rp);
-                let status = git::get_branch_status(&rp, &branch_info.current);
-                let repo_status = git::get_repo_status(&rp);
-                Ok::<_, ServerError>((branch_info, status, repo_status))
-            }
-        })
-        .await
-        .map_err(|e| ServerError::Internal(e.to_string()))??;
+    let vcs_type = detect_vcs(&repo_path);
 
-        return Ok(Json(serde_json::json!({
-            "success": true,
-            "action": "reset",
-            "branch": branch_info.current,
-            "branches": branch_info.branches,
-            "status": status,
-            "repoStatus": repo_status,
-        })));
+    if body.action.as_deref() == Some("reset") {
+        return match vcs_type {
+            VcsType::Svn => reset_svn(&repo_path).await,
+            _ => reset_git(&repo_path).await,
+        };
     }
 
     let branch = body
@@ -144,9 +211,69 @@ async fn checkout(Json(body): Json<CheckoutBody>) -> Result<Json<serde_json::Val
         .ok_or_else(|| ServerError::BadRequest("Missing branch".into()))?;
     let do_pull = body.pull.unwrap_or(false);
 
+    match vcs_type {
+        VcsType::Svn => checkout_svn(&repo_path, &branch, do_pull).await,
+        _ => checkout_git(&repo_path, &branch, do_pull).await,
+    }
+}
+
+async fn reset_git(repo_path: &str) -> Result<Json<serde_json::Value>, ServerError> {
+    let (branch_info, status, repo_status) = tokio::task::spawn_blocking({
+        let rp = repo_path.to_string();
+        move || {
+            git::reset_local_changes(&rp).map_err(ServerError::Internal)?;
+            let branch_info = git::get_branch_info(&rp);
+            let status = git::get_branch_status(&rp, &branch_info.current);
+            let repo_status = git::get_repo_status(&rp);
+            Ok::<_, ServerError>((branch_info, status, repo_status))
+        }
+    })
+    .await
+    .map_err(|e| ServerError::Internal(e.to_string()))??;
+
+    Ok(Json(serde_json::json!({
+        "success": true,
+        "action": "reset",
+        "branch": branch_info.current,
+        "branches": branch_info.branches,
+        "status": status,
+        "repoStatus": repo_status,
+    })))
+}
+
+async fn reset_svn(repo_path: &str) -> Result<Json<serde_json::Value>, ServerError> {
+    let rp = repo_path.to_string();
+    let result = tokio::task::spawn_blocking(move || -> Result<_, ServerError> {
+        svn::svn_revert(&rp, &[]).map_err(ServerError::Internal)?;
+        let current = svn::get_svn_current_branch(&rp).unwrap_or_else(|| "unknown".into());
+        let status = svn::get_svn_branch_status(&rp);
+        Ok((current, status.has_uncommitted_changes))
+    })
+    .await
+    .map_err(|e| ServerError::Internal(e.to_string()))??;
+
+    Ok(Json(serde_json::json!({
+        "success": true,
+        "action": "reset",
+        "branch": result.0,
+        "branches": [],
+        "status": {
+            "ahead": 0,
+            "behind": 0,
+            "hasUncommittedChanges": result.1,
+        },
+        "repoStatus": { "modified": 0, "untracked": 0 },
+    })))
+}
+
+async fn checkout_git(
+    repo_path: &str,
+    branch: &str,
+    do_pull: bool,
+) -> Result<Json<serde_json::Value>, ServerError> {
     let (success, info, status) = tokio::task::spawn_blocking({
-        let rp = repo_path.clone();
-        let br = branch.clone();
+        let rp = repo_path.to_string();
+        let br = branch.to_string();
         move || {
             let ok = git::checkout_branch(&rp, &br);
             if ok && do_pull {
@@ -174,6 +301,41 @@ async fn checkout(Json(body): Json<CheckoutBody>) -> Result<Json<serde_json::Val
     })))
 }
 
+async fn checkout_svn(
+    repo_path: &str,
+    branch: &str,
+    do_pull: bool,
+) -> Result<Json<serde_json::Value>, ServerError> {
+    let rp = repo_path.to_string();
+    let br = branch.to_string();
+    let result = tokio::task::spawn_blocking(move || -> Result<_, String> {
+        svn::svn_switch_branch(&rp, &br)?;
+        if do_pull {
+            svn::svn_update(&rp);
+        }
+        let current = svn::get_svn_current_branch(&rp).unwrap_or_else(|| "unknown".into());
+        let branches = svn::list_svn_branches(&rp);
+        let status = svn::get_svn_branch_status(&rp);
+        Ok((current, branches, status.has_uncommitted_changes))
+    })
+    .await
+    .map_err(|e| ServerError::Internal(e.to_string()))?
+    .map_err(ServerError::Internal)?;
+
+    Ok(Json(serde_json::json!({
+        "success": true,
+        "branch": result.0,
+        "branches": result.1,
+        "status": {
+            "ahead": 0,
+            "behind": 0,
+            "hasUncommittedChanges": result.2,
+        },
+    })))
+}
+
+// ─── DELETE ───────────────────────────────────────────────────────────
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct DeleteBranchBody {
@@ -194,8 +356,17 @@ async fn delete_branch(
         .to_string_lossy()
         .to_string();
 
+    let vcs_type = detect_vcs(&repo_path);
+
+    // Branch deletion is a Git-only operation
+    if vcs_type == VcsType::Svn {
+        return Err(ServerError::BadRequest(
+            "Branch deletion is not supported for SVN repositories".into(),
+        ));
+    }
+
     let branch_info = tokio::task::spawn_blocking({
-        let rp = repo_path.clone();
+        let rp = repo_path.to_string();
         let br = branch.clone();
         move || {
             git::delete_branch(&rp, &br)?;

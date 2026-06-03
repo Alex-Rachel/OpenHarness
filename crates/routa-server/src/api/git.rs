@@ -722,6 +722,29 @@ async fn get_commit_diff(
     Path((workspace_id, codebase_id, sha)): Path<(String, String, String)>,
     Query(query): Query<GetCommitDiffQuery>,
 ) -> Result<Json<GetCommitDiffResponse>, ServerError> {
+    let (repo_path, vcs_type) = resolve_codebase_repo_path_with_vcs(&state, &workspace_id, &codebase_id).await?;
+
+    // SVN dispatch: revision ID is "rNNN"
+    if vcs_type == VcsType::Svn {
+        let revision = sha
+            .strip_prefix('r')
+            .and_then(|s| s.parse::<u64>().ok())
+            .ok_or_else(|| ServerError::BadRequest("Invalid SVN revision format".to_string()))?;
+
+        let diff = tokio::task::spawn_blocking(move || {
+            routa_core::svn::get_svn_revision_diff(&repo_path, revision)
+        })
+        .await
+        .map_err(|error| ServerError::Internal(error.to_string()))?;
+
+        return Ok(Json(GetCommitDiffResponse {
+            diff,
+            sha: format!("r{}", revision),
+            path: None,
+        }));
+    }
+
+    // Git path
     let sha = resolve_commit_sha(Some(&sha))?;
     let path = query
         .path
@@ -730,10 +753,6 @@ async fn get_commit_diff(
     if let Some(path_value) = path.as_deref() {
         validate_git_file_path(path_value).map_err(ServerError::BadRequest)?;
     }
-    let repo_path = resolve_codebase_repo_path_with_capability(
-        &state, &workspace_id, &codebase_id, VcsCapability::CommitHistory,
-    )
-    .await?;
     let response_sha = sha.clone();
     let response_path = path.clone();
 

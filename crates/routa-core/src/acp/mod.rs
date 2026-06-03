@@ -1103,11 +1103,45 @@ impl AcpManager {
 
         match &managed.process {
             AgentProcessType::Claude(p) => {
-                // Spawn the prompt in a background task so we can return immediately
+                // Spawn the prompt in a background task so we can return immediately.
+                // On error (process death, crash), emit a synthetic turn_complete
+                // so the SSE stream and frontend don't hang forever in "running".
                 let process = Arc::clone(p);
                 let text = text.to_string();
+                let notification_tx = self.notification_channels.clone();
+                let history_map = self.history.clone();
+                let sid = session_id.to_string();
                 tokio::spawn(async move {
-                    let _ = process.prompt(&text).await;
+                    let result = process.prompt(&text).await;
+                    if let Err(e) = result {
+                        tracing::warn!(
+                            "[AcpManager] Claude prompt failed for session {}: {}",
+                            sid,
+                            e
+                        );
+                        // Broadcast a synthetic turn_complete with error stop reason
+                        let notification = serde_json::json!({
+                            "jsonrpc": "2.0",
+                            "method": "session/update",
+                            "params": {
+                                "sessionId": sid,
+                                "update": {
+                                    "sessionUpdate": "turn_complete",
+                                    "stopReason": "error",
+                                    "error": e
+                                }
+                            }
+                        });
+                        let channels = notification_tx.read().await;
+                        if let Some(tx) = channels.get(&sid) {
+                            let _ = tx.send(notification.clone());
+                        }
+                        // Persist into in-memory history
+                        let mut hist = history_map.write().await;
+                        hist.entry(sid.clone())
+                            .or_default()
+                            .push(notification);
+                    }
                 });
                 Ok(())
             }

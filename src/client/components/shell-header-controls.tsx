@@ -5,6 +5,7 @@ import { LanguageSwitcher } from "./language-switcher";
 import { McpStatusIndicator } from "./mcp-status-indicator";
 import { ThemeSwitcher } from "./theme-switcher";
 
+const isWindows = typeof navigator !== "undefined" && /Win/i.test(navigator.platform || navigator.userAgent);
 
 interface ShellHeaderControlsProps {
   className?: string;
@@ -19,9 +20,11 @@ export function ShellHeaderControls({
 }: ShellHeaderControlsProps) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className="hidden lg:flex">
-        <DockerStatusIndicator compact={compactStatus} />
-      </div>
+      {!isWindows && (
+        <div className="hidden lg:flex">
+          <DockerStatusIndicator compact={compactStatus} />
+        </div>
+      )}
       <div className="hidden lg:flex">
         <McpStatusIndicator compact={compactStatus} />
       </div>

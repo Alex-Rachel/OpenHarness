@@ -375,5 +375,6 @@ export const zhTail: TailTranslationDictionarySections = {
     hideRefs: "隐藏引用",
     parents: "父提交",
     files: "个文件",
+    svnTitle: "SVN 日志",
   },
 };

@@ -1108,10 +1108,20 @@ async fn acp_rpc(
                     let session_id_clone = session_id.clone();
                     let state_clone = state.clone();
                     Box::pin(async_stream::stream! {
-                        // Stream notifications until turn_complete or disconnect
+                        // Stream notifications until turn_complete, disconnect, or timeout.
+                        // The 10-minute timeout is a safety net: normally the Claude
+                        // process emits turn_complete or dies (which triggers a
+                        // synthetic turn_complete via prompt_claude_async).
+                        let idle_timeout = std::time::Duration::from_secs(600);
+                        let mut got_first_event = false;
+                        // Allow a longer initial wait (3 min) for first event (e.g. skill loading)
+                        let initial_timeout = std::time::Duration::from_secs(180);
+
                         loop {
-                            match rx.recv().await {
-                                Ok(msg) => {
+                            let timeout = if got_first_event { idle_timeout } else { initial_timeout };
+                            match tokio::time::timeout(timeout, rx.recv()).await {
+                                Ok(Ok(msg)) => {
+                                    got_first_event = true;
                                     let rewritten = match msg.get("params").cloned() {
                                         Some(params) => serde_json::json!({
                                             "jsonrpc": "2.0",
@@ -1140,11 +1150,65 @@ async fn acp_rpc(
                                         break;
                                     }
                                 }
-                                Err(e) => {
+                                Ok(Err(tokio::sync::broadcast::error::RecvError::Lagged(n))) => {
                                     tracing::warn!(
-                                        "[ACP Route] SSE stream error for session {}: {}",
+                                        "[ACP Route] SSE lagged by {} messages for session {}, resubscribing",
+                                        n,
+                                        session_id_clone
+                                    );
+                                    // Don't break — resubscribe by continuing the loop.
+                                    // The broadcast receiver auto-resubscribes after Lagged.
+                                    continue;
+                                }
+                                Ok(Err(e)) => {
+                                    tracing::warn!(
+                                        "[ACP Route] SSE stream closed for session {}: {}",
                                         session_id_clone,
                                         e
+                                    );
+                                    // Emit a synthetic turn_complete so the frontend
+                                    // doesn't get stuck in "running" state.
+                                    yield Ok::<_, Infallible>(
+                                        Event::default().data(
+                                            serde_json::json!({
+                                                "jsonrpc": "2.0",
+                                                "method": "session/update",
+                                                "params": {
+                                                    "sessionId": session_id_clone,
+                                                    "update": {
+                                                        "sessionUpdate": "turn_complete",
+                                                        "stopReason": "end_turn"
+                                                    }
+                                                }
+                                            })
+                                            .to_string(),
+                                        )
+                                    );
+                                    break;
+                                }
+                                Err(_) => {
+                                    tracing::warn!(
+                                        "[ACP Route] SSE stream timed out for session {} after {}s idle",
+                                        session_id_clone,
+                                        timeout.as_secs()
+                                    );
+                                    // Emit a synthetic turn_complete with error
+                                    yield Ok::<_, Infallible>(
+                                        Event::default().data(
+                                            serde_json::json!({
+                                                "jsonrpc": "2.0",
+                                                "method": "session/update",
+                                                "params": {
+                                                    "sessionId": session_id_clone,
+                                                    "update": {
+                                                        "sessionUpdate": "turn_complete",
+                                                        "stopReason": "error",
+                                                        "error": "Stream timed out waiting for agent response"
+                                                    }
+                                                }
+                                            })
+                                            .to_string(),
+                                        )
                                     );
                                     break;
                                 }

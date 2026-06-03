@@ -63,8 +63,10 @@ describe("parseSvnStatus", () => {
     const input = "M       modified.ts\n?       untracked.ts\nA       added.ts\nD       deleted.ts\n";
     const entries = parseSvnStatus(input);
     expect(entries).toHaveLength(4);
-    const status = getSvnStatus("/repo");
-    // Note: getSvnStatus calls svnExec which is mocked
+    expect(entries[0].statusCode).toBe("M");
+    expect(entries[1].statusCode).toBe("?");
+    expect(entries[2].statusCode).toBe("A");
+    expect(entries[3].statusCode).toBe("D");
   });
 });
 

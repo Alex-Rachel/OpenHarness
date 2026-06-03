@@ -27,14 +27,15 @@ export function KanbanGitOperationButtons({
   const capabilities = useVcsCapabilities(codebase);
   const canPullUpdate = capabilities.has("pullUpdate");
   const canRebase = capabilities.has("rebase");
+  const isSvn = codebase?.vcsType === "svn";
 
   // Hide entire component if neither operation is available
   if (!canPullUpdate && !canRebase) return null;
 
   return (
     <div className="flex items-center gap-2 border-t border-desktop-border px-3 py-2">
-      {/* Pull Button */}
-      {canPullUpdate && behind > 0 && (
+      {/* Pull / Update Button */}
+      {canPullUpdate && (isSvn || behind > 0) && (
         <button
           type="button"
           onClick={onPull}
@@ -42,12 +43,14 @@ export function KanbanGitOperationButtons({
           className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-[var(--dt-status-info)]/25 bg-[var(--dt-status-info-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--dt-status-info)] transition hover:border-desktop-accent disabled:cursor-not-allowed disabled:opacity-50"
         >
           <ArrowDown className="h-3.5 w-3.5" />
-          Pull {behind} commit{behind === 1 ? "" : "s"} ↑
+          {isSvn
+            ? "Update ↓"
+            : `Pull ${behind} commit${behind === 1 ? "" : "s"} ↑`}
         </button>
       )}
 
-      {/* Rebase Button */}
-      {canRebase && (
+      {/* Rebase Button — Git only */}
+      {canRebase && !isSvn && (
         <button
           type="button"
           onClick={onRebase}

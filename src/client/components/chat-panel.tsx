@@ -459,14 +459,14 @@ export function ChatPanel({
   // ── Render ───────────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#0f1117]">
+    <div className="flex flex-col h-full bg-desktop-bg-primary">
       {/* Session info bar with view toggle */}
       {activeSessionId && (
-        <div className="px-5 py-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div className="px-5 py-2 border-b border-desktop-border flex items-center justify-between">
           <div className="flex min-w-0 items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="w-1.5 h-1.5 rounded-full bg-desktop-status-success" />
             <span
-              className="max-w-[36rem] overflow-x-auto whitespace-nowrap text-[11px] text-slate-500 dark:text-slate-400 font-mono"
+              className="max-w-[36rem] overflow-x-auto whitespace-nowrap text-[11px] text-desktop-text-secondary font-mono"
               title={activeSessionId}
             >
               {t.sessions.sessionInfo} {activeSessionId}
@@ -478,17 +478,17 @@ export function ChatPanel({
               href={`/traces?sessionId=${encodeURIComponent(traceSessionId ?? activeSessionId)}${activeWorkspaceId ? `&workspaceId=${encodeURIComponent(activeWorkspaceId)}` : ""}`}
               target="_blank"
               rel="noreferrer"
-              className="rounded-md border border-slate-200 px-3 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="rounded-md border border-desktop-border px-3 py-1 text-[11px] font-medium text-desktop-text-secondary transition-colors hover:bg-desktop-surface-muted"
             >
               Debug
             </a>
-            <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-md p-0.5">
+            <div className="flex items-center bg-desktop-bg-tertiary rounded-md p-0.5">
             <button
               onClick={() => setViewMode("chat")}
               className={`px-3 py-1 text-[11px] font-medium rounded-md transition-colors ${
                 viewMode === "chat"
-                  ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm"
-                  : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                  ? "bg-desktop-surface text-desktop-text-primary shadow-sm"
+                  : "text-desktop-text-tertiary hover:text-desktop-text-primary"
               }`}
             >
               {t.chat.viewToggle.chat}
@@ -497,8 +497,8 @@ export function ChatPanel({
               onClick={() => setViewMode("trace")}
               className={`px-3 py-1 text-[11px] font-medium rounded-md transition-colors ${
                 viewMode === "trace"
-                  ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm"
-                  : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                  ? "bg-desktop-surface text-desktop-text-primary shadow-sm"
+                  : "text-desktop-text-tertiary hover:text-desktop-text-primary"
               }`}
             >
               {t.chat.viewToggle.trace}
@@ -509,14 +509,14 @@ export function ChatPanel({
       )}
 
       {error && (
-        <div className="flex items-start justify-between gap-3 border-b border-red-100 bg-red-50 px-5 py-2 text-xs text-red-600 dark:border-red-900/20 dark:bg-red-900/10 dark:text-red-400">
+        <div className="flex items-start justify-between gap-3 border-b border-desktop-danger-border bg-desktop-danger-subtle px-5 py-2 text-xs text-desktop-danger-text">
           <div className="min-w-0 flex-1">{error}</div>
           {activeSessionId && onResumeActiveSession && (
             <button
               type="button"
               onClick={() => void handleResumeActiveSession()}
               disabled={isResumingActiveSession || loading}
-              className="shrink-0 rounded-md border border-red-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200 dark:hover:bg-red-900/40"
+              className="shrink-0 rounded-md border border-desktop-danger-border bg-desktop-surface px-2.5 py-1 text-[11px] font-semibold text-desktop-danger-text transition-colors hover:bg-desktop-danger-subtle disabled:cursor-not-allowed disabled:opacity-60"
               title={t.sessions.resumeHint}
             >
               {isResumingActiveSession ? t.sessions.resuming : t.sessions.resume}
@@ -527,49 +527,49 @@ export function ChatPanel({
 
       {/* Authentication Required Banner */}
       {authError && (
-        <div className="px-5 py-3 bg-amber-50 dark:bg-amber-900/10 border-b border-amber-100 dark:border-amber-900/20">
+        <div className="px-5 py-3 bg-desktop-surface-muted border-b border-desktop-border">
           <div className="flex items-start gap-3">
             <div className="shrink-0 mt-0.5">
-              <TriangleAlert className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+              <TriangleAlert className="w-5 h-5 text-desktop-status-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2">
-                <h4 className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                <h4 className="text-sm font-medium text-desktop-text-primary">
                   {t.chat.authRequiredTitle}
                   {authError.agentInfo && (
-                    <span className="ml-2 text-xs font-normal text-amber-600 dark:text-amber-400">
+                    <span className="ml-2 text-xs font-normal text-desktop-text-secondary">
                       ({authError.agentInfo.name} v{authError.agentInfo.version})
                     </span>
                   )}
                 </h4>
                 <button
                   onClick={clearAuthError}
-                  className="shrink-0 p-1 rounded hover:bg-amber-100 dark:hover:bg-amber-800/30 transition-colors"
+                  className="shrink-0 p-1 rounded hover:bg-desktop-bg-active transition-colors"
                   title={t.common.dismiss}
                 >
-                  <X className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+                  <X className="w-4 h-4 text-desktop-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
                 </button>
               </div>
-              <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">
+              <p className="mt-1 text-xs text-desktop-text-secondary">
                 {authError.message}
               </p>
               {authError.authMethods.length > 0 && (
                 <div className="mt-3 space-y-2">
-                  <p className="text-xs font-medium text-amber-700 dark:text-amber-300">
+                  <p className="text-xs font-medium text-desktop-text-secondary">
                     {t.chat.availableAuthMethods}
                   </p>
                   <div className="space-y-1.5">
                     {authError.authMethods.map((method) => (
                       <div
                         key={method.id}
-                        className="flex items-start gap-2 p-2 rounded-md bg-amber-100/50 dark:bg-amber-800/20"
+                        className="flex items-start gap-2 p-2 rounded-md bg-desktop-bg-tertiary"
                       >
-                        <KeyRound className="w-4 h-4 mt-0.5 text-amber-600 dark:text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
+                        <KeyRound className="w-4 h-4 mt-0.5 text-desktop-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}/>
                         <div className="min-w-0">
-                          <div className="text-xs font-medium text-amber-800 dark:text-amber-200">
+                          <div className="text-xs font-medium text-desktop-text-primary">
                             {method.name}
                           </div>
-                          <div className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                          <div className="text-xs text-desktop-text-secondary mt-0.5">
                             {method.description}
                           </div>
                         </div>
@@ -616,7 +616,7 @@ export function ChatPanel({
           <div className="flex-1 overflow-y-auto min-h-0" data-testid="chat-panel-message-shell">
             <div className="max-w-3xl mx-auto px-5 py-5 space-y-2">
               {visibleMessages.length === 0 && activeSessionId && (
-                <div className="text-center py-20 text-sm text-slate-400 dark:text-slate-500">
+                <div className="text-center py-20 text-sm text-desktop-text-tertiary">
                   {t.sessions.placeholder}
                 </div>
               )}
@@ -669,7 +669,7 @@ export function ChatPanel({
           </div>
 
           {/* Input */}
-          <div className="border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#0f1117]">
+          <div className="border-t border-desktop-border bg-desktop-bg-primary">
             <div className="max-w-3xl mx-auto px-5 py-3 space-y-2">
               {/* Interactive request sticky cards — displayed above input until user submits */}
               {(pendingAskUserQuestions.length > 0 || pendingPermissionRequests.length > 0) && (
@@ -706,8 +706,8 @@ export function ChatPanel({
                     disabled={canvasPromptDisabled}
                     className={`mb-[1px] flex h-10 shrink-0 items-center gap-2 rounded-xl border px-3 text-xs font-medium transition-colors ${
                       canvasPromptActive
-                        ? "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-700 dark:bg-blue-950/40 dark:text-blue-200"
-                        : "border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-700 dark:bg-[#161922] dark:text-slate-400 dark:hover:border-blue-800 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
+                        ? "border-desktop-accent bg-desktop-bg-tertiary text-desktop-accent"
+                        : "border-desktop-border bg-desktop-surface-muted text-desktop-text-tertiary hover:border-desktop-accent hover:bg-desktop-bg-tertiary hover:text-desktop-accent"
                     } disabled:cursor-not-allowed disabled:opacity-45`}
                     title={canvasPromptDisabled ? t.chat.connectFirst : canvasPromptLabel}
                     aria-label={canvasPromptLabel}
@@ -749,8 +749,8 @@ export function ChatPanel({
                 />
               </div>
               {repoSelection?.path && (
-                <div className="flex items-center gap-1.5 px-1 text-[10px] text-slate-400 dark:text-slate-500">
-                  <span className="font-medium text-slate-500 dark:text-slate-400">
+                <div className="flex items-center gap-1.5 px-1 text-[10px] text-desktop-text-tertiary">
+                  <span className="font-medium text-desktop-text-secondary">
                     {t.sessions.repoPath}
                   </span>
                   <span className="min-w-0 flex-1 truncate font-mono" title={repoSelection.path}>
@@ -766,7 +766,7 @@ export function ChatPanel({
                         setCopiedRepoPath(false);
                       });
                     }}
-                    className="shrink-0 rounded p-0.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+                    className="shrink-0 rounded p-0.5 text-desktop-text-tertiary transition-colors hover:bg-desktop-bg-active hover:text-desktop-text-primary"
                     title={t.common.copyToClipboard}
                     aria-label={t.common.copyToClipboard}
                   >

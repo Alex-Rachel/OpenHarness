@@ -37,7 +37,7 @@ If you want the shortest “it works” path, use one of these:
 
 ### Desktop In Practice
 
-1. Download Routa Desktop from [GitHub Releases](https://github.com/phodal/routa/releases).
+1. Download Harness Desktop from [GitHub Releases](https://github.com/phodal/routa/releases).
 2. Create a workspace and enable one provider.
 3. Attach a repository.
 4. Open `Session` and ask: `Explain the architecture of this repository`.
@@ -66,7 +66,7 @@ Desktop is the best starting point if you want the full Routa experience:
 
 1. Open [GitHub Releases](https://github.com/phodal/routa/releases).
 2. Download the latest Desktop build for your platform.
-3. Install and launch Routa Desktop.
+3. Install and launch Harness Desktop.
 
 ### First Run
 

@@ -1,4 +1,4 @@
-//! System tray module for Routa Desktop.
+//! System tray module for Harness Desktop.
 //!
 //! Provides a reusable system tray icon with workspace-first shortcuts.
 //!
@@ -102,7 +102,7 @@ impl GitHubRepo {
 ///      ├─ Issues
 ///      └─ Repository
 /// ──────────────────
-/// Quit Routa
+/// Quit OpenHarness
 /// ```
 pub fn build_tray_menu(app: &AppHandle, repos: &[GitHubRepo]) -> tauri::Result<Menu<tauri::Wry>> {
     let menu = Menu::new(app)?;
@@ -205,7 +205,7 @@ pub fn build_tray_menu(app: &AppHandle, repos: &[GitHubRepo]) -> tauri::Result<M
     }
 
     // ── Quit ──
-    let quit = MenuItem::with_id(app, TRAY_QUIT_ID, "Quit Routa", true, None::<&str>)?;
+    let quit = MenuItem::with_id(app, TRAY_QUIT_ID, "Quit OpenHarness", true, None::<&str>)?;
     menu.append(&quit)?;
 
     Ok(menu)
@@ -221,7 +221,7 @@ pub fn setup_tray(app: &AppHandle, repos: &[GitHubRepo]) -> tauri::Result<()> {
     let menu = build_tray_menu(app, repos)?;
 
     let mut builder = TrayIconBuilder::with_id(TRAY_ID)
-        .tooltip("Routa Desktop")
+        .tooltip("Harness Desktop")
         .menu(&menu)
         .on_menu_event(handle_tray_menu_event);
 

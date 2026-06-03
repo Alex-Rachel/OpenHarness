@@ -18,7 +18,7 @@ github_url: "https://github.com/phodal/routa/issues/498"
 
 ## What Happened
 
-Routa Desktop 已经有系统托盘实现，但当前菜单结构仍然偏向 webhook / GitHub 快捷链接：一级入口主要是 `Show / Hide Window`、按仓库展开的 `Pull Requests / Issues / Repository`、`Webhook Settings…` 和 `Quit`。
+Harness Desktop 已经有系统托盘实现，但当前菜单结构仍然偏向 webhook / GitHub 快捷链接：一级入口主要是 `Show / Hide Window`、按仓库展开的 `Pull Requests / Issues / Repository`、`Webhook Settings…` 和 `Quit`。
 
 这和产品当前的主工作流不一致。Routa 的核心 surface 已经是 workspace-first，稳定高频能力集中在 `Sessions`、`Kanban`、`Team Runs` 和消息/后台任务，而这些能力没有进入托盘一级入口。
 

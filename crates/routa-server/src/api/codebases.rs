@@ -103,18 +103,69 @@ async fn list_codebase_changes(
                     "repoPath": repo_path,
                     "label": label,
                     "branch": codebase.branch.unwrap_or_else(|| "unknown".to_string()),
+                    "vcsType": null,
                     "status": { "clean": true, "ahead": 0, "behind": 0, "modified": 0, "untracked": 0 },
                     "files": [],
                     "error": "Missing repository path",
                 });
             }
 
+            // Determine VCS type: prefer stored value, fall back to filesystem detection
+            let vcs_type = codebase.vcs_type.unwrap_or_else(|| {
+                if std::path::Path::new(&repo_path).join(".svn").exists() {
+                    VcsType::Svn
+                } else if std::path::Path::new(&repo_path).join(".git").exists() {
+                    VcsType::Git
+                } else {
+                    VcsType::None
+                }
+            });
+
+            // SVN dispatch
+            if vcs_type == VcsType::Svn {
+                let svn_status = routa_core::svn::get_svn_status(&repo_path);
+                let files: Vec<serde_json::Value> = svn_status.all.iter().map(|entry| {
+                    let status_map = match entry.status_code.as_str() {
+                        "M" => "modified",
+                        "A" => "added",
+                        "D" => "deleted",
+                        "?" => "untracked",
+                        "!" => "missing",
+                        "C" => "conflicted",
+                        "R" => "renamed",
+                        _ => "modified",
+                    };
+                    serde_json::json!({
+                        "path": entry.path,
+                        "status": status_map,
+                    })
+                }).collect();
+
+                return serde_json::json!({
+                    "codebaseId": codebase.id,
+                    "repoPath": repo_path,
+                    "label": label,
+                    "branch": codebase.branch.unwrap_or_else(|| "trunk".to_string()),
+                    "vcsType": "svn",
+                    "status": {
+                        "clean": svn_status.all.is_empty(),
+                        "ahead": 0,
+                        "behind": 0,
+                        "modified": svn_status.modified.len(),
+                        "untracked": svn_status.untracked.len(),
+                    },
+                    "files": files,
+                });
+            }
+
+            // Git path
             if !crate::git::is_git_repository(&repo_path) {
                 return serde_json::json!({
                     "codebaseId": codebase.id,
                     "repoPath": repo_path,
                     "label": label,
                     "branch": codebase.branch.unwrap_or_else(|| "unknown".to_string()),
+                    "vcsType": vcs_type.to_string(),
                     "status": { "clean": true, "ahead": 0, "behind": 0, "modified": 0, "untracked": 0 },
                     "files": [],
                     "error": "Repository is missing or not a git repository",
@@ -127,6 +178,7 @@ async fn list_codebase_changes(
                 "repoPath": repo_path,
                 "label": label,
                 "branch": changes.branch,
+                "vcsType": "git",
                 "status": changes.status,
                 "files": changes.files,
             })
