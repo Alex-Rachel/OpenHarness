@@ -10,11 +10,12 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import { useMemo, useState, type Dispatch, type SetStateAction, type ReactNode, type RefObject } from "react";
+import { useCallback, useMemo, useState, type Dispatch, type SetStateAction, type ReactNode, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "@/i18n";
 import type { AcpProviderInfo, AcpTaskAdaptiveHarnessOptions } from "@/client/acp-client";
 import type { CodebaseData } from "@/client/hooks/use-workspaces";
+import { SkillClient } from "@/client/skill-client";
 import type { UseAcpActions, UseAcpState } from "@/client/hooks/use-acp";
 import { ChatPanel } from "@/client/components/chat-panel";
 import type { RepoSelection } from "@/client/components/repo-picker";
@@ -426,6 +427,20 @@ export function KanbanBoardSurface({
     return hasRealRepo ? new RealGitAdapter() : new MockGitAdapter();
   }, [codebases.length]);
 
+  // Skill loading for the agent ChatPanel — ensures skill content is
+  // pre-loaded and passed to the backend so Claude Code doesn't have to
+  // load skills internally (which can hang when the API is overloaded).
+  const skillClient = useMemo(() => new SkillClient(), []);
+  const repoPathForSkills = kanbanRepoSelection?.repoPath ?? defaultCodebase?.repoPath ?? undefined;
+  const onLoadSkill = useCallback(async (name: string): Promise<string | null> => {
+    try {
+      const skill = await skillClient.load(name, repoPathForSkills);
+      return skill?.content ?? null;
+    } catch {
+      return null;
+    }
+  }, [skillClient, repoPathForSkills]);
+
   const activeGitLogRepoPath = useMemo(() => {
     if (gitLogRepoPath && codebases.some((codebase) => codebase.repoPath === gitLogRepoPath)) {
       return gitLogRepoPath;
@@ -675,6 +690,7 @@ export function KanbanBoardSurface({
                 codebases={codebases}
                 activeWorkspaceId={workspaceId}
                 agentRole="DEVELOPER"
+                onLoadSkill={onLoadSkill}
               />
             </div>
           </aside>

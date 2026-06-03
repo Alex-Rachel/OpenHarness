@@ -154,6 +154,10 @@ export function useChatMessages({
     }
     transcriptRetryCountRef.current[activeSessionId] = 0;
     processedMessageIdsRef.current.clear();
+    // Reset the SSE update cursor — the parent hook may have cleared `updates`
+    // (via createSession/resumeSession) without this ref knowing, so all new
+    // updates for the new session would be silently dropped by .slice(oldIndex).
+    lastProcessedUpdateIndexRef.current = 0;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset running state on session change
     setIsSessionRunning(false);
     lastActivityTsRef.current = 0;
@@ -198,6 +202,11 @@ export function useChatMessages({
   // Process SSE updates
   useEffect(() => {
     if (updates.length === 0) return;
+    // If the updates array was cleared (e.g. by createSession/resumeSession)
+    // but our cursor wasn't reset, snap it back to 0 so we don't skip everything.
+    if (lastProcessedUpdateIndexRef.current > updates.length) {
+      lastProcessedUpdateIndexRef.current = 0;
+    }
     const pending = updates.slice(lastProcessedUpdateIndexRef.current);
     if (pending.length === 0) return;
     lastProcessedUpdateIndexRef.current = updates.length;
