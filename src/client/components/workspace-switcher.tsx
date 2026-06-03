@@ -95,9 +95,11 @@ export function WorkspaceSwitcher({
     try {
       if (normalizedWorkspaceId) {
         window.localStorage.setItem(DESKTOP_LAST_WORKSPACE_ID_STORAGE_KEY, normalizedWorkspaceId);
-      } else {
-        window.localStorage.removeItem(DESKTOP_LAST_WORKSPACE_ID_STORAGE_KEY);
       }
+      // Intentionally do NOT remove the key when activeWorkspaceId is null.
+      // null simply means the component hasn't initialized yet (e.g. home page
+      // just mounted) — clearing here would race with the parent's restoration
+      // effect and wipe the previously selected workspace ID.
     } catch {
       // localStorage may throw in restricted environments (quota, blocked storage)
     }
