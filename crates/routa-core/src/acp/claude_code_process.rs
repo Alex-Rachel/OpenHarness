@@ -358,8 +358,7 @@ impl ClaudeCodeProcess {
                                         turn: None,
                                         role: Some("assistant".to_string()),
                                         content_preview: Some(
-                                            agent_msg_buffer[..agent_msg_buffer.len().min(200)]
-                                                .to_string(),
+                                            truncate_content(&agent_msg_buffer, 200),
                                         ),
                                         full_content: Some(agent_msg_buffer.clone()),
                                     },
@@ -384,7 +383,7 @@ impl ClaudeCodeProcess {
                             "[ClaudeCode:{}] Failed to parse: {} - {}",
                             display_name,
                             e,
-                            &line[..line.len().min(100)]
+                            truncate_content(&line, 100)
                         );
                     }
                 }
@@ -402,7 +401,7 @@ impl ClaudeCodeProcess {
                         turn: None,
                         role: Some("assistant".to_string()),
                         content_preview: Some(
-                            agent_msg_buffer[..agent_msg_buffer.len().min(200)].to_string(),
+                            truncate_content(&agent_msg_buffer, 200),
                         ),
                         full_content: Some(agent_msg_buffer.clone()),
                     });
@@ -772,6 +771,18 @@ async fn process_stream_event(
 }
 
 // ─── Helper Functions ───────────────────────────────────────────────────
+
+/// Safely truncate a string at a UTF-8 character boundary.
+fn truncate_content(s: &str, max_bytes: usize) -> String {
+    if s.len() <= max_bytes {
+        return s.to_string();
+    }
+    let mut end = max_bytes;
+    while end > 0 && !s.is_char_boundary(end) {
+        end -= 1;
+    }
+    s[..end].to_string()
+}
 
 fn emit_session_update(
     tx: &broadcast::Sender<serde_json::Value>,

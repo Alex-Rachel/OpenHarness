@@ -431,7 +431,7 @@ export function KanbanBoardSurface({
   // pre-loaded and passed to the backend so Claude Code doesn't have to
   // load skills internally (which can hang when the API is overloaded).
   const skillClient = useMemo(() => new SkillClient(), []);
-  const repoPathForSkills = kanbanRepoSelection?.repoPath ?? defaultCodebase?.repoPath ?? undefined;
+  const repoPathForSkills = kanbanRepoSelection?.path ?? defaultCodebase?.repoPath ?? undefined;
   const onLoadSkill = useCallback(async (name: string): Promise<string | null> => {
     try {
       const skill = await skillClient.load(name, repoPathForSkills);
