@@ -46,8 +46,9 @@ async function withCurrentWindow(action: (window: TauriWindowHandle) => Promise<
 async function runWindowAction(action: (window: TauriWindowHandle) => Promise<void>): Promise<void> {
   try {
     await withCurrentWindow(action);
-  } catch {
+  } catch (error) {
     // HTTP-based Tauri dev can render the titlebar before IPC is available.
+    console.error("[DesktopWindowTitlebar] Window action failed:", error);
   }
 }
 
