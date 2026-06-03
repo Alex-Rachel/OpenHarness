@@ -1109,10 +1109,10 @@ async fn acp_rpc(
                     let state_clone = state.clone();
                     Box::pin(async_stream::stream! {
                         // Stream notifications until turn_complete, disconnect, or timeout.
-                        // The 10-minute timeout is a safety net: normally the Claude
+                        // The idle timeout is a safety net: normally the Claude
                         // process emits turn_complete or dies (which triggers a
                         // synthetic turn_complete via prompt_claude_async).
-                        let idle_timeout = std::time::Duration::from_secs(600);
+                        let idle_timeout = std::time::Duration::from_secs(300);
                         let mut got_first_event = false;
                         // Allow a longer initial wait (3 min) for first event (e.g. skill loading)
                         let initial_timeout = std::time::Duration::from_secs(180);
