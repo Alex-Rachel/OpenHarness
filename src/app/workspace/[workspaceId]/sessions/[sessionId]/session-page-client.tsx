@@ -179,7 +179,7 @@ export function SessionPageClient() {
 
   // ── Skill loading ─────────────────────────────────────────────────────
   const skillClient = useMemo(() => new SkillClient(), []);
-  const repoPathForSkills = repoSelection?.path ?? undefined;
+  const repoPathForSkills = repoSelection?.repoPath ?? undefined;
   const onLoadSkill = useCallback(async (name: string): Promise<string | null> => {
     try {
       const skill = await skillClient.load(name, repoPathForSkills);
