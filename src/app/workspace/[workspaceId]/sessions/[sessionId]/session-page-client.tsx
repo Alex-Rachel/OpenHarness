@@ -13,10 +13,9 @@
  * Route: /workspace/[workspaceId]/sessions/[sessionId]
  */
 
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 import {ChatPanel} from "@/client/components/chat-panel";
-import {SkillClient} from "@/client/skill-client";
 import {SpecialistManager} from "@/client/components/specialist-manager";
 import {CraftersView} from "@/client/components/task-panel";
 import {AgentInstallPanel} from "@/client/components/agent-install-panel";
@@ -176,16 +175,6 @@ export function SessionPageClient() {
   const workspacesHook = useWorkspaceContext();
   const { setTitleBarRight, clearTitleBarRight } = workspacesHook;
   const { codebases } = useCodebases(workspaceId);
-
-  // ── Skill loading ─────────────────────────────────────────────────────
-  const skillClient = useMemo(() => new SkillClient(), []);
-  const repoPathForSkills = repoSelection?.repoPath ?? undefined;
-  const onLoadSkill = useCallback(async (name: string): Promise<string | null> => {
-    try {
-      const skill = await skillClient.load(name, repoPathForSkills);
-      return skill?.content ?? null;
-    } catch { return null; }
-  }, [skillClient, repoPathForSkills]);
 
   // Auto-select default codebase as repo when workspace changes
   useEffect(() => {
@@ -1030,7 +1019,6 @@ export function SessionPageClient() {
             activeWorkspaceId={workspaceId}
             onWorkspaceChange={handleWorkspaceSelect}
             codebases={codebases}
-            onLoadSkill={onLoadSkill}
             inputPrefill={chatInputPrefill}
             onInputPrefillConsumed={handleInputPrefillConsumed}
             onPrepareCanvasPrompt={handlePrepareCanvasPrompt}
